@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.function.Predicate;
 
@@ -35,7 +36,6 @@ import de.energiequant.vatsim.compatibility.legacyproxy.fetching.LegacyNetworkIn
 public class Server {
     private static final Logger LOGGER = LoggerFactory.getLogger(Server.class);
 
-    // TODO: make intervals configurable?
     private static final Duration NETWORK_INFORMATION_UPDATE_INTERVAL = Duration.ofHours(6);
     private static final Duration NETWORK_INFORMATION_RETRY_INTERVAL = Duration.ofMinutes(5);
 
@@ -49,18 +49,21 @@ public class Server {
         + ";\n" //
         + "; VATSIM data served by this server remains under copyright of VATSIM. Usage of that data remains subject to conditions defined by VATSIM.\n";
 
-    public static void main(String[] args) throws Exception {
-        // FIXME: configure
-        String upstreamBaseUrl = "http://status.vatsim.net";
-        String localHostname = "localhost";
-        int localPort = 8080;
+    private final LegacyNetworkInformationFetcher legacyNetworkInformationFetcher;
+    private final JsonNetworkInformationFetcher jsonNetworkInformationFetcher;
+    private final HttpAsyncServer httpServer;
 
-        LegacyNetworkInformationFetcher legacyNetworkInformationFetcher = new LegacyNetworkInformationFetcher(
+    private final String upstreamBaseUrl = "http://status.vatsim.net";
+    private final String localHostname = "localhost";
+    private final int localPort = 8080;
+
+    public Server() {
+        legacyNetworkInformationFetcher = new LegacyNetworkInformationFetcher(
             upstreamBaseUrl + ServiceEndpoints.NETWORK_INFORMATION_LEGACY,
             NETWORK_INFORMATION_UPDATE_INTERVAL,
             NETWORK_INFORMATION_RETRY_INTERVAL);
 
-        JsonNetworkInformationFetcher jsonNetworkInformationFetcher = new JsonNetworkInformationFetcher(
+        jsonNetworkInformationFetcher = new JsonNetworkInformationFetcher(
             upstreamBaseUrl + ServiceEndpoints.NETWORK_INFORMATION_JSON,
             NETWORK_INFORMATION_UPDATE_INTERVAL,
             NETWORK_INFORMATION_RETRY_INTERVAL);
@@ -81,7 +84,7 @@ public class Server {
             jsonNetworkInformationFetcher::getLastFetchedNetworkInformation,
             legacyNetworkInformationFetcher::getLastAggregatedStartupMessages);
 
-        HttpAsyncServer server = AsyncServerBootstrap.bootstrap()
+        httpServer = AsyncServerBootstrap.bootstrap()
             .setIOReactorConfig(IOReactorConfig.DEFAULT)
             .addFilterFirst("ipFilter", ipFilter)
             .register(ServiceEndpoints.DATA_FILE_LEGACY,
@@ -107,27 +110,41 @@ public class Server {
             .register("/", legacyNetworkInformationRequestHandler)
             .register("*", new SimpleErrorResponse(HttpStatus.SC_NOT_FOUND, "not found"))
             .create();
+    }
 
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            @Override
-            public void run() {
-                LOGGER.info("Stopping fetcher threads");
-                legacyNetworkInformationFetcher.stop();
-                jsonNetworkInformationFetcher.stop();
-
-                LOGGER.info("Stopping server");
-                server.close(CloseMode.IMMEDIATE);
-
-                LOGGER.info("Shutdown complete");
-            }
-        });
-
+    public void start() {
         LOGGER.info("Starting server");
-        server.start();
-        Future<ListenerEndpoint> future = server.listen(new InetSocketAddress(localPort));
-        ListenerEndpoint listenerEndpoint = future.get();
-        LOGGER.info("Server is listening on {}", listenerEndpoint.getAddress());
-        server.awaitShutdown(TimeValue.MAX_VALUE);
+        httpServer.start();
+        Future<ListenerEndpoint> future = httpServer.listen(new InetSocketAddress(localPort));
+        ListenerEndpoint listenerEndpoint;
+        try {
+            listenerEndpoint = future.get();
+            LOGGER.info("Server is listening on {}", listenerEndpoint.getAddress());
+        } catch (InterruptedException | ExecutionException ex) {
+            LOGGER.error("Failed to start server, shutting down...", ex);
+            stop();
+        }
+    }
+
+    public void stop() {
+        LOGGER.info("Stopping fetcher threads");
+        legacyNetworkInformationFetcher.stop();
+        jsonNetworkInformationFetcher.stop();
+
+        LOGGER.info("Stopping server");
+        httpServer.close(CloseMode.IMMEDIATE);
+
+        LOGGER.info("Shutdown complete");
+    }
+
+    public void awaitShutdown() {
+        try {
+            httpServer.awaitShutdown(TimeValue.MAX_VALUE);
+        } catch (InterruptedException ex) {
+            LOGGER.info("Interrupted, stopping server...", ex);
+        }
+
+        stop();
     }
 
     private static <T> T pickRandomItem(Collection<T> items) {
