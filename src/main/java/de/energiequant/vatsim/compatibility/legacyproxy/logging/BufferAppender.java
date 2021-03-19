@@ -22,12 +22,6 @@ import org.apache.logging.log4j.core.config.plugins.PluginFactory;
 
 @Plugin(name = "Buffer", category = Core.CATEGORY_NAME, elementType = Appender.ELEMENT_TYPE)
 public class BufferAppender extends AbstractAppender {
-    /*
-     * FIXME: something is still wrong processing annotations for this class,
-     * sometimes it shows up, sometimes it is missing... might be sporadic M2Eclipse
-     * magic - maybe it has to be moved to a separate Maven module?
-     */
-
     private final List<FormattedEvent> formattedEvents = new ArrayList<>();
     private final AtomicBoolean isEnabled = new AtomicBoolean(true);
     private final Layout<? extends Serializable> layout;
