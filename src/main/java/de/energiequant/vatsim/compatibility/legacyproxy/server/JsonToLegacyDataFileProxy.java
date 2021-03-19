@@ -2,6 +2,7 @@ package de.energiequant.vatsim.compatibility.legacyproxy.server;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ExecutionException;
@@ -32,6 +33,9 @@ public class JsonToLegacyDataFileProxy extends GetOnlyRequestHandler {
 
     private final Supplier<String> jsonUrlSupplier;
     private final HttpPromiseBuilder<DataFile> promiseBuilder;
+
+    // TODO: configure, depends on status client version
+    private boolean isQuirkUtf8Enabled = false;
 
     private static final Charset FALLBACK_CHARACTER_SET = StandardCharsets.UTF_8;
 
@@ -90,10 +94,19 @@ public class JsonToLegacyDataFileProxy extends GetOnlyRequestHandler {
         byte[] bytes = baos.toByteArray();
         baos = null;
 
+        if (isQuirkUtf8Enabled) {
+            bytes = recodeLatinToUTF8(bytes);
+        }
+
         responseTrigger.submitResponse(
             AsyncResponseBuilder.create(HttpStatus.SC_OK)
                 .setEntity(AsyncEntityProducers.create(bytes, ContentType.TEXT_PLAIN))
                 .build(),
             context);
+    }
+
+    private byte[] recodeLatinToUTF8(byte[] bytes) {
+        String s = new String(bytes, StandardCharsets.ISO_8859_1);
+        return StandardCharsets.UTF_8.encode(CharBuffer.wrap(s)).array();
     }
 }
