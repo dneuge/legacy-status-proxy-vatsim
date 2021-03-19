@@ -1,17 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- In order for any changes to take effect, run "clean & build"! -->
 <Configuration status="INFO">
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout pattern="%d{ISO8601} - %-5p - %36.36c{1} - %m%n"/>
         </Console>
+        <Buffer name="Buffer">
+            <PatternLayout pattern="[%d{HH:mm:ss}] %m"/>
+        </Buffer>
     </Appenders>
     <Loggers>
         <Logger name="de.energiequant" level="debug" additivity="false">
             <AppenderRef ref="Console"/>
+            <AppenderRef ref="Buffer"/>
         </Logger>
         <Root level="info">
             <AppenderRef ref="Console"/>
+            <AppenderRef ref="Buffer"/>
         </Root>
     </Loggers>
 </Configuration>

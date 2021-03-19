@@ -34,6 +34,9 @@ import de.energiequant.vatsim.compatibility.legacyproxy.fetching.JsonNetworkInfo
 import de.energiequant.vatsim.compatibility.legacyproxy.fetching.LegacyNetworkInformationFetcher;
 
 public class Server {
+    // FIXME: port remains blocked even after proper shutdown?
+    // FIXME: server can be stopped twice (second shutdown should be ignored)
+
     private static final Logger LOGGER = LoggerFactory.getLogger(Server.class);
 
     private static final Duration NETWORK_INFORMATION_UPDATE_INTERVAL = Duration.ofHours(6);

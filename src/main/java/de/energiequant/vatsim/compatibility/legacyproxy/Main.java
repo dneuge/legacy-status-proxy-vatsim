@@ -3,6 +3,7 @@ package de.energiequant.vatsim.compatibility.legacyproxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.energiequant.vatsim.compatibility.legacyproxy.gui.MainWindow;
 import de.energiequant.vatsim.compatibility.legacyproxy.server.Server;
 
 public class Main {
@@ -19,5 +20,10 @@ public class Main {
         });
 
         server.start();
+
+        new MainWindow(() -> {
+            server.stop();
+            System.exit(0);
+        });
     }
 }
