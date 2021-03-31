@@ -1,5 +1,6 @@
 package de.energiequant.vatsim.compatibility.legacyproxy;
 
+import java.awt.GraphicsEnvironment;
 import java.util.Collection;
 
 import org.slf4j.Logger;
@@ -9,6 +10,7 @@ import de.energiequant.vatsim.compatibility.legacyproxy.attribution.AttributionP
 import de.energiequant.vatsim.compatibility.legacyproxy.attribution.License;
 import de.energiequant.vatsim.compatibility.legacyproxy.attribution.Project;
 import de.energiequant.vatsim.compatibility.legacyproxy.gui.MainWindow;
+import de.energiequant.vatsim.compatibility.legacyproxy.logging.BufferAppender;
 import de.energiequant.vatsim.compatibility.legacyproxy.server.Server;
 
 public class Main {
@@ -34,10 +36,14 @@ public class Main {
 
         server.start();
 
-        new MainWindow(() -> {
-            server.stop();
-            System.exit(0);
-        });
+        if (GraphicsEnvironment.isHeadless()) {
+            BufferAppender.getInstances().forEach(BufferAppender::disableAndClear);
+        } else {
+            new MainWindow(() -> {
+                server.stop();
+                System.exit(0);
+            });
+        }
     }
 
     public static Collection<Project> getDependencies() {

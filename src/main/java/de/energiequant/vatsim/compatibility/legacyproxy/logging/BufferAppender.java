@@ -65,6 +65,8 @@ public class BufferAppender extends AbstractAppender {
     }
 
     public void disableAndClear() {
+        // TODO: create a static method which disables all current and future loggers
+        // TODO: call that method in Main
         isEnabled.set(false);
         synchronized (formattedEvents) {
             formattedEvents.clear();
