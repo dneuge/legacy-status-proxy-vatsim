@@ -1,19 +1,20 @@
 package de.energiequant.vatsim.compatibility.legacyproxy.gui;
 
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.JButton;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
@@ -29,10 +30,13 @@ import org.apache.logging.log4j.Level;
 
 import de.energiequant.vatsim.compatibility.legacyproxy.logging.BufferAppender;
 import de.energiequant.vatsim.compatibility.legacyproxy.logging.BufferAppender.FormattedEvent;
+import de.energiequant.vatsim.compatibility.legacyproxy.utils.ResourceUtils;
 
 public class MainWindow extends JFrame {
     private final JEditorPane logOutput;
     private final JScrollPane logScrollPane;
+
+    private final AboutWindow aboutWindow = new AboutWindow();
 
     private static final Map<Level, String> LOG_STYLES_BY_LEVEL = new HashMap<Level, String>();
 
@@ -54,11 +58,10 @@ public class MainWindow extends JFrame {
     public MainWindow(Runnable onCloseCallback) {
         super("Legacy Status Proxy for VATSIM");
 
-        GridBagLayout gridBagLayout = new GridBagLayout();
-
-        setLayout(gridBagLayout);
         setSize(800, 600);
+        setMinimumSize(new Dimension(600, 400));
 
+        setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
 
         logOutput = new JEditorPane();
@@ -68,10 +71,21 @@ public class MainWindow extends JFrame {
 
         logScrollPane = new JScrollPane(logOutput);
 
+        gbc.gridx = 0;
+        gbc.gridy = 0;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         add(logScrollPane, gbc);
+
+        gbc.gridy++;
+        gbc.weightx = 0.0;
+        gbc.weighty = 0.0;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.anchor = GridBagConstraints.EAST;
+        JButton aboutButton = new JButton("About");
+        aboutButton.addActionListener(this::onAboutClicked);
+        add(aboutButton, gbc);
 
         appendLogOutput();
 
@@ -101,26 +115,8 @@ public class MainWindow extends JFrame {
     }
 
     private String getDefaultHtml() {
-        StringBuilder sb = new StringBuilder();
-
-        try (
-            InputStream is = getClass().getClassLoader()
-                .getResourceAsStream(getClass().getPackage().getName().replace('.', '/') + "/LogOutput.html"); //
-            InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8) //
-        ) {
-            char[] buffer = new char[4096];
-            while (isr.ready()) {
-                int read = isr.read(buffer);
-                if (read > 0) {
-                    sb.append(buffer, 0, read);
-                }
-            }
-        } catch (IOException ex) {
-            // TODO: log
-            ex.printStackTrace();
-        }
-
-        return sb.toString();
+        return ResourceUtils.getResourceContentAsString(getClass(), "LogOutput.html", StandardCharsets.UTF_8) //
+            .orElseThrow(() -> new RuntimeException("missing log output template"));
     }
 
     private void appendLogOutput() {
@@ -163,5 +159,9 @@ public class MainWindow extends JFrame {
 
     private void scrollToEndOfLog() {
         logScrollPane.getViewport().scrollRectToVisible(new Rectangle(0, logOutput.getHeight() - 1, 1, 1));
+    }
+
+    private void onAboutClicked(ActionEvent actionevent1) {
+        aboutWindow.setVisible(true);
     }
 }
