@@ -14,6 +14,7 @@
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 
+		<directory.generated.resources>src-gen/main/resources</directory.generated.resources>
 		<mainClass>de.energiequant.vatsim.compatibility.legacyproxy.Main</mainClass>
 
 		<!-- runtime dependencies -->
@@ -31,6 +32,8 @@
 		<log4jCachefileTransformer.version>2.14.0</log4jCachefileTransformer.version>
 		<maven.compiler.version>3.8.1</maven.compiler.version>
 		<maven.shade.version>3.2.4</maven.shade.version>
+		<maven.attribution.version>0.9.8</maven.attribution.version>
+		<maven.buildHelper.version>3.2.0</maven.buildHelper.version>
 	</properties>
 
 	<dependencyManagement>
@@ -125,6 +128,46 @@
 				</configuration> <executions> <execution> <id>make-assembly</id> <phase>package</phase> 
 				<goals> <goal>single</goal> </goals> </execution> </executions> </plugin> -->
 
+			<plugin>
+				<groupId>com.github.jinnovations</groupId>
+				<artifactId>attribution-maven-plugin</artifactId>
+				<version>${maven.attribution.version}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>generate-attribution-file</goal>
+						</goals>
+						<phase>generate-resources</phase>
+					</execution>
+				</executions>
+				<configuration>
+					<outputFile>${project.basedir}/${directory.generated.resources}/de/energiequant/vatsim/compatibility/legacyproxy/attribution/attribution.xml</outputFile>
+					<forceRegeneration>true</forceRegeneration>
+				</configuration>
+			</plugin>
+			
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>${maven.buildHelper.version}</version>
+				<executions>
+					<execution>
+						<id>add-resource</id>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>add-resource</goal>
+						</goals>
+						<configuration>
+							<resources>
+								<resource>
+									<directory>${directory.generated.resources}</directory>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>

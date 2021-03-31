@@ -1,4 +1,7 @@
 /target/
 /dependency-reduced-pom.xml
 
+/src-gen/main/resources/*
+!**/.keep
+
 *~
