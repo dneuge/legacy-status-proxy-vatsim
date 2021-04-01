@@ -6,6 +6,8 @@ This project provides a simple HTTP proxy server translating current VATSIM stat
 
 ## Disclaimer and Intended Use
 
+*This is a copy of [disclaimer.txt](src/main/resources/de/energiequant/vatsim/compatibility/legacyproxy/disclaimer.txt). The disclaimer has to be accepted before the server can be started.*
+
 This disclaimer is a more application-specific addition to the general points stated in the [MIT license](LICENSE.md).
 
 The server is intended to enable "passive" clients (e.g. status monitors) to access more current data formats than they originally support. A "passive" client only consumes status information but does not perform any interaction with the live VATSIM network.

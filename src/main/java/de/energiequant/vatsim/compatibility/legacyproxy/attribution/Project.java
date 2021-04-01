@@ -1,5 +1,8 @@
 package de.energiequant.vatsim.compatibility.legacyproxy.attribution;
 
+import static de.energiequant.vatsim.compatibility.legacyproxy.utils.ArgumentChecks.requireData;
+import static de.energiequant.vatsim.compatibility.legacyproxy.utils.ArgumentChecks.requireDataOrNull;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -38,27 +41,5 @@ public class Project {
 
     public Set<License> getLicenses() {
         return licenses;
-    }
-
-    private static void requireData(String what, Object o) {
-        if (o == null) {
-            throw new IllegalArgumentException(what + " must not be null");
-        }
-
-        requireDataOrNull(what, o);
-    }
-
-    private static void requireDataOrNull(String what, Object o) {
-        if (o instanceof String) {
-            String s = (String) o;
-            if (s.trim().isEmpty()) {
-                throw new IllegalArgumentException(what + " must not be blank");
-            }
-        } else if (o instanceof Collection) {
-            Collection<?> c = (Collection<?>) o;
-            if (c.isEmpty()) {
-                throw new IllegalArgumentException(what + " must not be empty");
-            }
-        }
     }
 }

@@ -29,6 +29,7 @@ import org.vatplanner.dataformats.vatsimpublic.export.LegacyNetworkInformationWr
 import org.vatplanner.dataformats.vatsimpublic.parser.DataFileParserFactory;
 
 import de.energiequant.vatsim.compatibility.legacyproxy.AppConstants;
+import de.energiequant.vatsim.compatibility.legacyproxy.Main;
 import de.energiequant.vatsim.compatibility.legacyproxy.ServiceEndpoints;
 import de.energiequant.vatsim.compatibility.legacyproxy.fetching.JsonNetworkInformationFetcher;
 import de.energiequant.vatsim.compatibility.legacyproxy.fetching.LegacyNetworkInformationFetcher;
@@ -115,7 +116,14 @@ public class Server {
             .create();
     }
 
+    // FIXME: is start/stop thread-safe? toggled from UI, may need decoupling
+
     public void start() {
+        if (!Main.getConfiguration().isDisclaimerAccepted()) {
+            LOGGER.warn("Server can only be started after accepting the disclaimer");
+            return;
+        }
+
         LOGGER.info("Starting server");
         httpServer.start();
         Future<ListenerEndpoint> future = httpServer.listen(new InetSocketAddress(localPort));

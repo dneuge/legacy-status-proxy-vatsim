@@ -4,4 +4,6 @@
 /src-gen/main/resources/*
 !**/.keep
 
+legacy-status-proxy-vatsim.properties
+
 *~

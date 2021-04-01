@@ -18,6 +18,7 @@ import javax.swing.JButton;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
+import javax.swing.JToggleButton;
 import javax.swing.WindowConstants;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Element;
@@ -28,6 +29,7 @@ import javax.swing.text.html.HTMLDocument;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.logging.log4j.Level;
 
+import de.energiequant.vatsim.compatibility.legacyproxy.Main;
 import de.energiequant.vatsim.compatibility.legacyproxy.logging.BufferAppender;
 import de.energiequant.vatsim.compatibility.legacyproxy.logging.BufferAppender.FormattedEvent;
 import de.energiequant.vatsim.compatibility.legacyproxy.utils.ResourceUtils;
@@ -35,6 +37,10 @@ import de.energiequant.vatsim.compatibility.legacyproxy.utils.ResourceUtils;
 public class MainWindow extends JFrame {
     private final JEditorPane logOutput;
     private final JScrollPane logScrollPane;
+    private final JToggleButton runStopButton;
+
+    private static final boolean RUN_STOP_RUNNING = true;
+    private static final boolean RUN_STOP_STOPPED = false;
 
     private final AboutWindow aboutWindow = new AboutWindow();
 
@@ -73,19 +79,38 @@ public class MainWindow extends JFrame {
 
         gbc.gridx = 0;
         gbc.gridy = 0;
+        gbc.gridwidth = 4;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         add(logScrollPane, gbc);
 
         gbc.gridy++;
+        gbc.gridwidth = 1;
         gbc.weightx = 0.0;
         gbc.weighty = 0.0;
         gbc.fill = GridBagConstraints.NONE;
+        gbc.anchor = GridBagConstraints.WEST;
+        runStopButton = new JToggleButton("Run/Stop");
+        // TODO: update button state depending on server state
+        runStopButton.addActionListener(this::onRunStopClicked);
+        add(runStopButton, gbc);
+
+        gbc.gridx++;
+        JButton configureButton = new JButton("Configure");
+        configureButton.addActionListener(this::onConfigureClicked);
+        add(configureButton, gbc);
+
+        gbc.gridx++;
         gbc.anchor = GridBagConstraints.EAST;
         JButton aboutButton = new JButton("About");
         aboutButton.addActionListener(this::onAboutClicked);
         add(aboutButton, gbc);
+
+        gbc.gridx++;
+        JButton quitButton = new JButton("Quit");
+        quitButton.addActionListener(this::onQuitClicked);
+        add(quitButton, gbc);
 
         appendLogOutput();
 
@@ -112,6 +137,10 @@ public class MainWindow extends JFrame {
         });
 
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+
+        if (!Main.getConfiguration().isDisclaimerAccepted()) {
+            aboutWindow.showDisclaimer();
+        }
     }
 
     private String getDefaultHtml() {
@@ -161,7 +190,25 @@ public class MainWindow extends JFrame {
         logScrollPane.getViewport().scrollRectToVisible(new Rectangle(0, logOutput.getHeight() - 1, 1, 1));
     }
 
-    private void onAboutClicked(ActionEvent actionevent1) {
+    private void onRunStopClicked(ActionEvent event) {
+        // FIXME: toggle based on state
+        boolean buttonState = runStopButton.isSelected();
+        if (buttonState == RUN_STOP_RUNNING) {
+            Main.getServer().start();
+        } else {
+            Main.getServer().stop();
+        }
+    }
+
+    private void onConfigureClicked(ActionEvent event) {
+        // TODO: implement
+    }
+
+    private void onAboutClicked(ActionEvent event) {
         aboutWindow.setVisible(true);
+    }
+
+    private void onQuitClicked(ActionEvent event) {
+        // TODO: implement
     }
 }

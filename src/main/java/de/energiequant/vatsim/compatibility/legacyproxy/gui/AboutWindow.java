@@ -16,7 +16,8 @@ public class AboutWindow extends JFrame {
     private final JTabbedPane tabbedPane;
     private final LicensesPanel licensesPanel;
 
-    private static final int LICENSES_TAB_INDEX = 1;
+    private static final int DISCLAIMER_TAB_INDEX = 1;
+    private static final int LICENSES_TAB_INDEX = 2;
 
     public AboutWindow() {
         super("About...");
@@ -32,12 +33,18 @@ public class AboutWindow extends JFrame {
         licensesPanel = new LicensesPanel(licenses);
 
         tabbedPane.addTab("About this program", new AboutThisProgramPanel(dependencies, this::showLicense));
+        tabbedPane.addTab("Disclaimer", new DisclaimerPanel());
         tabbedPane.addTab("Licenses", licensesPanel);
 
         add(tabbedPane);
 
         setMinimumSize(new Dimension(500, 300));
         setSize(new Dimension(800, 700));
+    }
+
+    public void showDisclaimer() {
+        tabbedPane.setSelectedIndex(DISCLAIMER_TAB_INDEX);
+        setVisible(true);
     }
 
     private void showLicense(License license) {
