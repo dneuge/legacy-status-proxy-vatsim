@@ -20,6 +20,7 @@ import de.energiequant.vatsim.compatibility.legacyproxy.attribution.Project;
 import de.energiequant.vatsim.compatibility.legacyproxy.gui.MainWindow;
 import de.energiequant.vatsim.compatibility.legacyproxy.logging.BufferAppender;
 import de.energiequant.vatsim.compatibility.legacyproxy.server.Server;
+import de.energiequant.vatsim.compatibility.legacyproxy.server.Server.State;
 import de.energiequant.vatsim.compatibility.legacyproxy.utils.ResourceUtils;
 
 public class Main {
@@ -92,10 +93,9 @@ public class Main {
         server.startHttpServer();
 
         configuration.addDisclaimerListener(() -> {
-            // TODO: only if server is running
-            if (!configuration.isDisclaimerAccepted()) {
-                LOGGER.warn("Stopping server because disclaimer has not been accepted");
-                server.stopAll();
+            if (!configuration.isDisclaimerAccepted() && (server.getState() == State.RUNNING)) {
+                LOGGER.warn("Stopping HTTP server because disclaimer has not been accepted");
+                server.stopHttpServer();
             }
         });
 
