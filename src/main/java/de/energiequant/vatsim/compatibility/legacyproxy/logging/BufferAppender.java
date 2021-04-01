@@ -27,6 +27,7 @@ public class BufferAppender extends AbstractAppender {
     private final Layout<? extends Serializable> layout;
 
     private static final Collection<BufferAppender> instances = Collections.synchronizedList(new ArrayList<>());
+    private static final AtomicBoolean isGloballyEnabled = new AtomicBoolean(true);
 
     public static class FormattedEvent {
         private final Level level;
@@ -49,6 +50,7 @@ public class BufferAppender extends AbstractAppender {
     private BufferAppender(String name, Filter filter, Layout<? extends Serializable> layout) {
         super(name, filter, layout, false, new Property[0]);
         this.layout = layout;
+        this.isEnabled.set(isGloballyEnabled.get());
     }
 
     @Override
@@ -64,12 +66,18 @@ public class BufferAppender extends AbstractAppender {
         }
     }
 
-    public void disableAndClear() {
-        // TODO: create a static method which disables all current and future loggers
-        // TODO: call that method in Main
+    private void disableAndClear() {
         isEnabled.set(false);
         synchronized (formattedEvents) {
             formattedEvents.clear();
+        }
+    }
+
+    public static void disableAndClearAll() {
+        isGloballyEnabled.set(false);
+
+        for (BufferAppender instance : getInstances()) {
+            instance.disableAndClear();
         }
     }
 

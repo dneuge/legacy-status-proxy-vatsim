@@ -37,7 +37,7 @@ public class Main {
         server.start();
 
         if (GraphicsEnvironment.isHeadless()) {
-            BufferAppender.getInstances().forEach(BufferAppender::disableAndClear);
+            BufferAppender.disableAndClearAll();
         } else {
             new MainWindow(() -> {
                 server.stop();
