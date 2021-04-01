@@ -210,8 +210,9 @@ public class Configuration {
         disclaimerListeners.add(listener);
     }
 
-    private void notifyListeners(Set<Runnable> disclaimerListeners) {
-        for (Runnable listener : disclaimerListeners) {
+    private void notifyListeners(Set<Runnable> listeners) {
+        Collection<Runnable> copy = new ArrayList<>(listeners);
+        for (Runnable listener : copy) {
             try {
                 listener.run();
             } catch (Exception ex) {

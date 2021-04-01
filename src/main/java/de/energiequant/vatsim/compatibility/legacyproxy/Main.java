@@ -79,22 +79,23 @@ public class Main {
             System.exit(1);
         }
 
-        server = new Server();
+        boolean shouldShutdownOnStartFailure = shouldRunHeadless;
+        server = new Server(shouldShutdownOnStartFailure);
 
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
-                server.stop();
+                server.stopAll();
             }
         });
 
-        server.start();
+        server.startHttpServer();
 
         configuration.addDisclaimerListener(() -> {
             // TODO: only if server is running
             if (!configuration.isDisclaimerAccepted()) {
                 LOGGER.warn("Stopping server because disclaimer has not been accepted");
-                server.stop();
+                server.stopAll();
             }
         });
 
@@ -102,7 +103,7 @@ public class Main {
             BufferAppender.disableAndClearAll();
         } else {
             new MainWindow(() -> {
-                server.stop();
+                server.stopAll();
                 System.exit(0);
             });
         }

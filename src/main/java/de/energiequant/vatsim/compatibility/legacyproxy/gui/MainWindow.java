@@ -32,6 +32,7 @@ import org.apache.logging.log4j.Level;
 import de.energiequant.vatsim.compatibility.legacyproxy.Main;
 import de.energiequant.vatsim.compatibility.legacyproxy.logging.BufferAppender;
 import de.energiequant.vatsim.compatibility.legacyproxy.logging.BufferAppender.FormattedEvent;
+import de.energiequant.vatsim.compatibility.legacyproxy.server.Server.State;
 import de.energiequant.vatsim.compatibility.legacyproxy.utils.ResourceUtils;
 
 public class MainWindow extends JFrame {
@@ -95,7 +96,6 @@ public class MainWindow extends JFrame {
         gbc.fill = GridBagConstraints.NONE;
         gbc.anchor = GridBagConstraints.WEST;
         runStopButton = new JToggleButton("Run/Stop");
-        // TODO: update button state depending on server state
         runStopButton.addActionListener(this::onRunStopClicked);
         add(runStopButton, gbc);
 
@@ -141,9 +141,32 @@ public class MainWindow extends JFrame {
 
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
+        Main.getServer().addStateChangeListener(this::onServerStateChanged);
+        onServerStateChanged();
+
         if (!Main.getConfiguration().isDisclaimerAccepted()) {
             aboutWindow.showDisclaimer();
         }
+    }
+
+    private void onServerStateChanged() {
+        updateRunStopButton();
+    }
+
+    private void updateRunStopButton() {
+        State serverState = Main.getServer().getState();
+
+        boolean shouldEnableButton = true;
+
+        if (serverState == State.RUNNING) {
+            runStopButton.setSelected(RUN_STOP_RUNNING);
+        } else if (serverState == State.HTTP_SERVER_STOPPED) {
+            runStopButton.setSelected(RUN_STOP_STOPPED);
+        } else {
+            shouldEnableButton = false;
+        }
+
+        runStopButton.setEnabled(shouldEnableButton);
     }
 
     private String getDefaultHtml() {
@@ -194,12 +217,11 @@ public class MainWindow extends JFrame {
     }
 
     private void onRunStopClicked(ActionEvent event) {
-        // FIXME: toggle based on state
         boolean buttonState = runStopButton.isSelected();
         if (buttonState == RUN_STOP_RUNNING) {
-            Main.getServer().start();
+            Main.getServer().startHttpServer();
         } else {
-            Main.getServer().stop();
+            Main.getServer().stopHttpServer();
         }
     }
 

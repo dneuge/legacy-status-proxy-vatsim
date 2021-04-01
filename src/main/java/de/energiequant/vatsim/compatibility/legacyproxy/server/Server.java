@@ -7,9 +7,14 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Deque;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 
 import org.apache.hc.core5.http.ContentType;
@@ -22,7 +27,6 @@ import org.apache.hc.core5.http.nio.AsyncServerRequestHandler;
 import org.apache.hc.core5.io.CloseMode;
 import org.apache.hc.core5.reactor.IOReactorConfig;
 import org.apache.hc.core5.reactor.ListenerEndpoint;
-import org.apache.hc.core5.util.TimeValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vatplanner.dataformats.vatsimpublic.export.LegacyNetworkInformationWriter;
@@ -36,7 +40,6 @@ import de.energiequant.vatsim.compatibility.legacyproxy.fetching.LegacyNetworkIn
 
 public class Server {
     // FIXME: port remains blocked even after proper shutdown?
-    // FIXME: server can be stopped twice (second shutdown should be ignored)
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Server.class);
 
@@ -55,13 +58,57 @@ public class Server {
 
     private final LegacyNetworkInformationFetcher legacyNetworkInformationFetcher;
     private final JsonNetworkInformationFetcher jsonNetworkInformationFetcher;
-    private final HttpAsyncServer httpServer;
+    private final AtomicReference<HttpAsyncServer> httpServer = new AtomicReference<>();
+    private final IPFilter ipFilter = new IPFilter();
 
     private final String upstreamBaseUrl = "http://status.vatsim.net";
     private final String localHostname = "localhost";
     private final int localPort = 8080;
 
-    public Server() {
+    private final boolean shouldShutdownOnStartFailure;
+    private final AtomicReference<State> state = new AtomicReference<>(State.INITIAL);
+    private final Set<Runnable> stateChangeListeners = Collections.synchronizedSet(new HashSet<>());
+
+    private static final long COMMAND_TIMEOUT = 2000;
+    private final Deque<Command> commandQueue = new LinkedList<>();
+    private final Thread commandThread = new Thread(() -> {
+        while (state.get() != State.FULLY_STOPPED) {
+            Command command = null;
+            synchronized (commandQueue) {
+                if (commandQueue.isEmpty()) {
+                    try {
+                        commandQueue.wait(COMMAND_TIMEOUT);
+                    } catch (InterruptedException ex) {
+                        // ignore, expected
+                    }
+                }
+
+                command = commandQueue.pollFirst();
+            }
+
+            if (command != null) {
+                onCommand(command);
+            }
+        }
+    });
+
+    public static enum State {
+        INITIAL,
+        RUNNING,
+        HTTP_SERVER_STOPPED,
+        FULLY_STOPPED;
+    }
+
+    private static enum Command {
+        START_HTTP_SERVER,
+        STOP_HTTP_SERVER,
+        STOP_ALL,
+        NOTIFY_STATE_CHANGE_LISTENERS;
+    }
+
+    public Server(boolean shouldShutdownOnStartFailure) {
+        this.shouldShutdownOnStartFailure = shouldShutdownOnStartFailure;
+
         legacyNetworkInformationFetcher = new LegacyNetworkInformationFetcher(
             upstreamBaseUrl + ServiceEndpoints.NETWORK_INFORMATION_LEGACY,
             NETWORK_INFORMATION_UPDATE_INTERVAL,
@@ -77,9 +124,32 @@ public class Server {
         jsonNetworkInformationFetcher.start();
 
         // FIXME: configure
-        IPFilter ipFilter = new IPFilter() //
+        ipFilter //
             .allow(IPFilter.LOCALHOST_IPV4) //
             .allow(IPFilter.LOCALHOST_IPV6);
+
+        commandThread.start();
+    }
+
+    public void startHttpServer() {
+        queueCommand(Command.START_HTTP_SERVER);
+    }
+
+    private void _startHttpServer() {
+        if (!Main.getConfiguration().isDisclaimerAccepted()) {
+            LOGGER.warn("Server can only be started after accepting the disclaimer");
+            return;
+        }
+
+        if (state.get() == State.FULLY_STOPPED) {
+            LOGGER.error("Server has completely stopped and cannot be restarted");
+            return;
+        } else if (state.get() == State.RUNNING) {
+            LOGGER.info("Server is already running, not starting again");
+            return;
+        }
+
+        LOGGER.info("Starting HTTP server");
 
         AsyncServerRequestHandler<Message<HttpRequest, Void>> legacyNetworkInformationRequestHandler = new InjectingLegacyNetworkInformationProxy(
             "http://" + localHostname + ":" + localPort,
@@ -88,7 +158,7 @@ public class Server {
             jsonNetworkInformationFetcher::getLastFetchedNetworkInformation,
             legacyNetworkInformationFetcher::getLastAggregatedStartupMessages);
 
-        httpServer = AsyncServerBootstrap.bootstrap()
+        HttpAsyncServer myHttpServer = AsyncServerBootstrap.bootstrap()
             .setIOReactorConfig(IOReactorConfig.DEFAULT)
             .addFilterFirst("ipFilter", ipFilter)
             .register(ServiceEndpoints.DATA_FILE_LEGACY,
@@ -114,48 +184,57 @@ public class Server {
             .register("/", legacyNetworkInformationRequestHandler)
             .register("*", new SimpleErrorResponse(HttpStatus.SC_NOT_FOUND, "not found"))
             .create();
-    }
 
-    // FIXME: is start/stop thread-safe? toggled from UI, may need decoupling
+        httpServer.set(myHttpServer);
 
-    public void start() {
-        if (!Main.getConfiguration().isDisclaimerAccepted()) {
-            LOGGER.warn("Server can only be started after accepting the disclaimer");
-            return;
-        }
-
-        LOGGER.info("Starting server");
-        httpServer.start();
-        Future<ListenerEndpoint> future = httpServer.listen(new InetSocketAddress(localPort));
+        myHttpServer.start();
+        Future<ListenerEndpoint> future = myHttpServer.listen(new InetSocketAddress(localPort));
+        state.set(State.RUNNING);
         ListenerEndpoint listenerEndpoint;
         try {
             listenerEndpoint = future.get();
-            LOGGER.info("Server is listening on {}", listenerEndpoint.getAddress());
+            LOGGER.info("HTTP server is listening on {}", listenerEndpoint.getAddress());
         } catch (InterruptedException | ExecutionException ex) {
-            LOGGER.error("Failed to start server, shutting down...", ex);
-            stop();
+            if (shouldShutdownOnStartFailure) {
+                LOGGER.error("Failed to start HTTP server, shutting down...", ex);
+                stopAll();
+            } else {
+                LOGGER.error("Failed to start HTTP server", ex);
+                stopHttpServer();
+            }
         }
     }
 
-    public void stop() {
+    public void stopHttpServer() {
+        queueCommand(Command.STOP_HTTP_SERVER);
+    }
+
+    private void _stopHttpServer() {
+        if (state.get() != State.RUNNING) {
+            LOGGER.info("HTTP server is not running");
+            return;
+        }
+
+        LOGGER.info("Stopping HTTP server");
+        httpServer.get().close(CloseMode.IMMEDIATE);
+
+        LOGGER.info("Stopped HTTP server");
+        state.set(State.HTTP_SERVER_STOPPED);
+    }
+
+    public void stopAll() {
+        queueCommand(Command.STOP_ALL);
+    }
+
+    private void _stopAll() {
         LOGGER.info("Stopping fetcher threads");
         legacyNetworkInformationFetcher.stop();
         jsonNetworkInformationFetcher.stop();
 
-        LOGGER.info("Stopping server");
-        httpServer.close(CloseMode.IMMEDIATE);
+        _stopHttpServer();
 
         LOGGER.info("Shutdown complete");
-    }
-
-    public void awaitShutdown() {
-        try {
-            httpServer.awaitShutdown(TimeValue.MAX_VALUE);
-        } catch (InterruptedException ex) {
-            LOGGER.info("Interrupted, stopping server...", ex);
-        }
-
-        stop();
+        state.set(State.FULLY_STOPPED);
     }
 
     private static <T> T pickRandomItem(Collection<T> items) {
@@ -166,5 +245,54 @@ public class Server {
 
     private static <T> Predicate<T> not(Predicate<T> original) {
         return original.negate();
+    }
+
+    public State getState() {
+        return state.get();
+    }
+
+    private void queueCommand(Command command) {
+        synchronized (commandQueue) {
+            commandQueue.add(command);
+            commandQueue.notifyAll();
+        }
+    }
+
+    public void addStateChangeListener(Runnable listener) {
+        stateChangeListeners.add(listener);
+    }
+
+    private void notifyStateChangeListeners() {
+        Collection<Runnable> copy = new ArrayList<>(stateChangeListeners);
+        for (Runnable listener : copy) {
+            try {
+                listener.run();
+            } catch (Exception ex) {
+                LOGGER.warn("Failed to notify server state change listener", ex);
+            }
+        }
+    }
+
+    private void onCommand(Command command) {
+        switch (command) {
+            case START_HTTP_SERVER:
+                _startHttpServer();
+                break;
+
+            case STOP_HTTP_SERVER:
+                _stopHttpServer();
+                break;
+
+            case STOP_ALL:
+                _stopAll();
+                break;
+
+            case NOTIFY_STATE_CHANGE_LISTENERS:
+                notifyStateChangeListeners();
+                break;
+
+            default:
+                throw new IllegalArgumentException("Unsupported command: " + command);
+        }
     }
 }
