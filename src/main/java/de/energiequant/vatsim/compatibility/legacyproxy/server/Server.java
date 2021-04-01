@@ -33,6 +33,7 @@ import org.vatplanner.dataformats.vatsimpublic.export.LegacyNetworkInformationWr
 import org.vatplanner.dataformats.vatsimpublic.parser.DataFileParserFactory;
 
 import de.energiequant.vatsim.compatibility.legacyproxy.AppConstants;
+import de.energiequant.vatsim.compatibility.legacyproxy.Configuration;
 import de.energiequant.vatsim.compatibility.legacyproxy.Main;
 import de.energiequant.vatsim.compatibility.legacyproxy.ServiceEndpoints;
 import de.energiequant.vatsim.compatibility.legacyproxy.fetching.JsonNetworkInformationFetcher;
@@ -61,9 +62,7 @@ public class Server {
     private final AtomicReference<HttpAsyncServer> httpServer = new AtomicReference<>();
     private final IPFilter ipFilter = new IPFilter();
 
-    private final String upstreamBaseUrl = "http://status.vatsim.net";
-    private final String localHostname = "localhost";
-    private final int localPort = 8080;
+    private final String upstreamBaseUrl = Main.getConfiguration().getUpstreamBaseUrl();
 
     private final boolean shouldShutdownOnStartFailure;
     private final AtomicReference<State> state = new AtomicReference<>(State.INITIAL);
@@ -150,6 +149,10 @@ public class Server {
         }
 
         LOGGER.info("Starting HTTP server");
+
+        Configuration config = Main.getConfiguration();
+        String localHostname = config.getLocalHostName();
+        int localPort = config.getServerPort();
 
         AsyncServerRequestHandler<Message<HttpRequest, Void>> legacyNetworkInformationRequestHandler = new InjectingLegacyNetworkInformationProxy(
             "http://" + localHostname + ":" + localPort,

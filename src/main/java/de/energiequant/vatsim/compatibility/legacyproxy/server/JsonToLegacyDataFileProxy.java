@@ -27,6 +27,7 @@ import de.energiequant.common.webdataretrieval.DefaultHttpRetrievalDecoders;
 import de.energiequant.common.webdataretrieval.HttpPromiseBuilder;
 import de.energiequant.common.webdataretrieval.HttpRetrieval;
 import de.energiequant.vatsim.compatibility.legacyproxy.AppConstants;
+import de.energiequant.vatsim.compatibility.legacyproxy.Main;
 
 public class JsonToLegacyDataFileProxy extends GetOnlyRequestHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(JsonToLegacyDataFileProxy.class);
@@ -34,8 +35,7 @@ public class JsonToLegacyDataFileProxy extends GetOnlyRequestHandler {
     private final Supplier<String> jsonUrlSupplier;
     private final HttpPromiseBuilder<DataFile> promiseBuilder;
 
-    // TODO: configure, depends on status client version
-    private boolean isQuirkUtf8Enabled = false;
+    private boolean isQuirkUtf8Enabled = Main.getConfiguration().isQuirkLegacyDataFileUtf8Enabled();
 
     private static final Charset FALLBACK_CHARACTER_SET = StandardCharsets.UTF_8;
 
