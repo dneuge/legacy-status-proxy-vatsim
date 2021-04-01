@@ -3,6 +3,7 @@ package de.energiequant.vatsim.compatibility.legacyproxy.gui;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Desktop;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -82,8 +83,13 @@ public class AboutThisProgramPanel extends JPanel {
         add(programLicenseLabel, gbc);
 
         gbc.gridy++;
+        JPanel spacer = new JPanel();
+        spacer.setMinimumSize(new Dimension(1, 20));
+        add(spacer, gbc);
+
+        gbc.gridy++;
         add(new JLabel(
-            "<html>This software includes the following runtime dependencies, please refer to their individual websites for full author/copyright information as there are way too many people to list them here. Listed in alphabetical order:</html>"),
+            "<html>This software includes the following runtime dependencies. For full author/copyright information please refer to their individual websites as there are way too many people to list them here. In alphabetical order:</html>"),
             gbc);
 
         gbc.gridy++;
