@@ -67,6 +67,9 @@ public class MainWindow extends JFrame {
         setSize(800, 600);
         setMinimumSize(new Dimension(600, 400));
 
+        setLocationRelativeTo(null);
+        aboutWindow.setLocationRelativeTo(this);
+
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
 
