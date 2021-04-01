@@ -10,6 +10,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,20 +29,29 @@ import javax.swing.text.html.HTMLDocument;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.logging.log4j.Level;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.energiequant.vatsim.compatibility.legacyproxy.Main;
 import de.energiequant.vatsim.compatibility.legacyproxy.logging.BufferAppender;
 import de.energiequant.vatsim.compatibility.legacyproxy.logging.BufferAppender.FormattedEvent;
+import de.energiequant.vatsim.compatibility.legacyproxy.server.Server;
 import de.energiequant.vatsim.compatibility.legacyproxy.server.Server.State;
 import de.energiequant.vatsim.compatibility.legacyproxy.utils.ResourceUtils;
 
 public class MainWindow extends JFrame {
+    private static final Logger LOGGER = LoggerFactory.getLogger(MainWindow.class);
+
     private final JEditorPane logOutput;
     private final JScrollPane logScrollPane;
     private final JToggleButton runStopButton;
 
-    private static final boolean RUN_STOP_RUNNING = true;
-    private static final boolean RUN_STOP_STOPPED = false;
+    private static final EnumSet<Server.State> RUN_STOP_BUTTON_ENABLED_STATES = EnumSet.of( //
+        Server.State.BLOCKED_BY_DISCLAIMER, //
+        Server.State.RUNNING, //
+        Server.State.HTTP_SERVER_STOPPED //
+    );
+    private static final EnumSet<Server.State> RUN_STOP_BUTTON_SELECTED_STATES = EnumSet.of(Server.State.RUNNING);
 
     private final AboutWindow aboutWindow = new AboutWindow();
 
@@ -151,22 +161,20 @@ public class MainWindow extends JFrame {
 
     private void onServerStateChanged() {
         updateRunStopButton();
+        popupDisclaimerIfServerBlocked();
+    }
+
+    private void popupDisclaimerIfServerBlocked() {
+        if (Main.getServer().getState() == Server.State.BLOCKED_BY_DISCLAIMER) {
+            LOGGER.debug("Server indicates to be blocked by disclaimer, popping up disclaimer again");
+            aboutWindow.showDisclaimer();
+        }
     }
 
     private void updateRunStopButton() {
         State serverState = Main.getServer().getState();
-
-        boolean shouldEnableButton = true;
-
-        if (serverState == State.RUNNING) {
-            runStopButton.setSelected(RUN_STOP_RUNNING);
-        } else if (serverState == State.HTTP_SERVER_STOPPED) {
-            runStopButton.setSelected(RUN_STOP_STOPPED);
-        } else {
-            shouldEnableButton = false;
-        }
-
-        runStopButton.setEnabled(shouldEnableButton);
+        runStopButton.setSelected(RUN_STOP_BUTTON_SELECTED_STATES.contains(serverState));
+        runStopButton.setEnabled(RUN_STOP_BUTTON_ENABLED_STATES.contains(serverState));
     }
 
     private String getDefaultHtml() {
@@ -217,12 +225,14 @@ public class MainWindow extends JFrame {
     }
 
     private void onRunStopClicked(ActionEvent event) {
-        boolean buttonState = runStopButton.isSelected();
-        if (buttonState == RUN_STOP_RUNNING) {
+        boolean shouldStart = runStopButton.isSelected();
+        if (shouldStart) {
             Main.getServer().startHttpServer();
         } else {
             Main.getServer().stopHttpServer();
         }
+
+        EventQueue.invokeLater(this::updateRunStopButton);
     }
 
     private void onConfigureClicked(ActionEvent event) {
@@ -234,6 +244,6 @@ public class MainWindow extends JFrame {
     }
 
     private void onQuitClicked(ActionEvent event) {
-        // TODO: implement
+        System.exit(0);
     }
 }

@@ -96,6 +96,9 @@ public class Main {
             if (!configuration.isDisclaimerAccepted() && (server.getState() == State.RUNNING)) {
                 LOGGER.warn("Stopping HTTP server because disclaimer has not been accepted");
                 server.stopHttpServer();
+            } else if (configuration.isDisclaimerAccepted() && (server.getState() == State.BLOCKED_BY_DISCLAIMER)) {
+                LOGGER.info("Disclaimer has been accepted, starting HTTP server");
+                server.startHttpServer();
             }
         });
 

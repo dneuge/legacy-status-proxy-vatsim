@@ -93,6 +93,7 @@ public class Server {
 
     public static enum State {
         INITIAL,
+        BLOCKED_BY_DISCLAIMER,
         RUNNING,
         HTTP_SERVER_STOPPED,
         FULLY_STOPPED;
@@ -137,16 +138,17 @@ public class Server {
     }
 
     private void _startHttpServer() {
-        if (!Main.getConfiguration().isDisclaimerAccepted()) {
-            LOGGER.warn("Server can only be started after accepting the disclaimer");
-            return;
-        }
-
         if (state.get() == State.FULLY_STOPPED) {
             LOGGER.error("Server has completely stopped and cannot be restarted");
             return;
         } else if (state.get() == State.RUNNING) {
             LOGGER.info("Server is already running, not starting again");
+            return;
+        }
+
+        if (!Main.getConfiguration().isDisclaimerAccepted()) {
+            LOGGER.warn("Server can only be started after accepting the disclaimer");
+            setState(State.BLOCKED_BY_DISCLAIMER);
             return;
         }
 
@@ -194,7 +196,7 @@ public class Server {
 
         myHttpServer.start();
         Future<ListenerEndpoint> future = myHttpServer.listen(new InetSocketAddress(localPort));
-        state.set(State.RUNNING);
+        setState(State.RUNNING);
         ListenerEndpoint listenerEndpoint;
         try {
             listenerEndpoint = future.get();
@@ -224,7 +226,7 @@ public class Server {
         httpServer.get().close(CloseMode.IMMEDIATE);
 
         LOGGER.info("Stopped HTTP server");
-        state.set(State.HTTP_SERVER_STOPPED);
+        setState(State.HTTP_SERVER_STOPPED);
     }
 
     public void stopAll() {
@@ -239,7 +241,7 @@ public class Server {
         _stopHttpServer();
 
         LOGGER.info("Shutdown complete");
-        state.set(State.FULLY_STOPPED);
+        setState(State.FULLY_STOPPED);
     }
 
     private static <T> T pickRandomItem(Collection<T> items) {
@@ -276,6 +278,11 @@ public class Server {
                 LOGGER.warn("Failed to notify server state change listener", ex);
             }
         }
+    }
+
+    private void setState(State newState) {
+        state.set(newState);
+        queueCommand(Command.NOTIFY_STATE_CHANGE_LISTENERS);
     }
 
     private void onCommand(Command command) {
