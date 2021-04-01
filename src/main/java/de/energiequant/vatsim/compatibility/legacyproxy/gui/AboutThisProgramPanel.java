@@ -1,5 +1,8 @@
 package de.energiequant.vatsim.compatibility.legacyproxy.gui;
 
+import static de.energiequant.vatsim.compatibility.legacyproxy.gui.SwingHelper.styleBold;
+import static de.energiequant.vatsim.compatibility.legacyproxy.gui.SwingHelper.stylePlain;
+
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Desktop;
@@ -37,8 +40,6 @@ import de.energiequant.vatsim.compatibility.legacyproxy.attribution.License;
 import de.energiequant.vatsim.compatibility.legacyproxy.attribution.Project;
 
 public class AboutThisProgramPanel extends JPanel {
-    // TODO: read from some generated file
-
     private static final Logger LOGGER = LoggerFactory.getLogger(AboutThisProgramPanel.class);
 
     private final Consumer<License> licenseClickedCallback;
@@ -146,13 +147,13 @@ public class AboutThisProgramPanel extends JPanel {
             gbc.weightx = 1.0;
             gbc.fill = GridBagConstraints.HORIZONTAL;
             gbc.anchor = GridBagConstraints.WEST;
-            add(new JLabel(project.getName()), gbc);
+            add(styleBold(new JLabel(project.getName())), gbc);
 
             gbc.gridx++;
             gbc.weightx = 0.0;
             gbc.fill = GridBagConstraints.NONE;
             gbc.anchor = GridBagConstraints.EAST;
-            add(new JLabel("version " + project.getVersion()), gbc);
+            add(stylePlain(new JLabel("version " + project.getVersion())), gbc);
 
             gbc.gridx = 0;
             gbc.gridy++;
@@ -164,6 +165,7 @@ public class AboutThisProgramPanel extends JPanel {
             String url = project.getUrl().orElse(null);
             if (url != null) {
                 JLabel urlLabel = new JLabel(url);
+                stylePlain(urlLabel);
                 linkExternal(urlLabel, url);
                 add(urlLabel, gbc);
                 gbc.gridy++;
@@ -189,15 +191,16 @@ public class AboutThisProgramPanel extends JPanel {
 
             boolean isFirst = true;
 
-            add(new JLabel("made available under "));
+            add(stylePlain(new JLabel("made available under ")));
             for (License license : sortedLicenses) {
                 if (!isFirst) {
-                    add(new JLabel(" & "));
+                    add(stylePlain(new JLabel(" & ")));
                 } else {
                     isFirst = false;
                 }
 
                 JLabel label = new JLabel(license.getCanonicalName());
+                stylePlain(label);
                 linkLicense(label, license);
                 add(label);
             }
@@ -255,4 +258,5 @@ public class AboutThisProgramPanel extends JPanel {
         Font underlinedFont = font.deriveFont(attributes);
         label.setFont(underlinedFont);
     }
+
 }
