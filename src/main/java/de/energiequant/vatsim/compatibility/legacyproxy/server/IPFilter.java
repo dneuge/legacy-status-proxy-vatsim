@@ -56,4 +56,10 @@ public class IPFilter implements AsyncFilterHandler {
         allowedAddresses.add(ip);
         return this;
     }
+
+    public IPFilter allowOnly(Collection<String> ips) {
+        allowedAddresses.retainAll(ips);
+        allowedAddresses.addAll(ips);
+        return this;
+    }
 }
