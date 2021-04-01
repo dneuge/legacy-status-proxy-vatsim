@@ -30,6 +30,7 @@ public class Configuration {
     private final File configFile;
 
     private static final boolean DEFAULT_DISCLAIMER_ACCEPTED = false;
+    private static final boolean DEFAULT_QUIRK_LEGACY_DATAFILE_UTF8 = false;
     private static final String DEFAULT_UPSTREAM_BASE_URL = "http://status.vatsim.net";
     private static final String DEFAULT_LOCAL_HOST_NAME = "localhost";
     private static final int DEFAULT_SERVER_PORT = 8080;
@@ -38,16 +39,20 @@ public class Configuration {
         IPFilter.LOCALHOST_IPV6 //
     );
 
-    private AtomicBoolean isDisclaimerAccepted = new AtomicBoolean(DEFAULT_DISCLAIMER_ACCEPTED);
-    private AtomicReference<String> upstreamBaseUrl = new AtomicReference<>(DEFAULT_UPSTREAM_BASE_URL);
-    private AtomicReference<String> localHostName = new AtomicReference<>(DEFAULT_LOCAL_HOST_NAME);
-    private AtomicInteger serverPort = new AtomicInteger(DEFAULT_SERVER_PORT);
+    private final AtomicBoolean isDisclaimerAccepted = new AtomicBoolean(DEFAULT_DISCLAIMER_ACCEPTED);
+    private final AtomicBoolean isQuirkLegacyDataFileUtf8Enabled = new AtomicBoolean(
+        DEFAULT_QUIRK_LEGACY_DATAFILE_UTF8 //
+    );
+    private final AtomicReference<String> upstreamBaseUrl = new AtomicReference<>(DEFAULT_UPSTREAM_BASE_URL);
+    private final AtomicReference<String> localHostName = new AtomicReference<>(DEFAULT_LOCAL_HOST_NAME);
+    private final AtomicInteger serverPort = new AtomicInteger(DEFAULT_SERVER_PORT);
     private final Set<String> allowedIps = Collections.synchronizedSet(new HashSet<>(DEFAULT_ALLOWED_IPS));
 
     private final Set<Runnable> disclaimerListeners = Collections.synchronizedSet(new HashSet<>());
 
     private static final String KEY_DISCLAIMER_ACCEPTED = "disclaimerAccepted";
     private static final String KEY_LOCAL_HOST_NAME = "localHostName";
+    private static final String KEY_QUIRK_LEGACY_DATAFILE_UTF8 = "quirks.datafile.legacy.UTF8";
     private static final String KEY_SERVER_PORT = "serverPort";
     private static final String KEY_UPSTREAM_BASE_URL = "upstreamBaseUrl";
     private static final String BASEKEY_ALLOWED_IPS = "allowedIps.";
@@ -79,6 +84,9 @@ public class Configuration {
         }
 
         setDisclaimerAccepted(readBoolean(properties, KEY_DISCLAIMER_ACCEPTED, DEFAULT_DISCLAIMER_ACCEPTED));
+        setQuirkLegacyDataFileUtf8Enabled(
+            readBoolean(properties, KEY_QUIRK_LEGACY_DATAFILE_UTF8, DEFAULT_QUIRK_LEGACY_DATAFILE_UTF8) //
+        );
         setUpstreamBaseUrl(readString(properties, KEY_UPSTREAM_BASE_URL, DEFAULT_UPSTREAM_BASE_URL));
         setLocalHostName(readString(properties, KEY_LOCAL_HOST_NAME, DEFAULT_LOCAL_HOST_NAME));
         setServerPort(readInteger(properties, KEY_SERVER_PORT, DEFAULT_SERVER_PORT));
@@ -118,10 +126,11 @@ public class Configuration {
 
     private void logConfig() {
         LOGGER.debug("Configuration file path: {}", configFile.getAbsolutePath());
-        LOGGER.debug("Configured disclaimer accepted: {}", isDisclaimerAccepted);
-        LOGGER.debug("Configured upstream base URL: {}", upstreamBaseUrl);
-        LOGGER.debug("Configured local host name: {}", localHostName);
-        LOGGER.debug("Configured server port: {}", serverPort);
+        LOGGER.debug("Configured disclaimer accepted: {}", isDisclaimerAccepted.get());
+        LOGGER.debug("Configured upstream base URL: {}", upstreamBaseUrl.get());
+        LOGGER.debug("Configured local host name: {}", localHostName.get());
+        LOGGER.debug("Configured quirk to enable UTF8 for legacy datafile: {}", isQuirkLegacyDataFileUtf8Enabled.get());
+        LOGGER.debug("Configured server port: {}", serverPort.get());
         LOGGER.debug("Configured allowed IPs:\n{}", allowedIps.stream().collect(Collectors.joining("\n")));
     }
 
@@ -129,6 +138,9 @@ public class Configuration {
         Properties properties = new Properties();
         properties.setProperty(KEY_DISCLAIMER_ACCEPTED, Boolean.toString(isDisclaimerAccepted.get()));
         properties.setProperty(KEY_LOCAL_HOST_NAME, localHostName.get());
+        properties.setProperty(KEY_QUIRK_LEGACY_DATAFILE_UTF8,
+            Boolean.toString(isQuirkLegacyDataFileUtf8Enabled.get()) //
+        );
         properties.setProperty(KEY_SERVER_PORT, Integer.toString(serverPort.get()));
         properties.setProperty(KEY_UPSTREAM_BASE_URL, upstreamBaseUrl.get());
 
@@ -162,6 +174,10 @@ public class Configuration {
         }
     }
 
+    public void setQuirkLegacyDataFileUtf8Enabled(boolean isQuirkLegacyDataFileUtf8Enabled) {
+        this.isQuirkLegacyDataFileUtf8Enabled.set(isQuirkLegacyDataFileUtf8Enabled);
+    }
+
     public void setLocalHostName(String localHostName) {
         requireData("local host name", localHostName);
         this.localHostName.set(localHostName);
@@ -188,6 +204,10 @@ public class Configuration {
 
     public boolean isDisclaimerAccepted() {
         return isDisclaimerAccepted.get();
+    }
+
+    public boolean isQuirkLegacyDataFileUtf8Enabled() {
+        return isQuirkLegacyDataFileUtf8Enabled.get();
     }
 
     public String getLocalHostName() {
