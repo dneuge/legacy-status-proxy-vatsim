@@ -122,12 +122,14 @@ public class Server {
         legacyNetworkInformationFetcher.start();
         jsonNetworkInformationFetcher.start();
 
-        // FIXME: configure
-        ipFilter //
-            .allow(IPFilter.LOCALHOST_IPV4) //
-            .allow(IPFilter.LOCALHOST_IPV6);
+        Main.getConfiguration().addIPFilterListener(this::updateIPFilter);
+        updateIPFilter();
 
         commandThread.start();
+    }
+
+    private void updateIPFilter() {
+        ipFilter.allowOnly(Main.getConfiguration().getAllowedIps());
     }
 
     public void startHttpServer() {

@@ -54,12 +54,14 @@ public class IPFilter implements AsyncFilterHandler {
 
     public IPFilter allow(String ip) {
         allowedAddresses.add(ip);
+        LOGGER.info("Access is now allowed from {}", allowedAddresses);
         return this;
     }
 
     public IPFilter allowOnly(Collection<String> ips) {
         allowedAddresses.retainAll(ips);
         allowedAddresses.addAll(ips);
+        LOGGER.info("Access is now allowed from {}", allowedAddresses);
         return this;
     }
 }

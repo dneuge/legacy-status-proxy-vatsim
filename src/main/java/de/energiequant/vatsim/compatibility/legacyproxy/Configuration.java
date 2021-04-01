@@ -17,7 +17,6 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,6 +48,7 @@ public class Configuration {
     private final Set<String> allowedIps = Collections.synchronizedSet(new HashSet<>(DEFAULT_ALLOWED_IPS));
 
     private final Set<Runnable> disclaimerListeners = Collections.synchronizedSet(new HashSet<>());
+    private final Set<Runnable> ipFilterListeners = Collections.synchronizedSet(new HashSet<>());
 
     private static final String KEY_DISCLAIMER_ACCEPTED = "disclaimerAccepted";
     private static final String KEY_LOCAL_HOST_NAME = "localHostName";
@@ -125,13 +125,13 @@ public class Configuration {
     }
 
     private void logConfig() {
-        LOGGER.debug("Configuration file path: {}", configFile.getAbsolutePath());
+        LOGGER.debug("Configuration file path:        {}", configFile.getAbsolutePath());
         LOGGER.debug("Configured disclaimer accepted: {}", isDisclaimerAccepted.get());
-        LOGGER.debug("Configured upstream base URL: {}", upstreamBaseUrl.get());
-        LOGGER.debug("Configured local host name: {}", localHostName.get());
-        LOGGER.debug("Configured quirk to enable UTF8 for legacy datafile: {}", isQuirkLegacyDataFileUtf8Enabled.get());
-        LOGGER.debug("Configured server port: {}", serverPort.get());
-        LOGGER.debug("Configured allowed IPs:\n{}", allowedIps.stream().collect(Collectors.joining("\n")));
+        LOGGER.debug("Configured upstream base URL:   {}", upstreamBaseUrl.get());
+        LOGGER.debug("Configured local host name:     {}", localHostName.get());
+        LOGGER.debug("Configured UTF8 quirk:          {}", isQuirkLegacyDataFileUtf8Enabled.get());
+        LOGGER.debug("Configured server port:         {}", serverPort.get());
+        LOGGER.debug("Configured allowed IPs:         {}", allowedIps);
     }
 
     public void save() {
@@ -165,6 +165,8 @@ public class Configuration {
     public void setAllowedIps(Collection<String> allowedIps) {
         this.allowedIps.retainAll(allowedIps);
         this.allowedIps.addAll(allowedIps);
+
+        notifyListeners(ipFilterListeners);
     }
 
     public void setDisclaimerAccepted(boolean isDisclaimerAccepted) {
@@ -228,6 +230,10 @@ public class Configuration {
 
     public void addDisclaimerListener(Runnable listener) {
         disclaimerListeners.add(listener);
+    }
+
+    public void addIPFilterListener(Runnable listener) {
+        ipFilterListeners.add(listener);
     }
 
     private void notifyListeners(Set<Runnable> listeners) {
