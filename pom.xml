@@ -20,6 +20,9 @@
 		<finalName>legacy-status-proxy-vatsim</finalName>
 
 		<!-- runtime dependencies -->
+		<vatplanner.dataformatsVatsimPublic.version>0.1-pre210402</vatplanner.dataformatsVatsimPublic.version>
+		<webDataRetrieval.version>0.2</webDataRetrieval.version>
+		
 		<slf4j.version>1.7.30</slf4j.version>
 		<log4j.version>2.13.3</log4j.version>
 		<httpcomponents.version>5.0.3</httpcomponents.version>
@@ -57,13 +60,13 @@
 		<dependency>
 			<groupId>org.vatplanner</groupId>
 			<artifactId>dataformats-vatsim-public</artifactId>
-			<version>0.1-SNAPSHOT</version>
+			<version>${vatplanner.dataformatsVatsimPublic.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>de.energiequant.common</groupId>
 			<artifactId>webdataretrieval</artifactId>
-			<version>0.1-SNAPSHOT</version>
+			<version>${webDataRetrieval.version}</version>
 		</dependency>
 
 		<dependency>
