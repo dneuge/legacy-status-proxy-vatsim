@@ -3,7 +3,7 @@ stated in the MIT license.
 
 By using the application and accepting this disclaimer you confirm that you
 also accept all related software licenses. This includes (but may not be
-imited to) the MIT and Apache 2.0 licenses. See the list of dependencies for
+limited to) the MIT and Apache 2.0 licenses. See the list of dependencies for
 more information (available from "About" dialog on GUI or by running with
 --version on CLI). Generic copies of all license texts are available at
 runtime from the "About" dialog or by running --license <LICENSE> on CLI
