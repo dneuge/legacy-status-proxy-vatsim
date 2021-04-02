@@ -41,7 +41,7 @@ public class Main {
     private static Server server;
 
     // TODO: set application meta data automatically during build
-    private static final String APPLICATION_JAR_NAME = "legacy-status-proxy-vatsim-0.1-SNAPSHOT.jar";
+    private static final String APPLICATION_JAR_NAME = "legacy-status-proxy-vatsim.jar";
     private static final String APPLICATION_NAME = "Legacy status proxy for VATSIM";
     private static final String APPLICATION_VERSION = "0.1";
     private static final String APPLICATION_URL = "https://github.com/dneuge/legacy-status-proxy-vatsim";
