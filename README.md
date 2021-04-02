@@ -79,9 +79,11 @@ Settings in **HTTP Server** may need to be changed if you want to open access to
 
 **Save configuration** will, if not already done, create a file to persist your current settings (by default: `legacy-status-proxy-vatsim.properties` in the directory you started the JAR from). This will also save whether you accepted the disclaimer or rejected it (same as in the "About" dialog).
 
-### Setting up commonly used clients
+### Setting up clients
 
 Before setting up a client please check if an updated version of the client has already been made available. It may not be necessary to use this proxy server.
+
+If your wanted client is not listed here check the client settings if it allows to enter a data source URL (maybe already indicating `http://status.vatsim.net/`) and change it to point to your proxy server (by default: `http://localhost:8080/`). Restart the client if it does not seem to update and check if the proxy server reports any errors. Double-check with a browser on the same machine if the URL you specified delivers the "index" as seen on [http://status.vatsim.net/](http://status.vatsim.net/) and the URL listed as `url0` shows a CSV-like dump of the network status.
 
 In addition to this description please refer to the GitHub discussions for [compatibility](https://github.com/dneuge/legacy-status-proxy-vatsim/discussions/categories/compatibility) for any questions or to describe how to set up additional clients.
 
