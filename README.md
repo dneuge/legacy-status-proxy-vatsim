@@ -99,6 +99,8 @@ If the JAR file cannot be run directly on your system you have to prefix the com
 
 Arguments are appended to the end of the command. Available options are:
 
+| Option                | Description                                                                                             |
+| --------------------- | ------------------------------------------------------------------------------------------------------- |
 | `--no-gui`            | force to stay on CLI, do not start GUI even if available                                                |
 | `--help`              | displays a complete list of all available options                                                       |
 | `--version`           | displays version and dependency information together with the associated licenses                       |
