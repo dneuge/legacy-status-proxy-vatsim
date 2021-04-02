@@ -195,6 +195,24 @@
 									<mainClass>${mainClass}</mainClass>
 								</transformer>
 							</transformers>
+
+							<filters>
+								<filter>
+									<artifact>*:*</artifact>
+									<excludes>
+										<exclude>META-INF/MANIFEST.MF</exclude>
+										
+										<!-- License information for dependencies is provided at runtime 
+											for this application. Original files from repackaged JARs collide and cannot 
+											be related to the correct projects. Furthermore not every JAR includes license 
+											information in this way so the information is incomplete, hidden and useless. 
+											Remove those files. -->
+										<exclude>META-INF/NOTICE*</exclude>
+										<exclude>META-INF/DEPENDENCIES*</exclude>
+										<exclude>META-INF/LICENSE*</exclude>
+									</excludes>
+								</filter>
+							</filters>
 						</configuration>
 					</execution>
 				</executions>
