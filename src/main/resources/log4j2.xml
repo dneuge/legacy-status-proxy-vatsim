@@ -9,10 +9,12 @@
         </Buffer>
     </Appenders>
     <Loggers>
+    	<!--
         <Logger name="de.energiequant" level="debug" additivity="false">
             <AppenderRef ref="Console"/>
             <AppenderRef ref="Buffer"/>
         </Logger>
+        -->
         <Root level="info">
             <AppenderRef ref="Console"/>
             <AppenderRef ref="Buffer"/>
