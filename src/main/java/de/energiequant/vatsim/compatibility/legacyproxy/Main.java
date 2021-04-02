@@ -33,8 +33,6 @@ import de.energiequant.vatsim.compatibility.legacyproxy.server.Server.State;
 import de.energiequant.vatsim.compatibility.legacyproxy.utils.ResourceUtils;
 
 public class Main {
-    // FIXME: display copyright notices
-
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
     private static final Collection<Project> DEPENDENCIES = AttributionParser.getProjects();
 
@@ -223,7 +221,6 @@ public class Main {
     }
 
     private static void printDisclaimer() {
-        // TODO: convert line end chars?
         System.out.println(DISCLAIMER);
     }
 

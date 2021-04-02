@@ -40,8 +40,6 @@ import de.energiequant.vatsim.compatibility.legacyproxy.fetching.JsonNetworkInfo
 import de.energiequant.vatsim.compatibility.legacyproxy.fetching.LegacyNetworkInformationFetcher;
 
 public class Server {
-    // TODO: port remains blocked even after proper shutdown
-
     private static final Logger LOGGER = LoggerFactory.getLogger(Server.class);
 
     private static final Duration NETWORK_INFORMATION_UPDATE_INTERVAL = Duration.ofHours(6);
