@@ -10,6 +10,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
@@ -18,6 +19,7 @@ import java.util.Map;
 import javax.swing.JButton;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JToggleButton;
 import javax.swing.WindowConstants;
@@ -45,6 +47,7 @@ public class MainWindow extends JFrame {
     private final JEditorPane logOutput;
     private final JScrollPane logScrollPane;
     private final JToggleButton runStopButton;
+    private final JLabel statusLabel = SwingHelper.stylePlain(new JLabel());
 
     private static final EnumSet<Server.State> RUN_STOP_BUTTON_ENABLED_STATES = EnumSet.of( //
         Server.State.BLOCKED_BY_DISCLAIMER, //
@@ -52,6 +55,8 @@ public class MainWindow extends JFrame {
         Server.State.HTTP_SERVER_STOPPED //
     );
     private static final EnumSet<Server.State> RUN_STOP_BUTTON_SELECTED_STATES = EnumSet.of(Server.State.RUNNING);
+
+    private static final EnumMap<Server.State, String> MESSAGE_BY_SERVER_STATE = new EnumMap<>(Server.State.class);
 
     private final AboutWindow aboutWindow = new AboutWindow();
     private final ConfigurationWindow configurationWindow = new ConfigurationWindow();
@@ -67,6 +72,27 @@ public class MainWindow extends JFrame {
         LOG_STYLES_BY_LEVEL.put(Level.WARN, styleForColor("#A93226"));
         LOG_STYLES_BY_LEVEL.put(Level.ERROR, styleForColor("#B03A2E"));
         LOG_STYLES_BY_LEVEL.put(Level.FATAL, styleForColor("#B03A2E"));
+
+        MESSAGE_BY_SERVER_STATE.put(//
+            Server.State.INITIAL, //
+            "Server has not been started yet." //
+        );
+        MESSAGE_BY_SERVER_STATE.put( //
+            Server.State.BLOCKED_BY_DISCLAIMER, //
+            "Disclaimer needs to be accepted to run HTTP server." //
+        );
+        MESSAGE_BY_SERVER_STATE.put( //
+            Server.State.RUNNING, //
+            "Server is running." //
+        );
+        MESSAGE_BY_SERVER_STATE.put( //
+            Server.State.HTTP_SERVER_STOPPED, //
+            "HTTP server has been stopped." //
+        );
+        MESSAGE_BY_SERVER_STATE.put( //
+            Server.State.FULLY_STOPPED, //
+            "Server has been stopped. Application restart is needed to run it again." //
+        );
     }
 
     private static String styleForColor(String color) {
@@ -102,11 +128,15 @@ public class MainWindow extends JFrame {
         add(logScrollPane, gbc);
 
         gbc.gridy++;
+        gbc.weighty = 0.0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.anchor = GridBagConstraints.WEST;
+        add(statusLabel, gbc);
+
+        gbc.gridy++;
         gbc.gridwidth = 1;
         gbc.weightx = 0.0;
-        gbc.weighty = 0.0;
         gbc.fill = GridBagConstraints.NONE;
-        gbc.anchor = GridBagConstraints.WEST;
         runStopButton = new JToggleButton("Run/Stop");
         runStopButton.addActionListener(this::onRunStopClicked);
         add(runStopButton, gbc);
@@ -163,7 +193,13 @@ public class MainWindow extends JFrame {
 
     private void onServerStateChanged() {
         updateRunStopButton();
+        updateStatusLabel();
         popupDisclaimerIfServerBlocked();
+    }
+
+    private void updateStatusLabel() {
+        State state = Main.getServer().getState();
+        statusLabel.setText(MESSAGE_BY_SERVER_STATE.getOrDefault(state, ""));
     }
 
     private void popupDisclaimerIfServerBlocked() {
