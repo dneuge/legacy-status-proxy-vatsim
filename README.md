@@ -99,16 +99,16 @@ If the JAR file cannot be run directly on your system you have to prefix the com
 
 Arguments are appended to the end of the command. Available options are:
 
-| Option                | Description                                                                                             |
-| --------------------- | ------------------------------------------------------------------------------------------------------- |
-| `--no-gui`            | force to stay on CLI, do not start GUI even if available                                                |
-| `--help`              | displays a complete list of all available options                                                       |
-| `--version`           | displays version and dependency information together with the associated licenses                       |
-| `--license LICENSE`   | displays the specified license identified by the keys shown on `--help` or `--version`                  |
-| `--disclaimer`        | displays the disclaimer                                                                                 |
-| `--accept-disclaimer` | accepts the disclaimer                                                                                  |
-| `--config FILE`       | use the specified file for configuration instead of the default `legacy-status-proxy-vatsim.properties` |
-| `--save-config`       | saves the configuration after processing CLI options (creates the file if it does not exist yet)        |
+| Option                             | Description                                                                                             |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| `--no-gui`                         | force to stay on CLI, do not start GUI even if available                                                |
+| `--help`                           | displays a complete list of all available options                                                       |
+| `--version`                        | displays version and dependency information together with the associated licenses                       |
+| `--license LICENSE`                | displays the specified license identified by the keys shown on `--help` or `--version`                  |
+| `--disclaimer`                     | displays the disclaimer                                                                                 |
+| `--accept-disclaimer-and-licenses` | accepts the disclaimer and licenses                                                                     |
+| `--config FILE`                    | use the specified file for configuration instead of the default `legacy-status-proxy-vatsim.properties` |
+| `--save-config`                    | saves the configuration after processing CLI options (creates the file if it does not exist yet)        |
 
 Configuration via CLI is not supported yet. It is recommended to create a configuration via the GUI and use the resulting configuration file for CLI. It is also possible to persist the configuration using `--save-config` in the state immediately after parsing CLI options. Combining `--save-config` with a non-existing `--config FILE` thus creates a new file with default values that can be edited manually in a text editor. Saving a configuration with `--accept-disclaimer` will persist the agreement.
 

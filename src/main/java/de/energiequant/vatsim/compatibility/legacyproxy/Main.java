@@ -56,7 +56,7 @@ public class Main {
 
     private static final String OPTION_NAME_HELP = "help";
     private static final String OPTION_NAME_SHOW_DISCLAIMER = "disclaimer";
-    private static final String OPTION_NAME_ACCEPT_DISCLAIMER = "accept-disclaimer";
+    private static final String OPTION_NAME_ACCEPT_DISCLAIMER = "accept-disclaimer-and-licenses";
     private static final String OPTION_NAME_NO_GUI = "no-gui";
     private static final String OPTION_NAME_CONFIG_PATH = "config";
     private static final String OPTION_NAME_SAVE_CONFIG = "save-config";
@@ -269,7 +269,7 @@ public class Main {
         options.addOption(Option
             .builder()
             .longOpt(OPTION_NAME_ACCEPT_DISCLAIMER)
-            .desc("accept disclaimer (required before proxy server can be used)")
+            .desc("accept disclaimer and licenses (required before proxy server can be used)")
             .build());
 
         options.addOption(Option

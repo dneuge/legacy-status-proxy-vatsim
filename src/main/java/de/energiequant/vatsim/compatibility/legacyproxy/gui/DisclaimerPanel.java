@@ -34,7 +34,7 @@ public class DisclaimerPanel extends JPanel {
         editorPane.setFont(Font.decode(Font.MONOSPACED));
         JScrollPane scrollPane = new JScrollPane(editorPane);
 
-        checkBox = new JCheckBox("I understand and accept the disclaimer (required to start the server)");
+        checkBox = new JCheckBox("I understand and accept the disclaimer and licenses (required to start the server)");
         Main.getConfiguration().addDisclaimerListener(this::updateCheckBoxState);
         updateCheckBoxState();
         onChange(checkBox, this::onCheckBoxStateChanged);
