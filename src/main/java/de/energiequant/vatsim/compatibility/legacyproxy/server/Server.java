@@ -168,6 +168,7 @@ public class Server {
         HttpAsyncServer myHttpServer = AsyncServerBootstrap.bootstrap()
             .setIOReactorConfig(IOReactorConfig.DEFAULT)
             .addFilterFirst("ipFilter", ipFilter)
+            .setCanonicalHostName(localHostname)
             .register(ServiceEndpoints.DATA_FILE_LEGACY,
                 new JsonToLegacyDataFileProxy(
                     new DataFileParserFactory().createDataFileParser(AppConstants.UPSTREAM_DATA_FILE_FORMAT),
