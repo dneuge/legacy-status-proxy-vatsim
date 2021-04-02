@@ -54,6 +54,7 @@ public class MainWindow extends JFrame {
     private static final EnumSet<Server.State> RUN_STOP_BUTTON_SELECTED_STATES = EnumSet.of(Server.State.RUNNING);
 
     private final AboutWindow aboutWindow = new AboutWindow();
+    private final ConfigurationWindow configurationWindow = new ConfigurationWindow();
 
     private static final Map<Level, String> LOG_STYLES_BY_LEVEL = new HashMap<Level, String>();
 
@@ -80,6 +81,7 @@ public class MainWindow extends JFrame {
 
         setLocationRelativeTo(null);
         aboutWindow.setLocationRelativeTo(this);
+        configurationWindow.setLocationRelativeTo(this);
 
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -236,7 +238,7 @@ public class MainWindow extends JFrame {
     }
 
     private void onConfigureClicked(ActionEvent event) {
-        // TODO: implement
+        configurationWindow.setVisible(true);
     }
 
     private void onAboutClicked(ActionEvent event) {

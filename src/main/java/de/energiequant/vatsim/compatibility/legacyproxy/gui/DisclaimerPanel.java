@@ -1,5 +1,7 @@
 package de.energiequant.vatsim.compatibility.legacyproxy.gui;
 
+import static de.energiequant.vatsim.compatibility.legacyproxy.gui.SwingHelper.onChange;
+
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -10,11 +12,16 @@ import javax.swing.JCheckBox;
 import javax.swing.JEditorPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.event.ChangeEvent;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.energiequant.vatsim.compatibility.legacyproxy.Configuration;
 import de.energiequant.vatsim.compatibility.legacyproxy.Main;
 
 public class DisclaimerPanel extends JPanel {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DisclaimerPanel.class);
+
     private final JCheckBox checkBox;
 
     public DisclaimerPanel() {
@@ -30,7 +37,7 @@ public class DisclaimerPanel extends JPanel {
         checkBox = new JCheckBox("I understand and accept the disclaimer (required to start the server)");
         Main.getConfiguration().addDisclaimerListener(this::updateCheckBoxState);
         updateCheckBoxState();
-        checkBox.addChangeListener(this::onCheckBoxStateChanged);
+        onChange(checkBox, this::onCheckBoxStateChanged);
 
         JButton saveButton = new JButton("Save configuration");
         saveButton.addActionListener(this::onSaveConfigurationClicked);
@@ -62,8 +69,17 @@ public class DisclaimerPanel extends JPanel {
         checkBox.setSelected(Main.getConfiguration().isDisclaimerAccepted());
     }
 
-    private void onCheckBoxStateChanged(ChangeEvent event) {
-        Main.getConfiguration().setDisclaimerAccepted(checkBox.isSelected());
+    private void onCheckBoxStateChanged() {
+        boolean newValue = checkBox.isSelected();
+
+        Configuration config = Main.getConfiguration();
+        boolean oldValue = config.isDisclaimerAccepted();
+        if (oldValue == newValue) {
+            return;
+        }
+
+        LOGGER.debug("Disclaimer acceptance changed to {}", newValue);
+        config.setDisclaimerAccepted(newValue);
     }
 
     private void onSaveConfigurationClicked(ActionEvent event) {

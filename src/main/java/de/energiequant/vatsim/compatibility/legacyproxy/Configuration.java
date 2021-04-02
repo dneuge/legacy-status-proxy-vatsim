@@ -33,10 +33,10 @@ public class Configuration {
     private static final String DEFAULT_UPSTREAM_BASE_URL = "http://status.vatsim.net";
     private static final String DEFAULT_LOCAL_HOST_NAME = "localhost";
     private static final int DEFAULT_SERVER_PORT = 8080;
-    private static final Collection<String> DEFAULT_ALLOWED_IPS = Arrays.asList( //
+    public static final Collection<String> DEFAULT_ALLOWED_IPS = Collections.unmodifiableCollection(Arrays.asList( //
         IPFilter.LOCALHOST_IPV4, //
         IPFilter.LOCALHOST_IPV6 //
-    );
+    ));
 
     private final AtomicBoolean isDisclaimerAccepted = new AtomicBoolean(DEFAULT_DISCLAIMER_ACCEPTED);
     private final AtomicBoolean isQuirkLegacyDataFileUtf8Enabled = new AtomicBoolean(
@@ -56,6 +56,9 @@ public class Configuration {
     private static final String KEY_SERVER_PORT = "serverPort";
     private static final String KEY_UPSTREAM_BASE_URL = "upstreamBaseUrl";
     private static final String BASEKEY_ALLOWED_IPS = "allowedIps.";
+
+    public static final int SERVER_PORT_MINIMUM = 1;
+    public static final int SERVER_PORT_MAXIMUM = 65535;
 
     public static class LoadingFailed extends Exception {
         private LoadingFailed(File configFile, Throwable cause) {
@@ -186,7 +189,7 @@ public class Configuration {
     }
 
     public void setServerPort(int serverPort) {
-        if (serverPort <= 0) {
+        if ((serverPort < SERVER_PORT_MINIMUM) || (serverPort > SERVER_PORT_MAXIMUM)) {
             throw new IllegalArgumentException("Invalid server port: " + serverPort);
         }
 
