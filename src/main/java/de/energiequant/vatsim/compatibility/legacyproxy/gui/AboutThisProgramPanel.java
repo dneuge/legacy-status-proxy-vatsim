@@ -35,6 +35,7 @@ import javax.swing.JScrollPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.energiequant.vatsim.compatibility.legacyproxy.AppConstants;
 import de.energiequant.vatsim.compatibility.legacyproxy.Main;
 import de.energiequant.vatsim.compatibility.legacyproxy.attribution.License;
 import de.energiequant.vatsim.compatibility.legacyproxy.attribution.Project;
@@ -57,7 +58,7 @@ public class AboutThisProgramPanel extends JPanel {
         linkExternal(applicationUrlLabel, applicationUrl);
 
         License programLicense = Main.getEffectiveLicense();
-        JLabel programLicenseLabel = new JLabel("Released under " + programLicense.getCanonicalName());
+        JLabel programLicenseLabel = new JLabel("released under " + programLicense.getCanonicalName());
         linkLicense(programLicenseLabel, programLicense);
 
         List<Project> sortedDependencies = dependencies.stream() //
@@ -89,9 +90,7 @@ public class AboutThisProgramPanel extends JPanel {
         add(spacer, gbc);
 
         gbc.gridy++;
-        add(new JLabel(
-            "<html>This software includes the following runtime dependencies. For full author/copyright information please refer to their individual websites as there are way too many people to list them here. In alphabetical order:</html>"),
-            gbc);
+        add(new JLabel("<html>" + AppConstants.DEPENDENCIES_CAPTION + "</html>"), gbc);
 
         gbc.gridy++;
         gbc.fill = GridBagConstraints.BOTH;
@@ -171,12 +170,12 @@ public class AboutThisProgramPanel extends JPanel {
                 gbc.gridy++;
             }
 
-            add(new LicensesPanel(project.getLicenses()), gbc);
+            add(new ProjectCardLicensesPanel(project.getLicenses()), gbc);
         }
     }
 
-    private class LicensesPanel extends JPanel {
-        public LicensesPanel(Set<License> licenses) {
+    private class ProjectCardLicensesPanel extends JPanel {
+        public ProjectCardLicensesPanel(Set<License> licenses) {
             super();
 
             setOpaque(true);
@@ -191,7 +190,7 @@ public class AboutThisProgramPanel extends JPanel {
 
             boolean isFirst = true;
 
-            add(stylePlain(new JLabel("made available under ")));
+            add(stylePlain(new JLabel(AppConstants.PROJECT_DEPENDENCY_LICENSE_INTRO)));
             for (License license : sortedLicenses) {
                 if (!isFirst) {
                     add(stylePlain(new JLabel(" & ")));

@@ -3,7 +3,12 @@ package de.energiequant.vatsim.compatibility.legacyproxy;
 import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -11,6 +16,7 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +52,8 @@ public class Main {
     private static final String OPTION_NAME_ACCEPT_DISCLAIMER = "accept-disclaimer";
     private static final String OPTION_NAME_NO_GUI = "no-gui";
     private static final String OPTION_NAME_CONFIG_PATH = "config";
+    private static final String OPTION_NAME_VERSION = "version";
+    private static final String OPTION_NAME_SHOW_LICENSE = "license";
 
     private static final String DEFAULT_CONFIG_PATH = "legacy-status-proxy-vatsim.properties";
 
@@ -63,7 +71,32 @@ public class Main {
         CommandLine parameters = parser.parse(options, args);
         if (parameters.hasOption(OPTION_NAME_HELP)) {
             new HelpFormatter().printHelp(APPLICATION_JAR_NAME, options);
-            System.exit(1);
+            System.exit(0);
+        }
+
+        if (parameters.hasOption(OPTION_NAME_VERSION)) {
+            printVersion();
+            System.exit(0);
+        }
+
+        if (parameters.hasOption(OPTION_NAME_SHOW_LICENSE)) {
+            String licenseName = parameters.getOptionValue(OPTION_NAME_SHOW_LICENSE);
+            License license = null;
+            try {
+                license = License.valueOf(licenseName);
+            } catch (Exception ex) {
+                // ignore
+            }
+
+            if (license == null) {
+                System.err.println("License " + licenseName + " not found");
+                System.err.println();
+                System.err.println("Available: " + sortedLicenseKeys().collect(Collectors.joining(", ")));
+                System.exit(1);
+            }
+
+            printLicense(license);
+            System.exit(0);
         }
 
         boolean shouldRunHeadless = GraphicsEnvironment.isHeadless() || parameters.hasOption(OPTION_NAME_NO_GUI);
@@ -112,9 +145,68 @@ public class Main {
         }
     }
 
+    private static void printLicense(License license) {
+        String html = license.getText();
+
+        // TODO: deprecation warning is a false-positive in Eclipse?
+        @SuppressWarnings("deprecation")
+        String text = StringEscapeUtils.unescapeHtml4(html.replaceAll("<[^>]*?>", ""));
+
+        System.out.println(text);
+    }
+
+    private static void printVersion() {
+        System.out.println(APPLICATION_NAME);
+        System.out.println("version " + APPLICATION_VERSION);
+        System.out.println(APPLICATION_URL);
+        License license = getEffectiveLicense();
+        System.out.println("released under " + license.getCanonicalName() + " [" + license.name() + "]");
+        System.out.println();
+        System.out.println(AppConstants.DEPENDENCIES_CAPTION);
+        getDependencies().stream().sorted(Comparator.comparing(Project::getName)).forEachOrdered(Main::printDependency);
+        System.out.println();
+        System.out.println("Generic copies of all involved software licenses are included with this program.");
+        System.out.println(
+            "To view a license run with --" + OPTION_NAME_SHOW_LICENSE + " <"
+                + sortedLicenseKeys().collect(Collectors.joining("|")) + ">");
+        System.out.println("The corresponding license IDs are shown in brackets [ ] above.");
+    }
+
+    private static void printDependency(Project project) {
+        System.out.println();
+        System.out.println(project.getName() + " (version " + project.getVersion() + ")");
+        project.getUrl().ifPresent(System.out::println);
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(AppConstants.PROJECT_DEPENDENCY_LICENSE_INTRO);
+        List<License> licenses = project.getLicenses() //
+            .stream() //
+            .sorted(Comparator.comparing(License::getCanonicalName)) //
+            .collect(Collectors.toList());
+        boolean isFirst = true;
+        for (License license : licenses) {
+            if (!isFirst) {
+                sb.append(" & ");
+            } else {
+                isFirst = false;
+            }
+            sb.append(license.getCanonicalName());
+            sb.append(" [");
+            sb.append(license.name());
+            sb.append("]");
+        }
+        System.out.println(sb.toString());
+    }
+
     private static void printDisclaimer() {
         // TODO: convert line end chars?
-        System.err.println(DISCLAIMER);
+        System.out.println(DISCLAIMER);
+    }
+
+    private static Stream<String> sortedLicenseKeys() {
+        return Arrays.stream(License.values()) //
+            .map(License::name) //
+            .sorted();
     }
 
     private static void addOptions(Options options) {
@@ -122,6 +214,20 @@ public class Main {
             .builder()
             .longOpt(OPTION_NAME_HELP)
             .desc("prints the help text")
+            .build());
+
+        options.addOption(Option
+            .builder()
+            .longOpt(OPTION_NAME_VERSION)
+            .desc("prints all version, dependency and license information")
+            .build());
+
+        options.addOption(Option
+            .builder()
+            .longOpt(OPTION_NAME_SHOW_LICENSE)
+            .hasArg()
+            .desc("prints the specified license, available: "
+                + sortedLicenseKeys().collect(Collectors.joining(", ")))
             .build());
 
         options.addOption(Option
