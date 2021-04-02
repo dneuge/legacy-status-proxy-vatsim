@@ -1,6 +1,16 @@
 This disclaimer is a more application-specific addition to the general points
 stated in the MIT license.
 
+By using the application and accepting this disclaimer you confirm that you
+also accept all related software licenses. This includes (but may not be
+imited to) the MIT and Apache 2.0 licenses. See the list of dependencies for
+more information (available from "About" dialog on GUI or by running with
+--version on CLI). Generic copies of all license texts are available at
+runtime from the "About" dialog or by running --license <LICENSE> on CLI
+(see --help or --version for more information on usage). Redistribution of
+this software in binary form may be subject to the restrictions set by
+combination of the software licenses of all included dependencies.
+
 The server is intended to enable "passive" clients (e.g. status monitors) to
 access more current data formats than they originally support. A "passive"
 client only consumes status information but does not perform any interaction
