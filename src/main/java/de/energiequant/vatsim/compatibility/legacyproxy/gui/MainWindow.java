@@ -64,7 +64,6 @@ public class MainWindow extends JFrame {
     private static final Map<Level, String> LOG_STYLES_BY_LEVEL = new HashMap<Level, String>();
 
     // TODO: split to log component
-    // TODO: log lines are duplicated if second logger is configured (debug)
 
     static {
         LOG_STYLES_BY_LEVEL.put(Level.TRACE, styleForColor("#1E8449"));

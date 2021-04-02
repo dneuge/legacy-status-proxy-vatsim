@@ -82,7 +82,7 @@ public class BufferAppender extends AbstractAppender {
     }
 
     public List<FormattedEvent> getFormattedEventsAndClear() {
-        List<FormattedEvent> copied = new ArrayList<>(formattedEvents);
+        List<FormattedEvent> copied = new ArrayList<>();
         synchronized (formattedEvents) {
             copied.addAll(formattedEvents);
             formattedEvents.clear();
