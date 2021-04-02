@@ -1,6 +1,7 @@
 package de.energiequant.vatsim.compatibility.legacyproxy.gui;
 
 import static de.energiequant.vatsim.compatibility.legacyproxy.gui.SwingHelper.styleBold;
+import static de.energiequant.vatsim.compatibility.legacyproxy.gui.SwingHelper.styleMonospaced;
 import static de.energiequant.vatsim.compatibility.legacyproxy.gui.SwingHelper.stylePlain;
 
 import java.awt.Color;
@@ -32,11 +33,13 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.energiequant.vatsim.compatibility.legacyproxy.AppConstants;
 import de.energiequant.vatsim.compatibility.legacyproxy.Main;
+import de.energiequant.vatsim.compatibility.legacyproxy.attribution.CopyrightNotice;
 import de.energiequant.vatsim.compatibility.legacyproxy.attribution.License;
 import de.energiequant.vatsim.compatibility.legacyproxy.attribution.Project;
 
@@ -83,6 +86,9 @@ public class AboutThisProgramPanel extends JPanel {
 
         gbc.gridy++;
         add(programLicenseLabel, gbc);
+
+        gbc.gridy++;
+        add(new JLabel(Main.getApplicationCopyright()), gbc);
 
         gbc.gridy++;
         JPanel spacer = new JPanel();
@@ -171,6 +177,16 @@ public class AboutThisProgramPanel extends JPanel {
             }
 
             add(new ProjectCardLicensesPanel(project.getLicenses()), gbc);
+
+            gbc.gridy++;
+            gbc.insets = new Insets(5, 25, 5, 5);
+            String copyrightNotice = getHtmlCopyrightNotice(project);
+            add(styleMonospaced(new JLabel("<html>" + copyrightNotice + "</html>")), gbc);
+        }
+
+        private String getHtmlCopyrightNotice(Project project) {
+            return StringEscapeUtils.escapeHtml4(CopyrightNotice.getNotice(project))
+                .replaceAll("\n", "<br/>");
         }
     }
 

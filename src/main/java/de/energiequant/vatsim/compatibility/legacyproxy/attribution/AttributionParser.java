@@ -33,12 +33,12 @@ public class AttributionParser {
             private static final String PROJECT_URL = "projectUrl";
             private static final String LICENSES = "licenses";
             private static final String LICENSE_NAME = "name";
+            private static final String ARTIFACT_GROUP_ID = "groupId";
+            private static final String ARTIFACT_ID = "artifactId";
 
             private static class Ignored {
                 private static final String ATTRIBUTION_REPORT = "attributionReport";
                 private static final String DEPENDENCIES = "dependencies";
-                private static final String ARTIFACT_GROUP_ID = "groupId";
-                private static final String ARTIFACT_ID = "artifactId";
                 private static final String ARTIFACT_TYPE = "type";
                 private static final String ARTIFACT_DOWNLOAD_URLS = "downloadUrls";
                 private static final String ARTIFACT_DOWNLOAD_URL_STRING = "string";
@@ -51,6 +51,8 @@ public class AttributionParser {
 
         private StringBuilder cdata;
 
+        private String groupId;
+        private String artifactId;
         private String projectName;
         private String projectVersion;
         private String projectUrl;
@@ -64,6 +66,8 @@ public class AttributionParser {
 
             switch (qName) {
                 case ElementNames.DEPENDENCY:
+                    groupId = null;
+                    artifactId = null;
                     projectName = null;
                     projectVersion = null;
                     projectUrl = null;
@@ -94,6 +98,14 @@ public class AttributionParser {
 
         public void endProjectElement(String qName) {
             switch (qName) {
+                case ElementNames.ARTIFACT_GROUP_ID:
+                    groupId = getAndClearCData();
+                    break;
+
+                case ElementNames.ARTIFACT_ID:
+                    artifactId = getAndClearCData();
+                    break;
+
                 case ElementNames.PROJECT_NAME:
                     projectName = getAndClearCData();
                     break;
@@ -111,15 +123,13 @@ public class AttributionParser {
                     for (String licenseName : licenseNames) {
                         licenses.add(License.byAlias(licenseName));
                     }
-                    projects.add(new Project(projectName, projectVersion, projectUrl, licenses));
+                    projects.add(new Project(groupId, artifactId, projectName, projectVersion, projectUrl, licenses));
                     break;
 
                 case ElementNames.Ignored.ATTRIBUTION_REPORT:
                 case ElementNames.Ignored.DEPENDENCIES:
                 case ElementNames.Ignored.ARTIFACT_DOWNLOAD_URLS:
                 case ElementNames.Ignored.ARTIFACT_DOWNLOAD_URL_STRING:
-                case ElementNames.Ignored.ARTIFACT_GROUP_ID:
-                case ElementNames.Ignored.ARTIFACT_ID:
                 case ElementNames.Ignored.ARTIFACT_TYPE:
                     // ignore expected unused elements
                     break;

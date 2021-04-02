@@ -21,6 +21,11 @@ public class SwingHelper {
         return label;
     }
 
+    public static JLabel styleMonospaced(JLabel label) {
+        label.setFont(Font.decode(Font.MONOSPACED));
+        return label;
+    }
+
     public static void onChange(JTextField field, Runnable runnable) {
         field.addKeyListener(new KeyAdapter() {
             @Override

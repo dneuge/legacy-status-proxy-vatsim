@@ -7,6 +7,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -21,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.energiequant.vatsim.compatibility.legacyproxy.attribution.AttributionParser;
+import de.energiequant.vatsim.compatibility.legacyproxy.attribution.CopyrightNotice;
 import de.energiequant.vatsim.compatibility.legacyproxy.attribution.License;
 import de.energiequant.vatsim.compatibility.legacyproxy.attribution.Project;
 import de.energiequant.vatsim.compatibility.legacyproxy.gui.MainWindow;
@@ -30,6 +33,8 @@ import de.energiequant.vatsim.compatibility.legacyproxy.server.Server.State;
 import de.energiequant.vatsim.compatibility.legacyproxy.utils.ResourceUtils;
 
 public class Main {
+    // FIXME: display copyright notices
+
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
     private static final Collection<Project> DEPENDENCIES = AttributionParser.getProjects();
 
@@ -45,6 +50,7 @@ public class Main {
     private static final String APPLICATION_NAME = "Legacy status proxy for VATSIM";
     private static final String APPLICATION_VERSION = "0.1";
     private static final String APPLICATION_URL = "https://github.com/dneuge/legacy-status-proxy-vatsim";
+    private static final String APPLICATION_COPYRIGHT = "Copyright (c) 2021 Daniel Neugebauer";
 
     private static final License EFFECTIVE_LICENSE = License.MIT;
 
@@ -168,6 +174,7 @@ public class Main {
         System.out.println(APPLICATION_URL);
         License license = getEffectiveLicense();
         System.out.println("released under " + license.getCanonicalName() + " [" + license.name() + "]");
+        System.out.println(APPLICATION_COPYRIGHT);
         System.out.println();
         System.out.println(AppConstants.DEPENDENCIES_CAPTION);
         getDependencies().stream().sorted(Comparator.comparing(Project::getName)).forEachOrdered(Main::printDependency);
@@ -203,6 +210,16 @@ public class Main {
             sb.append("]");
         }
         System.out.println(sb.toString());
+
+        System.out.println();
+        System.out.println(indent("    ", CopyrightNotice.getNotice(project)));
+        System.out.println();
+    }
+
+    private static String indent(String prefix, String s) {
+        Pattern pattern = Pattern.compile("^", Pattern.MULTILINE);
+        Matcher matcher = pattern.matcher(s);
+        return matcher.replaceAll(prefix);
     }
 
     private static void printDisclaimer() {
@@ -287,6 +304,10 @@ public class Main {
 
     public static String getApplicationVersion() {
         return APPLICATION_VERSION;
+    }
+
+    public static String getApplicationCopyright() {
+        return APPLICATION_COPYRIGHT;
     }
 
     public static License getEffectiveLicense() {
