@@ -5,6 +5,7 @@ import static de.energiequant.vatsim.compatibility.legacyproxy.gui.SwingHelper.s
 import static de.energiequant.vatsim.compatibility.legacyproxy.gui.SwingHelper.unformattedNumericSpinner;
 
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -15,6 +16,8 @@ import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -150,6 +153,8 @@ public class ConfigurationWindow extends JFrame {
             onChange(serverPortField, this::onServerPortFieldChanged);
             onChange(quirkUtf8CheckBox, this::onQuirkUtf8CheckBoxChanged);
 
+            styleSpinner(serverPortField);
+
             setBorder(BorderFactory.createTitledBorder("HTTP Server"));
 
             setLayout(new GridBagLayout());
@@ -193,6 +198,15 @@ public class ConfigurationWindow extends JFrame {
             gbc.weightx = 1.0;
             gbc.fill = GridBagConstraints.HORIZONTAL;
             add(quirkUtf8CheckBox, gbc);
+        }
+
+        private void styleSpinner(JSpinner spinner) {
+            JComponent editor = spinner.getEditor();
+            if (editor instanceof JSpinner.DefaultEditor) {
+                JFormattedTextField textField = ((JSpinner.DefaultEditor) editor).getTextField();
+                textField.setHorizontalAlignment(JTextField.LEFT);
+                textField.setFont(spinner.getFont().deriveFont(Font.PLAIN));
+            }
         }
 
         private void updateAllOptions() {
