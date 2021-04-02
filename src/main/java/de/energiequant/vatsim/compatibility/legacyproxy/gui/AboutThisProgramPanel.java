@@ -101,7 +101,9 @@ public class AboutThisProgramPanel extends JPanel {
         gbc.gridy++;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.weighty = 1.0;
-        add(new JScrollPane(dependenciesList), gbc);
+        JScrollPane dependenciesScrollPane = new JScrollPane(dependenciesList);
+        dependenciesScrollPane.getVerticalScrollBar().setUnitIncrement(12);
+        add(dependenciesScrollPane, gbc);
     }
 
     private class DependenciesList extends JPanel {
