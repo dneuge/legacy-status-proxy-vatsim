@@ -106,8 +106,9 @@ Arguments are appended to the end of the command. Available options are:
 | `--disclaimer`        | displays the disclaimer                                                                                 |
 | `--accept-disclaimer` | accepts the disclaimer                                                                                  |
 | `--config FILE`       | use the specified file for configuration instead of the default `legacy-status-proxy-vatsim.properties` |
+| `--save-config`       | saves the configuration after processing CLI options (creates the file if it does not exist yet)        |
 
-Currently, configuration via CLI is not supported. It is recommended to create a configuration via the GUI and use the resulting configuration file for CLI.
+Configuration via CLI is not supported yet. It is recommended to create a configuration via the GUI and use the resulting configuration file for CLI. It is also possible to persist the configuration using `--save-config` in the state immediately after parsing CLI options. Combining `--save-config` with a non-existing `--config FILE` thus creates a new file with default values that can be edited manually in a text editor. Saving a configuration with `--accept-disclaimer` will persist the agreement.
 
 ## FAQ / Common issues
 

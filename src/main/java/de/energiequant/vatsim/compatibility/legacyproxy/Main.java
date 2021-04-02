@@ -53,6 +53,7 @@ public class Main {
     private static final String OPTION_NAME_ACCEPT_DISCLAIMER = "accept-disclaimer";
     private static final String OPTION_NAME_NO_GUI = "no-gui";
     private static final String OPTION_NAME_CONFIG_PATH = "config";
+    private static final String OPTION_NAME_SAVE_CONFIG = "save-config";
     private static final String OPTION_NAME_VERSION = "version";
     private static final String OPTION_NAME_SHOW_LICENSE = "license";
 
@@ -113,6 +114,10 @@ public class Main {
             || (!configuration.isDisclaimerAccepted() && shouldRunHeadless)) {
             printDisclaimer();
             System.exit(1);
+        }
+
+        if (parameters.hasOption(OPTION_NAME_SAVE_CONFIG)) {
+            configuration.save();
         }
 
         boolean shouldShutdownOnStartFailure = shouldRunHeadless;
@@ -255,6 +260,12 @@ public class Main {
             .longOpt(OPTION_NAME_CONFIG_PATH)
             .hasArg()
             .desc("path to configuration file to be used")
+            .build());
+
+        options.addOption(Option
+            .builder()
+            .longOpt(OPTION_NAME_SAVE_CONFIG)
+            .desc("saves the configuration after processing CLI options (creates the file if it does not exist yet)")
             .build());
     }
 
