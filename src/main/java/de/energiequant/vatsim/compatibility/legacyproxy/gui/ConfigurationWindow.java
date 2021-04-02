@@ -275,7 +275,7 @@ public class ConfigurationWindow extends JFrame {
             gbc.fill = GridBagConstraints.HORIZONTAL;
             gbc.anchor = GridBagConstraints.WEST;
             add(stylePlain(new JLabel(
-                "<html>Only the listed IP addresses are allowed to access the proxy server. Addresses need to be entered exactly as shown in the log. Changes are applied immediately.</html>")),
+                "<html>Only the listed IP addresses are served data by the proxy server. Addresses need to be entered exactly as shown in the log. Changes are applied immediately.</html>")),
                 gbc);
 
             gbc.gridy++;
