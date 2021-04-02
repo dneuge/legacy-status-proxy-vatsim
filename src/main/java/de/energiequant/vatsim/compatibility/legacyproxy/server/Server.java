@@ -173,13 +173,23 @@ public class Server {
                 new JsonToLegacyDataFileProxy(
                     new DataFileParserFactory().createDataFileParser(AppConstants.UPSTREAM_DATA_FILE_FORMAT),
                     () -> {
-                        // TODO: include URLs from legacy NetworkInformation
-                        return jsonNetworkInformationFetcher.getLastFetchedNetworkInformation() //
-                            .map(x -> x.getDataFileUrls(AppConstants.UPSTREAM_DATA_FILE_FORMAT)) //
-                            .filter(not(List::isEmpty)) //
-                            .map(Server::pickRandomItem) //
-                            .map(URL::toString) //
-                            .orElse(null);
+                        Set<URL> combined = new HashSet<>();
+                        combined.addAll(
+                            jsonNetworkInformationFetcher.getLastFetchedNetworkInformation() //
+                                .map(x -> x.getDataFileUrls(AppConstants.UPSTREAM_DATA_FILE_FORMAT)) //
+                                .orElse(new ArrayList<>()) //
+                        );
+                        combined.addAll(
+                            legacyNetworkInformationFetcher.getLastFetchedNetworkInformation() //
+                                .map(x -> x.getDataFileUrls(AppConstants.UPSTREAM_DATA_FILE_FORMAT)) //
+                                .orElse(new ArrayList<>()) //
+                        );
+
+                        if (combined.isEmpty()) {
+                            return null;
+                        }
+
+                        return pickRandomItem(combined).toString();
                     } //
                 ) //
             )
