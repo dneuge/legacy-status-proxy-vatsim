@@ -100,7 +100,6 @@ public class LicensesPanel extends JPanel {
     }
 
     private void scrollToStartOfLicense() {
-        // FIXME: scrolling does not work
-        licenseTextScrollPane.getViewport().scrollRectToVisible(TOP_LEFT);
+        licenseText.scrollRectToVisible(TOP_LEFT);
     }
 }
