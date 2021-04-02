@@ -49,6 +49,7 @@ public class Main {
     private static final License EFFECTIVE_LICENSE = License.MIT;
 
     private static final String OPTION_NAME_HELP = "help";
+    private static final String OPTION_NAME_SHOW_DISCLAIMER = "disclaimer";
     private static final String OPTION_NAME_ACCEPT_DISCLAIMER = "accept-disclaimer";
     private static final String OPTION_NAME_NO_GUI = "no-gui";
     private static final String OPTION_NAME_CONFIG_PATH = "config";
@@ -108,7 +109,8 @@ public class Main {
             configuration.setDisclaimerAccepted(true);
         }
 
-        if (!configuration.isDisclaimerAccepted() && shouldRunHeadless) {
+        if (parameters.hasOption(OPTION_NAME_SHOW_DISCLAIMER)
+            || (!configuration.isDisclaimerAccepted() && shouldRunHeadless)) {
             printDisclaimer();
             System.exit(1);
         }
@@ -220,6 +222,12 @@ public class Main {
             .builder()
             .longOpt(OPTION_NAME_VERSION)
             .desc("prints all version, dependency and license information")
+            .build());
+
+        options.addOption(Option
+            .builder()
+            .longOpt(OPTION_NAME_SHOW_DISCLAIMER)
+            .desc("prints the disclaimer")
             .build());
 
         options.addOption(Option
