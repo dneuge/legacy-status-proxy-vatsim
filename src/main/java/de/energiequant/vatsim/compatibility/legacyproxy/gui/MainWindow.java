@@ -63,8 +63,8 @@ public class MainWindow extends JFrame {
 
     private static final Map<Level, String> LOG_STYLES_BY_LEVEL = new HashMap<Level, String>();
 
-    // FIXME: split to log component
-    // FIXME: log lines are duplicated
+    // TODO: split to log component
+    // TODO: log lines are duplicated if second logger is configured (debug)
 
     static {
         LOG_STYLES_BY_LEVEL.put(Level.TRACE, styleForColor("#1E8449"));
@@ -234,8 +234,6 @@ public class MainWindow extends JFrame {
 
                 String message = event.getMessage();
                 String attrStyle = LOG_STYLES_BY_LEVEL.getOrDefault(event.getLevel(), "");
-
-                // FIXME: proper safe conversion to HTML
                 String messageHtml = "<li " + attrStyle + ">" + sanitizeHtml(message).replace("\n", "<br/>") + "</li>";
 
                 try {
@@ -254,7 +252,7 @@ public class MainWindow extends JFrame {
     }
 
     private String sanitizeHtml(String message) {
-        // FIXME: why does Eclipse think the class is deprecated?
+        // TODO: deprecation warning is a false-positive in Eclipse?
         return StringEscapeUtils.escapeHtml4(message);
     }
 

@@ -40,7 +40,7 @@ import de.energiequant.vatsim.compatibility.legacyproxy.fetching.JsonNetworkInfo
 import de.energiequant.vatsim.compatibility.legacyproxy.fetching.LegacyNetworkInformationFetcher;
 
 public class Server {
-    // FIXME: port remains blocked even after proper shutdown?
+    // TODO: port remains blocked even after proper shutdown
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Server.class);
 
