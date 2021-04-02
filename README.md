@@ -4,6 +4,8 @@
 
 This project provides a simple HTTP proxy server translating current VATSIM status file formats to outdated legacy formats to provide compatibility to monitor applications.
 
+Click [here](https://github.com/dneuge/legacy-status-proxy-vatsim/releases/latest/download/legacy-status-proxy-vatsim.jar) to download the latest released version.
+
 ## Disclaimer and Intended Use
 
 *This is a copy of [disclaimer.txt](src/main/resources/de/energiequant/vatsim/compatibility/legacyproxy/disclaimer.txt). The disclaimer has to be accepted before the server can be started.*
