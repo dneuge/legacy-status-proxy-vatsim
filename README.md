@@ -49,7 +49,7 @@ When running in default settings a local host name of `localhost` and a server p
 
 ### Required software
 
-You will need to have Java 1.8 or later installed in order to run the proxy server.
+You will need to have Java installed in order to run the proxy server. Minimum supported Java version is 1.8, maximum tested version is Java 11. If you don't have Java installed and don't know where to get it you may want to check [AdoptOpenJDK](https://adoptopenjdk.net/) and download a their Java 11 HotSpot JVM.
 
 ### Using the GUI (desktop application)
 
