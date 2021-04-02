@@ -18,6 +18,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,6 +28,8 @@ public class Configuration {
     private static final Logger LOGGER = LoggerFactory.getLogger(Configuration.class);
 
     private final File configFile;
+
+    private static final String CURRENT_DISCLAIMER_HASH = DigestUtils.md5Hex(Main.getDisclaimer());
 
     private static final boolean DEFAULT_DISCLAIMER_ACCEPTED = false;
     private static final boolean DEFAULT_QUIRK_LEGACY_DATAFILE_UTF8 = false;
@@ -68,6 +71,8 @@ public class Configuration {
 
     public Configuration(File configFile) throws LoadingFailed {
         this.configFile = configFile;
+
+        LOGGER.debug("Current disclaimer hash is: {}", CURRENT_DISCLAIMER_HASH);
         load();
     }
 
@@ -86,7 +91,7 @@ public class Configuration {
             throw new LoadingFailed(configFile, ex);
         }
 
-        setDisclaimerAccepted(readBoolean(properties, KEY_DISCLAIMER_ACCEPTED, DEFAULT_DISCLAIMER_ACCEPTED));
+        setDisclaimerAccepted(CURRENT_DISCLAIMER_HASH.equals(readString(properties, KEY_DISCLAIMER_ACCEPTED, "")));
         setQuirkLegacyDataFileUtf8Enabled(
             readBoolean(properties, KEY_QUIRK_LEGACY_DATAFILE_UTF8, DEFAULT_QUIRK_LEGACY_DATAFILE_UTF8) //
         );
@@ -139,7 +144,7 @@ public class Configuration {
 
     public void save() {
         Properties properties = new Properties();
-        properties.setProperty(KEY_DISCLAIMER_ACCEPTED, Boolean.toString(isDisclaimerAccepted.get()));
+        properties.setProperty(KEY_DISCLAIMER_ACCEPTED, isDisclaimerAccepted.get() ? CURRENT_DISCLAIMER_HASH : "");
         properties.setProperty(KEY_LOCAL_HOST_NAME, localHostName.get());
         properties.setProperty(KEY_QUIRK_LEGACY_DATAFILE_UTF8,
             Boolean.toString(isQuirkLegacyDataFileUtf8Enabled.get()) //
