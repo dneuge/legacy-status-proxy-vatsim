@@ -96,6 +96,22 @@ Open QuteScoop's Preferences dialog. In the "Network" tab change "network" from 
 
 View the text of some ATIS station. If you do not see line breaks try changing the *encode data file in UTF-8 instead of ISO-8859-1* option as described above, restart the proxy server and reload the data in QuteScoop (F5).
 
+#### ServInfo
+
+The status proxy needs to be configured as a network, do *not* configure anything in *Proxy settings*.
+
+##### as a custom network
+
+Open *Options/Connection Parameters*. In section *Custom Network Settings* select a free slot such as *Custom Network 1*. Choose a *Network name* (for example `VATSIM Legacy`) and enter the proxy address as *Locator path url* (default: `http://localhost:8080/`). Confirm the settings with *OK*.
+
+Use the icon with two networked computers to retrieve data through the proxy; do not click the VATSIM logo.
+
+##### as "VATSIM"
+
+Close ServInfo and navigate to the application's folder. Open `servinfo.ini` with a text editor. Find the `VATSIM Servers Locator Url` setting and change the URL to your server address (default: `http://localhost:8080/`). Save the file, close the editor and start ServInfo.
+
+Click the VATSIM logo to retrieve data through the proxy.
+
 ### Using the CLI (command-line)
 
 The CLI is useful if you want to start multiple instances, run it without a window in the background or on a server machine.
