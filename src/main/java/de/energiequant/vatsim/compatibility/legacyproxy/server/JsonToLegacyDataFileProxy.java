@@ -2,9 +2,11 @@ package de.energiequant.vatsim.compatibility.legacyproxy.server;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Supplier;
 
@@ -107,6 +109,15 @@ public class JsonToLegacyDataFileProxy extends GetOnlyRequestHandler {
 
     private byte[] recodeLatinToUTF8(byte[] bytes) {
         String s = new String(bytes, StandardCharsets.ISO_8859_1);
-        return StandardCharsets.UTF_8.encode(CharBuffer.wrap(s)).array();
+        return toByteArray(StandardCharsets.UTF_8.encode(CharBuffer.wrap(s)));
+    }
+
+    private byte[] toByteArray(ByteBuffer buffer) {
+        if (!buffer.hasArray()) {
+            throw new IllegalArgumentException("buffer must be backed by an array");
+        }
+
+        int offset = buffer.arrayOffset();
+        return Arrays.copyOfRange(buffer.array(), offset, offset + buffer.limit());
     }
 }
