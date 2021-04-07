@@ -71,6 +71,7 @@ public class ConfigurationWindow extends JFrame {
         gbc.anchor = GridBagConstraints.EAST;
         JButton saveButton = new JButton("Save configuration");
         saveButton.addActionListener(this::onSaveClicked);
+        saveButton.setEnabled(Main.getConfiguration().isSaneLocation());
         add(saveButton, gbc);
 
         updateAllOptions();

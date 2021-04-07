@@ -63,6 +63,8 @@ public class Configuration {
     public static final int SERVER_PORT_MINIMUM = 1;
     public static final int SERVER_PORT_MAXIMUM = 65535;
 
+    private final boolean isSaneLocation;
+
     public static class LoadingFailed extends Exception {
         private LoadingFailed(File configFile, Throwable cause) {
             super("Configuration could not be loaded from " + configFile.getAbsolutePath(), cause);
@@ -71,6 +73,16 @@ public class Configuration {
 
     public Configuration(File configFile) throws LoadingFailed {
         this.configFile = configFile;
+        this.isSaneLocation = !isSystemPath(configFile);
+
+        if (!isSaneLocation) {
+            LOGGER.warn(
+                "The configuration file appears to be located at an unsafe location such as a system directory. " //
+                    + "Saving configurations to such locations is not supported and has been disabled. " //
+                    + "This can happen if you run the proxy from \"recent files\" or similar on Windows. " //
+                    + "Please make sure to run the proxy from a regular working directory or a shortcut." //
+            );
+        }
 
         LOGGER.debug("Current disclaimer hash is: {}", CURRENT_DISCLAIMER_HASH);
         load();
@@ -101,6 +113,20 @@ public class Configuration {
         setAllowedIps(readStringsFromMultipleKeys(properties, BASEKEY_ALLOWED_IPS, DEFAULT_ALLOWED_IPS));
 
         logConfig();
+    }
+
+    private boolean isSystemPath(File file) {
+        String sysRoot = System.getenv("SystemRoot");
+        if ((sysRoot == null) || sysRoot.isEmpty()) {
+            return false;
+        }
+
+        sysRoot = sysRoot.toLowerCase();
+        if (!sysRoot.endsWith(File.separator)) {
+            sysRoot += File.separator;
+        }
+
+        return file.getAbsolutePath().toLowerCase().startsWith(sysRoot);
     }
 
     private Collection<String> readStringsFromMultipleKeys(Properties properties, String baseKey, Collection<String> defaultValues) {
@@ -143,6 +169,12 @@ public class Configuration {
     }
 
     public void save() {
+        if (!isSaneLocation) {
+            LOGGER.warn("Configuration file is at an unsafe location and thus will not be saved: {}",
+                configFile.getAbsolutePath());
+            return;
+        }
+
         Properties properties = new Properties();
         properties.setProperty(KEY_DISCLAIMER_ACCEPTED, isDisclaimerAccepted.get() ? CURRENT_DISCLAIMER_HASH : "");
         properties.setProperty(KEY_LOCAL_HOST_NAME, localHostName.get());
@@ -255,4 +287,7 @@ public class Configuration {
         }
     }
 
+    public boolean isSaneLocation() {
+        return isSaneLocation;
+    }
 }

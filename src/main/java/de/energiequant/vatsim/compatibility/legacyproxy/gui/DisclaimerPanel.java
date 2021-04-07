@@ -27,6 +27,8 @@ public class DisclaimerPanel extends JPanel {
     public DisclaimerPanel() {
         super();
 
+        Configuration config = Main.getConfiguration();
+
         JEditorPane editorPane = new JEditorPane();
         editorPane.setContentType("text/plain");
         editorPane.setText(Main.getDisclaimer());
@@ -35,11 +37,12 @@ public class DisclaimerPanel extends JPanel {
         JScrollPane scrollPane = new JScrollPane(editorPane);
 
         checkBox = new JCheckBox("I understand and accept the disclaimer and licenses (required to start the server)");
-        Main.getConfiguration().addDisclaimerListener(this::updateCheckBoxState);
+        config.addDisclaimerListener(this::updateCheckBoxState);
         updateCheckBoxState();
         onChange(checkBox, this::onCheckBoxStateChanged);
 
         JButton saveButton = new JButton("Save configuration");
+        saveButton.setEnabled(config.isSaneLocation());
         saveButton.addActionListener(this::onSaveConfigurationClicked);
 
         setLayout(new GridBagLayout());
