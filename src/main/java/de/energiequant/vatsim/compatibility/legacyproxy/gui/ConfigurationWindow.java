@@ -31,6 +31,7 @@ import javax.swing.SpinnerNumberModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.energiequant.vatsim.compatibility.legacyproxy.AppConstants;
 import de.energiequant.vatsim.compatibility.legacyproxy.Configuration;
 import de.energiequant.vatsim.compatibility.legacyproxy.Main;
 
@@ -71,7 +72,10 @@ public class ConfigurationWindow extends JFrame {
         gbc.anchor = GridBagConstraints.EAST;
         JButton saveButton = new JButton("Save configuration");
         saveButton.addActionListener(this::onSaveClicked);
-        saveButton.setEnabled(Main.getConfiguration().isSaneLocation());
+        if (!Main.getConfiguration().isSaneLocation()) {
+            saveButton.setEnabled(false);
+            saveButton.setToolTipText(AppConstants.SAVING_DISABLED_TOOLTIP);
+        }
         add(saveButton, gbc);
 
         updateAllOptions();
