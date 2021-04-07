@@ -42,7 +42,13 @@ public class DisclaimerPanel extends JPanel {
         onChange(checkBox, this::onCheckBoxStateChanged);
 
         JButton saveButton = new JButton("Save configuration");
-        saveButton.setEnabled(config.isSaneLocation());
+        if (!config.isSaneLocation()) {
+            saveButton.setEnabled(false);
+
+            // if the button is visible but disabled it's misleading as it looks like the
+            // user would need to perform some other action to accept the disclaimer
+            saveButton.setVisible(false);
+        }
         saveButton.addActionListener(this::onSaveConfigurationClicked);
 
         setLayout(new GridBagLayout());
