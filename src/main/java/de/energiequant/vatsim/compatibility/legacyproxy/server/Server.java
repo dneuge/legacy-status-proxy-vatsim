@@ -17,6 +17,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 
+import org.apache.hc.core5.http.ConnectionReuseStrategy;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpRequest;
 import org.apache.hc.core5.http.HttpStatus;
@@ -59,6 +60,8 @@ public class Server {
     private final JsonNetworkInformationFetcher jsonNetworkInformationFetcher;
     private final AtomicReference<HttpAsyncServer> httpServer = new AtomicReference<>();
     private final IPFilter ipFilter = new IPFilter();
+
+    private static final ConnectionReuseStrategy NEVER_REUSE_CONNECTIONS = (request, response, context) -> false;
 
     private final String upstreamBaseUrl = Main.getConfiguration().getUpstreamBaseUrl();
 
@@ -167,6 +170,7 @@ public class Server {
             .setIOReactorConfig(IOReactorConfig.DEFAULT)
             .addFilterFirst("ipFilter", ipFilter)
             .setCanonicalHostName(localHostname)
+            .setConnectionReuseStrategy(NEVER_REUSE_CONNECTIONS)
             .register(ServiceEndpoints.DATA_FILE_LEGACY,
                 new JsonToLegacyDataFileProxy(
                     new DataFileParserFactory().createDataFileParser(AppConstants.UPSTREAM_DATA_FILE_FORMAT),
