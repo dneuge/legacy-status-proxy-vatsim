@@ -22,6 +22,7 @@ import org.vatplanner.dataformats.vatsimpublic.export.LegacyDataFileWriter;
 import org.vatplanner.dataformats.vatsimpublic.export.Writer;
 import org.vatplanner.dataformats.vatsimpublic.parser.DataFile;
 import org.vatplanner.dataformats.vatsimpublic.parser.Parser;
+import org.vatplanner.dataformats.vatsimpublic.parser.ParserLogEntry;
 
 import de.energiequant.common.webdataretrieval.DefaultHttpRetrievalDecoders;
 import de.energiequant.common.webdataretrieval.HttpPromiseBuilder;
@@ -35,7 +36,8 @@ public class JsonToLegacyDataFileProxy extends GetOnlyRequestHandler {
     private final Supplier<String> jsonUrlSupplier;
     private final HttpPromiseBuilder<DataFile> promiseBuilder;
 
-    private boolean isQuirkUtf8Enabled = Main.getConfiguration().isQuirkLegacyDataFileUtf8Enabled();
+    private final boolean isParserLogEnabled = Main.getConfiguration().isParserLogEnabled();
+    private final boolean isQuirkUtf8Enabled = Main.getConfiguration().isQuirkLegacyDataFileUtf8Enabled();
 
     private static final Charset FALLBACK_CHARACTER_SET = StandardCharsets.UTF_8;
 
@@ -74,6 +76,7 @@ public class JsonToLegacyDataFileProxy extends GetOnlyRequestHandler {
         try {
             LOGGER.debug("Retrieving JSON data file from {}", url);
             dataFile = promiseBuilder.requestByGet(url).get();
+            logParserMessages(dataFile);
         } catch (InterruptedException | ExecutionException ex) {
             LOGGER.warn("Failed to retrieve JSON data file from {}", url, ex);
 
@@ -103,6 +106,22 @@ public class JsonToLegacyDataFileProxy extends GetOnlyRequestHandler {
                 .setEntity(AsyncEntityProducers.create(bytes, ContentType.TEXT_PLAIN))
                 .build(),
             context);
+    }
+
+    private void logParserMessages(DataFile dataFile) {
+        if (!isParserLogEnabled) {
+            return;
+        }
+
+        // exceptions/stack traces are not logged as they are only useful for
+        // development and would clutter the log in the main window beyond readability
+        for (ParserLogEntry entry : dataFile.getParserLogEntries()) {
+            LOGGER.warn(
+                "Failed to parse{}, section {}, {}: {}", //
+                entry.isLineRejected() ? " (rejected)" : "", //
+                entry.getSection(), entry.getMessage(), entry.getLineContent() //
+            );
+        }
     }
 
     private byte[] recodeLatinToUTF8(byte[] bytes) {

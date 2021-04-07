@@ -32,6 +32,7 @@ public class Configuration {
     private static final String CURRENT_DISCLAIMER_HASH = DigestUtils.md5Hex(Main.getDisclaimer());
 
     private static final boolean DEFAULT_DISCLAIMER_ACCEPTED = false;
+    private static final boolean DEFAULT_PARSER_LOG = false;
     private static final boolean DEFAULT_QUIRK_LEGACY_DATAFILE_UTF8 = false;
     private static final String DEFAULT_UPSTREAM_BASE_URL = "http://status.vatsim.net";
     private static final String DEFAULT_LOCAL_HOST_NAME = "localhost";
@@ -45,6 +46,7 @@ public class Configuration {
     private final AtomicBoolean isQuirkLegacyDataFileUtf8Enabled = new AtomicBoolean(
         DEFAULT_QUIRK_LEGACY_DATAFILE_UTF8 //
     );
+    private final AtomicBoolean isParserLogEnabled = new AtomicBoolean();
     private final AtomicReference<String> upstreamBaseUrl = new AtomicReference<>(DEFAULT_UPSTREAM_BASE_URL);
     private final AtomicReference<String> localHostName = new AtomicReference<>(DEFAULT_LOCAL_HOST_NAME);
     private final AtomicInteger serverPort = new AtomicInteger(DEFAULT_SERVER_PORT);
@@ -55,6 +57,7 @@ public class Configuration {
 
     private static final String KEY_DISCLAIMER_ACCEPTED = "disclaimerAccepted";
     private static final String KEY_LOCAL_HOST_NAME = "localHostName";
+    private static final String KEY_PARSER_LOG = "parserLog";
     private static final String KEY_QUIRK_LEGACY_DATAFILE_UTF8 = "quirks.datafile.legacy.UTF8";
     private static final String KEY_SERVER_PORT = "serverPort";
     private static final String KEY_UPSTREAM_BASE_URL = "upstreamBaseUrl";
@@ -106,6 +109,9 @@ public class Configuration {
         setDisclaimerAccepted(CURRENT_DISCLAIMER_HASH.equals(readString(properties, KEY_DISCLAIMER_ACCEPTED, "")));
         setQuirkLegacyDataFileUtf8Enabled(
             readBoolean(properties, KEY_QUIRK_LEGACY_DATAFILE_UTF8, DEFAULT_QUIRK_LEGACY_DATAFILE_UTF8) //
+        );
+        setParserLogEnabled(
+            readBoolean(properties, KEY_PARSER_LOG, DEFAULT_PARSER_LOG) //
         );
         setUpstreamBaseUrl(readString(properties, KEY_UPSTREAM_BASE_URL, DEFAULT_UPSTREAM_BASE_URL));
         setLocalHostName(readString(properties, KEY_LOCAL_HOST_NAME, DEFAULT_LOCAL_HOST_NAME));
@@ -163,8 +169,9 @@ public class Configuration {
         LOGGER.debug("Configured disclaimer accepted: {}", isDisclaimerAccepted.get());
         LOGGER.debug("Configured upstream base URL:   {}", upstreamBaseUrl.get());
         LOGGER.debug("Configured local host name:     {}", localHostName.get());
-        LOGGER.debug("Configured UTF8 quirk:          {}", isQuirkLegacyDataFileUtf8Enabled.get());
         LOGGER.debug("Configured server port:         {}", serverPort.get());
+        LOGGER.debug("Configured UTF8 quirk:          {}", isQuirkLegacyDataFileUtf8Enabled.get());
+        LOGGER.debug("Configured parser log:          {}", isParserLogEnabled.get());
         LOGGER.debug("Configured allowed IPs:         {}", allowedIps);
     }
 
@@ -178,6 +185,7 @@ public class Configuration {
         Properties properties = new Properties();
         properties.setProperty(KEY_DISCLAIMER_ACCEPTED, isDisclaimerAccepted.get() ? CURRENT_DISCLAIMER_HASH : "");
         properties.setProperty(KEY_LOCAL_HOST_NAME, localHostName.get());
+        properties.setProperty(KEY_PARSER_LOG, Boolean.toString(isParserLogEnabled.get()));
         properties.setProperty(KEY_QUIRK_LEGACY_DATAFILE_UTF8,
             Boolean.toString(isQuirkLegacyDataFileUtf8Enabled.get()) //
         );
@@ -216,6 +224,10 @@ public class Configuration {
         }
     }
 
+    public void setParserLogEnabled(boolean isParserLogEnabled) {
+        this.isParserLogEnabled.set(isParserLogEnabled);
+    }
+
     public void setQuirkLegacyDataFileUtf8Enabled(boolean isQuirkLegacyDataFileUtf8Enabled) {
         this.isQuirkLegacyDataFileUtf8Enabled.set(isQuirkLegacyDataFileUtf8Enabled);
     }
@@ -246,6 +258,10 @@ public class Configuration {
 
     public boolean isDisclaimerAccepted() {
         return isDisclaimerAccepted.get();
+    }
+
+    public boolean isParserLogEnabled() {
+        return isParserLogEnabled.get();
     }
 
     public boolean isQuirkLegacyDataFileUtf8Enabled() {

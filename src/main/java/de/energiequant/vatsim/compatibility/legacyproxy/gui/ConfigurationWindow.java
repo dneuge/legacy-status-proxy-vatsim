@@ -150,6 +150,7 @@ public class ConfigurationWindow extends JFrame {
             new SpinnerNumberModel(1, Configuration.SERVER_PORT_MINIMUM, Configuration.SERVER_PORT_MAXIMUM, 1) //
         ));
         final JCheckBox quirkUtf8CheckBox = new JCheckBox("encode data file in UTF-8 instead of ISO-8859-1");
+        final JCheckBox enableParserLogCheckBox = new JCheckBox("log parser errors (upstream data)");
 
         public HttpServerPanel() {
             super();
@@ -157,6 +158,7 @@ public class ConfigurationWindow extends JFrame {
             onChange(localHostNameField, this::onLocalHostNameFieldAction);
             onChange(serverPortField, this::onServerPortFieldChanged);
             onChange(quirkUtf8CheckBox, this::onQuirkUtf8CheckBoxChanged);
+            onChange(enableParserLogCheckBox, this::onEnableParserLogCheckBoxChanged);
 
             styleSpinner(serverPortField);
 
@@ -203,6 +205,12 @@ public class ConfigurationWindow extends JFrame {
             gbc.weightx = 1.0;
             gbc.fill = GridBagConstraints.HORIZONTAL;
             add(quirkUtf8CheckBox, gbc);
+
+            gbc.gridy++;
+            gbc.gridwidth = 1;
+            gbc.weightx = 1.0;
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+            add(enableParserLogCheckBox, gbc);
         }
 
         private void styleSpinner(JSpinner spinner) {
@@ -219,6 +227,7 @@ public class ConfigurationWindow extends JFrame {
             localHostNameField.setText(config.getLocalHostName());
             serverPortField.setValue(config.getServerPort());
             quirkUtf8CheckBox.setSelected(config.isQuirkLegacyDataFileUtf8Enabled());
+            enableParserLogCheckBox.setSelected(config.isParserLogEnabled());
         }
 
         private void onLocalHostNameFieldAction() {
@@ -272,6 +281,18 @@ public class ConfigurationWindow extends JFrame {
             config.setQuirkLegacyDataFileUtf8Enabled(newValue);
         }
 
+        private void onEnableParserLogCheckBoxChanged() {
+            boolean newValue = enableParserLogCheckBox.isSelected();
+
+            Configuration config = Main.getConfiguration();
+            boolean oldValue = config.isParserLogEnabled();
+            if (oldValue == newValue) {
+                return;
+            }
+
+            LOGGER.debug("setting parser logging to {}", newValue);
+            config.setParserLogEnabled(newValue);
+        }
     }
 
     private class AccessPanel extends JPanel {
