@@ -41,6 +41,7 @@ By using the server you agree with all terms of the [MIT license](LICENSE.md), i
 - non-ASCII characters on served data may be wrong
 - restarting the server in quick succession is not possible (Socket bind failure for socket / Address already in use)
 - some information may have been removed from recent formats and will be replaced by placeholders (e.g. flight plan revision numbers or controller coordinates)
+  - clients may be unable to locate unknown online ATC stations as a result of ATC coordinates having been removed
 - some information may only be available in recent formats (e.g. pilot ratings); no compatibility is provided for such data
 
 ## How to configure and run
@@ -124,7 +125,19 @@ Configuration via CLI is not supported yet. It is recommended to create a config
 
 Try to change the **encode data file in UTF-8 instead of ISO-8859-1** option and restart the server (see above for details). This will depend on the client you are using: VATSIM changed the character set in the last years of the old CSV-like data file format and some (pre-release versions of) clients had already been migrated, others not. Serving multiple clients at the same time may require a second server instance to work around this incompatibility.
 
-### server cannot be started
+### Some controllers are not visible
+
+**Possible cause:** The client misses airspace data for affected controllers.
+
+Check if there is updated airspace information for the affected client. Before JSON format version 3 all online controllers had coordinates and many clients relied on that information to display unknown ATC stations. JSON v3 removed those coordinates. Currently, there is no good way such data could be supplied by the proxy.
+
+### Saving configuration is not possible (disabled)
+
+**Cause:** The proxy was launched from a system directory, for example by using special functions such as "recent files" on Windows.
+
+The configuration file is assumed to be located at the current working directory which may not be a valid location in some cases. Try to launch the proxy from the directory it is actually located in (i.e. navigate to the correct folder in Windows Explorer). You can also create a shortcut which allows you to choose the working directory. Alternatively, you can run the proxy with a specific configuration file path provided by command-line argument `--config FILE`.
+
+### Server cannot be started
 
 #### Socket bind failure for socket / Address already in use
 
@@ -146,13 +159,13 @@ Proxy restarts in quick succession are currently not possible if clients have ac
 
 Configure the proxy to use another port or check your system permissions (e.g. ports below 1024 are reserved on Linux).
 
-### server responds with "Forbidden" (log: rejecting connection from...)
+### Server responds with "Forbidden" (log: rejecting connection from...)
 
 **Cause:** The affected client's IP address has not been allowed to access the server. By default, proxy service is limited to "localhost" (`127.0.0.1` or `::1`).
 
 Check if the client should really be allowed to access the server and add the IP address exactly as printed on the server log to your configuration.
 
-### server responds with "Not authoritative" (HTTP status 421 Misdirected Request)
+### Server responds with "Not authoritative" (HTTP status 421 Misdirected Request)
 
 **Cause:** The affected client did not call the proxy server by its configured host name.
 
