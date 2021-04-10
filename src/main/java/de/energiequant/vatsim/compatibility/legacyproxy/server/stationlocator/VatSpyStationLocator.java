@@ -111,15 +111,6 @@ public class VatSpyStationLocator {
         // FIXME: change to collect all points, then average instead of overwriting
         Map<String, GeoPoint2D> centerPointsByCallsignPrefix = new HashMap<>();
 
-        for (Airport airport : vatSpyFile.getAirports()) {
-            centerPointsByCallsignPrefix.put(
-                unifyCallsign(airport.getIcaoCode()),
-                airport.getLocation() //
-            );
-
-            // TODO: add by alternative codes as well?
-        }
-
         Map<String, List<GeoPoint2D>> centerPointsByFirId = new HashMap<>();
         for (FlightInformationRegion fir : vatSpyFile.getFlightInformationRegions()) {
             String boundaryId = fir.getBoundaryId().orElseGet(fir::getId);
@@ -204,6 +195,42 @@ public class VatSpyStationLocator {
                     previousCenterPoint,
                     centerPoint //
                 );
+            }
+        }
+
+        for (Airport airport : vatSpyFile.getAirports()) {
+            String airportIcaoCallsignPrefix = unifyCallsign(airport.getIcaoCode());
+            if (centerPointsByCallsignPrefix.containsKey(airportIcaoCallsignPrefix)) {
+                LOGGER.warn(
+                    "Center point for callsign prefix \"{}\" is already set, not adding location for airport {}",
+                    airportIcaoCallsignPrefix,
+                    airport.getIcaoCode() //
+                );
+            } else {
+                centerPointsByCallsignPrefix.put(
+                    airportIcaoCallsignPrefix,
+                    airport.getLocation() //
+                );
+            }
+
+            String airportAlternativeCodeCallsignPrefix = airport.getAlternativeCode()
+                .map(this::unifyCallsign)
+                .orElse(null);
+            if ((airportAlternativeCodeCallsignPrefix != null)
+                && !airportIcaoCallsignPrefix.equals(airportAlternativeCodeCallsignPrefix)) {
+                if (centerPointsByCallsignPrefix.containsKey(airportAlternativeCodeCallsignPrefix)) {
+                    LOGGER.warn(
+                        "Center point for callsign prefix \"{}\" is already set, not adding location for airport {} (alternative code {})",
+                        airportAlternativeCodeCallsignPrefix,
+                        airport.getIcaoCode(),
+                        airport.getAlternativeCode().orElse(null) //
+                    );
+                } else {
+                    centerPointsByCallsignPrefix.put(
+                        airportAlternativeCodeCallsignPrefix,
+                        airport.getLocation() //
+                    );
+                }
             }
         }
 
