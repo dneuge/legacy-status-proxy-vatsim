@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -47,6 +48,7 @@ public class Configuration {
         DEFAULT_QUIRK_LEGACY_DATAFILE_UTF8 //
     );
     private final AtomicBoolean isParserLogEnabled = new AtomicBoolean();
+    private final AtomicReference<File> vatSpyBaseDirectory = new AtomicReference<>(null);
     private final AtomicReference<String> upstreamBaseUrl = new AtomicReference<>(DEFAULT_UPSTREAM_BASE_URL);
     private final AtomicReference<String> localHostName = new AtomicReference<>(DEFAULT_LOCAL_HOST_NAME);
     private final AtomicInteger serverPort = new AtomicInteger(DEFAULT_SERVER_PORT);
@@ -61,6 +63,7 @@ public class Configuration {
     private static final String KEY_QUIRK_LEGACY_DATAFILE_UTF8 = "quirks.datafile.legacy.UTF8";
     private static final String KEY_SERVER_PORT = "serverPort";
     private static final String KEY_UPSTREAM_BASE_URL = "upstreamBaseUrl";
+    private static final String KEY_VATSPY_BASE_DIRECTORY = "vatSpyBaseDirectory";
     private static final String BASEKEY_ALLOWED_IPS = "allowedIps.";
 
     public static final int SERVER_PORT_MINIMUM = 1;
@@ -110,6 +113,7 @@ public class Configuration {
         setQuirkLegacyDataFileUtf8Enabled(
             readBoolean(properties, KEY_QUIRK_LEGACY_DATAFILE_UTF8, DEFAULT_QUIRK_LEGACY_DATAFILE_UTF8) //
         );
+        setVatSpyBaseDirectory(readFile(properties, KEY_VATSPY_BASE_DIRECTORY, ""));
         setParserLogEnabled(
             readBoolean(properties, KEY_PARSER_LOG, DEFAULT_PARSER_LOG) //
         );
@@ -164,6 +168,17 @@ public class Configuration {
         return (String) properties.getOrDefault(key, defaultValue);
     }
 
+    private File readFile(Properties properties, String key, String defaultValue) {
+        // FIXME: may have issues with spaces or special chars in filenames
+
+        String path = readString(properties, key, defaultValue);
+        if (path.trim().isEmpty()) {
+            return null;
+        }
+
+        return new File(path);
+    }
+
     private void logConfig() {
         LOGGER.debug("Configuration file path:        {}", configFile.getAbsolutePath());
         LOGGER.debug("Configured disclaimer accepted: {}", isDisclaimerAccepted.get());
@@ -171,6 +186,7 @@ public class Configuration {
         LOGGER.debug("Configured local host name:     {}", localHostName.get());
         LOGGER.debug("Configured server port:         {}", serverPort.get());
         LOGGER.debug("Configured UTF8 quirk:          {}", isQuirkLegacyDataFileUtf8Enabled.get());
+        LOGGER.debug("Configured VAT-Spy base dir:    {}", vatSpyBaseDirectory.get());
         LOGGER.debug("Configured parser log:          {}", isParserLogEnabled.get());
         LOGGER.debug("Configured allowed IPs:         {}", allowedIps);
     }
@@ -191,6 +207,12 @@ public class Configuration {
         );
         properties.setProperty(KEY_SERVER_PORT, Integer.toString(serverPort.get()));
         properties.setProperty(KEY_UPSTREAM_BASE_URL, upstreamBaseUrl.get());
+        properties.setProperty(
+            KEY_VATSPY_BASE_DIRECTORY,
+            getVatSpyBaseDirectory()
+                .map(File::getAbsolutePath)
+                .orElse("") //
+        );
 
         int i = 0;
         for (String allowedIp : allowedIps) {
@@ -252,6 +274,14 @@ public class Configuration {
         this.upstreamBaseUrl.set(upstreamBaseUrl);
     }
 
+    public void setVatSpyBaseDirectory(File directory) {
+        vatSpyBaseDirectory.set(directory);
+    }
+
+    public void unsetVatSpyBaseDirectory() {
+        vatSpyBaseDirectory.set(null);
+    }
+
     public Set<String> getAllowedIps() {
         return new HashSet<>(allowedIps);
     }
@@ -278,6 +308,10 @@ public class Configuration {
 
     public String getUpstreamBaseUrl() {
         return upstreamBaseUrl.get();
+    }
+
+    public Optional<File> getVatSpyBaseDirectory() {
+        return Optional.ofNullable(vatSpyBaseDirectory.get());
     }
 
     private String removeTrailingSlashes(String s) {

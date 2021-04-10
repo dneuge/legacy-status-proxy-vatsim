@@ -20,8 +20,11 @@ import org.apache.hc.core5.http.nio.support.AsyncResponseBuilder;
 import org.apache.hc.core5.http.protocol.HttpContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.vatplanner.dataformats.vatsimpublic.entities.status.ControllerRating;
 import org.vatplanner.dataformats.vatsimpublic.export.LegacyDataFileWriter;
 import org.vatplanner.dataformats.vatsimpublic.export.Writer;
+import org.vatplanner.dataformats.vatsimpublic.parser.Client;
+import org.vatplanner.dataformats.vatsimpublic.parser.ClientType;
 import org.vatplanner.dataformats.vatsimpublic.parser.DataFile;
 import org.vatplanner.dataformats.vatsimpublic.parser.Parser;
 import org.vatplanner.dataformats.vatsimpublic.parser.ParserLogEntry;
@@ -31,12 +34,16 @@ import de.energiequant.common.webdataretrieval.HttpPromiseBuilder;
 import de.energiequant.common.webdataretrieval.HttpRetrieval;
 import de.energiequant.vatsim.compatibility.legacyproxy.AppConstants;
 import de.energiequant.vatsim.compatibility.legacyproxy.Main;
+import de.energiequant.vatsim.compatibility.legacyproxy.server.stationlocator.Station;
+import de.energiequant.vatsim.compatibility.legacyproxy.server.stationlocator.StationLocator;
 
 public class JsonToLegacyDataFileProxy extends GetOnlyRequestHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(JsonToLegacyDataFileProxy.class);
 
     private final Supplier<String> jsonUrlSupplier;
     private final HttpPromiseBuilder<DataFile> promiseBuilder;
+
+    private final StationLocator stationLocator = new StationLocator();
 
     private final boolean isParserLogEnabled = Main.getConfiguration().isParserLogEnabled();
     private final boolean isQuirkUtf8Enabled = Main.getConfiguration().isQuirkLegacyDataFileUtf8Enabled();
@@ -91,6 +98,8 @@ public class JsonToLegacyDataFileProxy extends GetOnlyRequestHandler {
             return;
         }
 
+        injectStationLocations(dataFile);
+
         LOGGER.debug("Encoding legacy data file");
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         Writer<DataFile> writer = new LegacyDataFileWriter();
@@ -108,6 +117,39 @@ public class JsonToLegacyDataFileProxy extends GetOnlyRequestHandler {
                 .setEntity(AsyncEntityProducers.create(bytes, ContentType.TEXT_PLAIN))
                 .build(),
             context);
+    }
+
+    private void injectStationLocations(DataFile dataFile) {
+        // FIXME: only if configured
+        // FIXME: add copyright/license notice to data file
+
+        LOGGER.debug("Injecting station locations...");
+        for (Client client : dataFile.getClients()) {
+            ClientType clientType = client.getRawClientType();
+            boolean isATC = (clientType == ClientType.ATC_CONNECTED) || (clientType == ClientType.ATIS);
+            boolean isObserver = (client.getControllerRating() == ControllerRating.OBS);
+            boolean hasLocation = !(Double.isNaN(client.getLatitude()) || Double.isNaN(client.getLongitude()));
+            boolean hasActiveFrequency = (client
+                .getServedFrequencyKilohertz() < Client.FREQUENCY_KILOHERTZ_PLACEHOLDER_MINIMUM //
+            );
+            boolean shouldInject = isATC && !isObserver && !hasLocation && hasActiveFrequency;
+            if (!shouldInject) {
+                continue;
+            }
+
+            String callsign = client.getCallsign();
+            Station station = stationLocator.locate(callsign).orElse(null);
+            if (station == null) {
+                LOGGER.warn("station for {} could not be located", callsign);
+            } else {
+                double latitude = station.getLatitude();
+                double longitude = station.getLongitude();
+
+                LOGGER.debug("injecting location for {} ({} / {})", callsign, latitude, longitude);
+                client.setLatitude(latitude);
+                client.setLongitude(longitude);
+            }
+        }
     }
 
     private void logParserMessages(DataFile dataFile) {

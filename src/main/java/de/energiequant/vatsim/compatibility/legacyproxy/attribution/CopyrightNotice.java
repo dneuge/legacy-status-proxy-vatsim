@@ -147,6 +147,11 @@ public class CopyrightNotice {
         add("de.energiequant.common", "webdataretrieval", "0.2", //
             "Copyright (c) 2016 Daniel Neugebauer" //
         );
+
+        // FIXME: pin version before release
+        add("org.vatplanner", "dataformats-vatsim-public", "0.1-SNAPSHOT", //
+            "Copyright (c) 2016 Daniel Neugebauer" //
+        );
     }
 
     private static String buildKey(String groupId, String artifactId, String version) {
