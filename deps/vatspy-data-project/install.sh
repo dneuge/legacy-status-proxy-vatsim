@@ -50,6 +50,11 @@ git checkout ${commit_hash} || die "Switching to ${commit_hash} failed"
 # verify license
 md5sum -c <(echo "${expected_license_md5} LICENSE") || die 'LICENSE changed'
 
+# add commit date
+commit_date_file='.git_commit_date'
+[[ "" == $(git ls-files | grep -F "${commit_date_file}") ]] || die "File collision: ${commit_date_file} seems to be part of the upstream repository"
+git show ${commit_hash} --format='%cI' >${commit_date_file} || die 'Failed to add commit date'
+
 # build Maven artifact
 cd "${basedir}"
 mvn clean compile package || die 'Building artifact failed'
