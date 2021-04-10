@@ -3,6 +3,7 @@ package de.energiequant.vatsim.compatibility.legacyproxy.server.stationlocator;
 import java.io.File;
 import java.io.FileReader;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -28,6 +29,7 @@ import org.vatplanner.dataformats.vatsimpublic.parser.vatspy.VatSpyFile;
 import org.vatplanner.dataformats.vatsimpublic.parser.vatspy.VatSpyFileParser;
 
 import de.energiequant.vatsim.compatibility.legacyproxy.Main;
+import de.energiequant.vatsim.compatibility.legacyproxy.utils.ResourceUtils;
 
 public class VatSpyStationLocator {
     private static final Logger LOGGER = LoggerFactory.getLogger(VatSpyStationLocator.class);
@@ -37,15 +39,24 @@ public class VatSpyStationLocator {
 
     private static final String CALLSIGN_DELIMITER = "_";
 
-    private final Map<String, GeoPoint2D> centerPointsByCallsignPrefix;
+    private static final String INCLUDED_VAT_SPY_DAT_PATH = "com/github/vatsimnetwork/vatspy-data-project/"
+        + EXPECTED_FILE_NAME_VATSPY_DAT;
+    private static final String INCLUDED_FIR_BOUNDARIES_DAT_PATH = "com/github/vatsimnetwork/vatspy-data-project/"
+        + EXPECTED_FILE_NAME_FIR_BOUNDARIES_DAT;
 
-    public static class LoadingFailed extends RuntimeException {
+    private final Map<String, GeoPoint2D> centerPointsByCallsignPrefix = new HashMap<>();
+
+    public static class LoadingFailed extends Exception {
+        private LoadingFailed(String message) {
+            super(message);
+        }
+
         private LoadingFailed(String message, Throwable cause) {
             super(message, cause);
         }
     }
 
-    public VatSpyStationLocator(File baseDirectory) {
+    public VatSpyStationLocator(File baseDirectory) throws LoadingFailed {
         if (!baseDirectory.isDirectory()) {
             throw new IllegalArgumentException(baseDirectory.getAbsolutePath() + " is not a directory");
         }
@@ -60,13 +71,39 @@ public class VatSpyStationLocator {
             new FIRBoundaryFileParser() //
         );
 
+        load(vatSpyFile, firBoundaryFile);
+    }
+
+    public VatSpyStationLocator() throws LoadingFailed {
+        VatSpyFile vatSpyFile = parse(
+            ResourceUtils.getAbsoluteResourceContentAsString(
+                VatSpyStationLocator.class,
+                INCLUDED_VAT_SPY_DAT_PATH,
+                StandardCharsets.UTF_8 //
+            ).orElseThrow(() -> new LoadingFailed("Resource unavailable: " + INCLUDED_VAT_SPY_DAT_PATH)),
+            new VatSpyFileParser() //
+        );
+
+        FIRBoundaryFile firBoundaryFile = parse(
+            ResourceUtils.getAbsoluteResourceContentAsString(
+                VatSpyStationLocator.class,
+                INCLUDED_FIR_BOUNDARIES_DAT_PATH,
+                StandardCharsets.UTF_8 //
+            ).orElseThrow(() -> new LoadingFailed("Resource unavailable: " + EXPECTED_FILE_NAME_FIR_BOUNDARIES_DAT)),
+            new FIRBoundaryFileParser() //
+        );
+
+        load(vatSpyFile, firBoundaryFile);
+    }
+
+    private void load(VatSpyFile vatSpyFile, FIRBoundaryFile firBoundaryFile) {
         if (Main.getConfiguration().isParserLogEnabled()) {
             logParserMessages(EXPECTED_FILE_NAME_VATSPY_DAT, vatSpyFile);
             logParserMessages(EXPECTED_FILE_NAME_FIR_BOUNDARIES_DAT, firBoundaryFile);
         }
 
         Map<String, GeoPoint2D> centerPointsByBoundaryId = indexCenterPointsByBoundaryId(firBoundaryFile);
-        centerPointsByCallsignPrefix = indexCenterPointsByCallsignPrefix(vatSpyFile, centerPointsByBoundaryId);
+        centerPointsByCallsignPrefix.putAll(indexCenterPointsByCallsignPrefix(vatSpyFile, centerPointsByBoundaryId));
     }
 
     private Map<String, GeoPoint2D> indexCenterPointsByCallsignPrefix(VatSpyFile vatSpyFile, Map<String, GeoPoint2D> centerPointsByBoundaryId) {
@@ -241,11 +278,19 @@ public class VatSpyStationLocator {
             ));
     }
 
-    private <T> T parse(File file, Parser<T> parser) {
+    private <T> T parse(File file, Parser<T> parser) throws LoadingFailed {
         try (Reader r = new FileReader(file)) {
             return parser.deserialize(r);
         } catch (Exception ex) {
             throw new LoadingFailed("Failed to parse " + file.getAbsolutePath(), ex);
+        }
+    }
+
+    private <T> T parse(String content, Parser<T> parser) throws LoadingFailed {
+        try {
+            return parser.deserialize(content);
+        } catch (Exception ex) {
+            throw new LoadingFailed("Failed to parse", ex);
         }
     }
 
