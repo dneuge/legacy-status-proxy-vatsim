@@ -23,6 +23,7 @@
 		<!-- <vatplanner.dataformatsVatsimPublic.version>0.1-pre210402</vatplanner.dataformatsVatsimPublic.version> -->
 		<vatplanner.dataformatsVatsimPublic.version>0.1-SNAPSHOT</vatplanner.dataformatsVatsimPublic.version>
 		<webDataRetrieval.version>0.2</webDataRetrieval.version>
+		<vatspyData.version>4f3ae5ecce72ace70c26c22ef751cd3bc03201de</vatspyData.version>
 		
 		<slf4j.version>1.7.30</slf4j.version>
 		<log4j.version>2.13.3</log4j.version>
@@ -68,6 +69,12 @@
 			<groupId>de.energiequant.common</groupId>
 			<artifactId>webdataretrieval</artifactId>
 			<version>${webDataRetrieval.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>_inofficial.com.github.vatsimnetwork</groupId>
+			<artifactId>vatspy-data-project</artifactId>
+			<version>${vatspyData.version}</version>
 		</dependency>
 
 		<dependency>

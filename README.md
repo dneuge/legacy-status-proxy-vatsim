@@ -196,7 +196,19 @@ Some dependencies have no stable release version and thus are currently not avai
 - [Web Data Retrieval](https://github.com/dneuge/web-data-retrieval) at version `0.2`
 - VATPlanner's [VATSIM Public Data Formats](https://github.com/vatplanner/dataformats-vatsim-public) library at version `0.1-pre210402`
 
+In addition, the following projects do not have Maven artifacts nor an official POM file, so they need to be fetched, repackaged and installed locally as well:
+
+- [VAT-Spy Client Data](https://github.com/vatsimnetwork/vatspy-data-project) at revision `4f3ae5ecce72ace70c26c22ef751cd3bc03201de`
+
 Automated checkout, build and installation can be performed on Linux systems by running [install-unpublished-dependencies.sh](install-unpublished-dependencies.sh).
+
+#### Updating/packaging VAT-Spy data
+
+Unfortunately, VAT-Spy data is not available through an official artifact and needs to be packaged locally using [deps/vatspy-data-project/install.sh](deps/vatspy-data-project/install.sh). To package a specific commit hash provide the hash as first argument, otherwise the latest official version will be determined from VATSIM API.
+
+The script is only available for Linux systems but may work on MacOS or in Windows git bash.
+
+Please do not deploy the unofficial package to any servers, only install it locally on the build machine.
 
 ### Compilation
 

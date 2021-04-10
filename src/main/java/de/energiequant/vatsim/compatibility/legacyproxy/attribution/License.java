@@ -13,9 +13,31 @@ import org.slf4j.LoggerFactory;
 import de.energiequant.vatsim.compatibility.legacyproxy.utils.ResourceUtils;
 
 public enum License {
-    APACHE2("Apache License, Version 2.0", "apache2.html",
-        asList("Apache License, Version 2.0", "The Apache Software License, Version 2.0")),
-    MIT("MIT License", "mit.html", asList("MIT", "MIT License"));
+    APACHE2(
+        "Apache License, Version 2.0",
+        "apache2.html",
+        asList(
+            "Apache License, Version 2.0",
+            "The Apache Software License, Version 2.0" //
+        ) //
+    ),
+
+    CC_BY_SA_4_0(
+        "Creative Commons Attribution Share Alike 4.0 International",
+        "cc-by-sa-4_0.html",
+        asList(
+            "CC-BY-SA-4.0" //
+        ) //
+    ),
+
+    MIT(
+        "MIT License",
+        "mit.html",
+        asList(
+            "MIT",
+            "MIT License" //
+        ) //
+    );
 
     private static class LicenseViolation extends RuntimeException {
         public LicenseViolation(String msg) {
