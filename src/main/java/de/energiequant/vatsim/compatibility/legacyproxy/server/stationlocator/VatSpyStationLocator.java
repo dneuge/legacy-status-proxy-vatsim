@@ -108,6 +108,7 @@ public class VatSpyStationLocator {
 
     private Map<String, GeoPoint2D> indexCenterPointsByCallsignPrefix(VatSpyFile vatSpyFile, Map<String, GeoPoint2D> centerPointsByBoundaryId) {
         // TODO: refactor to simplify
+        // FIXME: change to collect all points, then average instead of overwriting
         Map<String, GeoPoint2D> centerPointsByCallsignPrefix = new HashMap<>();
 
         for (Airport airport : vatSpyFile.getAirports()) {
@@ -121,15 +122,13 @@ public class VatSpyStationLocator {
 
         Map<String, List<GeoPoint2D>> centerPointsByFirId = new HashMap<>();
         for (FlightInformationRegion fir : vatSpyFile.getFlightInformationRegions()) {
-            String callsignPrefix = unifyCallsign(fir.getCallsignPrefix().orElseGet(fir::getId));
             String boundaryId = fir.getBoundaryId().orElseGet(fir::getId);
 
             GeoPoint2D centerPoint = centerPointsByBoundaryId.get(boundaryId);
             if (centerPoint == null) {
                 LOGGER.warn(
-                    "Missing center point for FIR \"{}\", callsign prefix \"{}\", boundary ID \"{}\"",
+                    "Missing center point for FIR \"{}\", boundary ID \"{}\"",
                     fir.getId(),
-                    callsignPrefix,
                     boundaryId //
                 );
                 continue;
@@ -138,15 +137,33 @@ public class VatSpyStationLocator {
             centerPointsByFirId.computeIfAbsent(fir.getId(), x -> new ArrayList<>())
                 .add(centerPoint);
 
-            GeoPoint2D previousCenterPoint = centerPointsByCallsignPrefix.put(callsignPrefix, centerPoint);
-            if (previousCenterPoint != null) {
-                // TODO: don't warn if points are equal
-                LOGGER.warn(
-                    "Multiple center points with callsign prefix \"{}\", was {}, is now {}",
-                    callsignPrefix,
-                    previousCenterPoint,
-                    centerPoint //
-                );
+            // even if callsign prefixes are configured, some stations still log in with
+            // what is set as IDs instead, so both need to be registered (the prefix is
+            // optional)
+            String callsignPrefix = fir.getCallsignPrefix().map(this::unifyCallsign).orElse(null);
+            if (callsignPrefix != null) {
+                GeoPoint2D previousCenterPoint = centerPointsByCallsignPrefix.put(callsignPrefix, centerPoint);
+                if (previousCenterPoint != null) {
+                    LOGGER.warn(
+                        "Multiple center points with callsign prefix \"{}\", was {}, is now {}",
+                        callsignPrefix,
+                        previousCenterPoint,
+                        centerPoint //
+                    );
+                }
+            }
+
+            String idAsCallsign = unifyCallsign(fir.getId());
+            if (!idAsCallsign.equals(callsignPrefix)) {
+                GeoPoint2D previousCenterPoint = centerPointsByCallsignPrefix.put(idAsCallsign, centerPoint);
+                if (previousCenterPoint != null) {
+                    LOGGER.warn(
+                        "Multiple center points with callsign prefix \"{}\", was {}, is now {}",
+                        idAsCallsign,
+                        previousCenterPoint,
+                        centerPoint //
+                    );
+                }
             }
         }
 
@@ -181,7 +198,6 @@ public class VatSpyStationLocator {
 
             GeoPoint2D previousCenterPoint = centerPointsByCallsignPrefix.put(callsignPrefix, centerPoint);
             if (previousCenterPoint != null) {
-                // TODO: don't warn if points are equal
                 LOGGER.warn(
                     "Multiple center points with callsign prefix \"{}\", was {}, is now {}",
                     callsignPrefix,
