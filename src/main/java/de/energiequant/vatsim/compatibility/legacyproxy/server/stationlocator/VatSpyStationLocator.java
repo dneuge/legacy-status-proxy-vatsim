@@ -234,6 +234,39 @@ public class VatSpyStationLocator {
             }
         }
 
+        // TODO: maybe make US aliases a configurable option?
+
+        // US stations (ICAO prefix K) often log in without the ICAO prefix and
+        // sometimes do not match any other registered prefix either. This is a
+        // well-known issue with a good chance of it just putting a K in front
+        // matching the correct station, so we alias all US stations to omit their K
+        // prefix if no other call sign collides to increase our chance to provide
+        // as many locations as possible from VAT-Spy data.
+        Map<String, GeoPoint2D> aliasedCenterPoints = new HashMap<>();
+        for (Map.Entry<String, GeoPoint2D> entry : centerPointsByCallsignPrefix.entrySet()) {
+            String originalCallsignPrefix = entry.getKey();
+            if ((originalCallsignPrefix.length() < 2) || !originalCallsignPrefix.startsWith("K")) {
+                continue;
+            }
+
+            String alias = originalCallsignPrefix.substring(1);
+            if (centerPointsByCallsignPrefix.containsKey(alias)) {
+                continue;
+            }
+
+            GeoPoint2D centerPoint = entry.getValue();
+            LOGGER.trace(
+                "Aliasing \"{}\" to \"{}\" (%d)",
+                alias,
+                originalCallsignPrefix,
+                centerPoint //
+            );
+
+            aliasedCenterPoints.put(alias, centerPoint);
+        }
+
+        centerPointsByCallsignPrefix.putAll(aliasedCenterPoints);
+
         return centerPointsByCallsignPrefix;
     }
 
