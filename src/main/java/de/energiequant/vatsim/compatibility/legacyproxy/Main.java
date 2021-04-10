@@ -132,6 +132,8 @@ public class Main {
             configuration.save();
         }
 
+        warnAboutOldVatSpyData();
+
         boolean shouldShutdownOnStartFailure = shouldRunHeadless;
         server = new Server(shouldShutdownOnStartFailure);
 
@@ -161,6 +163,18 @@ public class Main {
                 server.stopAll();
                 System.exit(0);
             });
+        }
+    }
+
+    private static void warnAboutOldVatSpyData() {
+        // TODO: warn only if not overridden by an external data source
+        if (VatSpyMetaData.isOlderThan(AppConstants.VATSPY_AGE_WARNING_THRESHOLD)) {
+            LOGGER.warn(
+                "VAT-Spy data is {} days old and may be outdated. Please check for updates.",
+                VatSpyMetaData.getAge() //
+                    .map(age -> Long.toString(age.toHours() / 24))
+                    .orElse("?") //
+            );
         }
     }
 

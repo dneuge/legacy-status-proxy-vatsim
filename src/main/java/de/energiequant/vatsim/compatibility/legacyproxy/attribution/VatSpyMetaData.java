@@ -1,6 +1,7 @@
 package de.energiequant.vatsim.compatibility.legacyproxy.attribution;
 
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.Optional;
@@ -44,5 +45,20 @@ public class VatSpyMetaData {
 
     public static Optional<Instant> getIncludedDataTimestamp() {
         return Optional.ofNullable(INCLUDED_DATA_TIMESTAMP);
+    }
+
+    public static Optional<Duration> getAge() {
+        if (INCLUDED_DATA_TIMESTAMP == null) {
+            LOGGER.debug("VAT-Spy data age is not known.");
+            return Optional.empty();
+        }
+
+        return Optional.of(Duration.between(INCLUDED_DATA_TIMESTAMP, Instant.now()));
+    }
+
+    public static boolean isOlderThan(Duration duration) {
+        return getAge()
+            .map(age -> age.compareTo(duration) > 0)
+            .orElse(false);
     }
 }
