@@ -92,7 +92,7 @@ In addition to this description please refer to the GitHub discussions for [comp
 
 #### QuteScoop
 
-Open QuteScoop's Preferences dialog. In the "Network" tab change "network" from "VATSIM" to "user defined network" and enter the URL to your proxy server (default: `http://localhost:8080/`). Restart QuteScoop to get rid of any cached information. The status line should display "User Network - today ....z: ... clients" and you should see all pilots and controllers as usual.
+Open QuteScoop's Preferences dialog. In the "Network" tab change "network" from "VATSIM" to "user defined network" and enter the URL to your proxy server (default: `http://localhost:8080/`). Re-enable "ATC bookings" or bookings will be missing. Restart QuteScoop to get rid of any cached information. The status line should display "User Network - today ....z: ... clients" and you should see all pilots and controllers as usual.
 
 View the text of some ATIS station. If you do not see line breaks try changing the *encode data file in UTF-8 instead of ISO-8859-1* option as described above, restart the proxy server and reload the data in QuteScoop (F5).
 
