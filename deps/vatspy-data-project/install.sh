@@ -62,4 +62,4 @@ mvn clean compile package || die 'Building artifact failed'
 # install artifact
 mvn install || die 'Installing artifact failed'
 
-echo 'Success.'
+echo 'VAT-Spy data installed successfully.'
