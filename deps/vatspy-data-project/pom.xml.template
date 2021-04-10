@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>_inofficial.com.github.vatsimnetwork</groupId>
+	<artifactId>vatspy-data-project</artifactId>
+	<name>VAT-Spy Client Data Update Project</name>
+	<version>##VERSION##</version>
+	<packaging>jar</packaging>
+
+	<licenses>
+		<license>
+			<name>CC-BY-SA-4.0</name>
+			<url>https://creativecommons.org/licenses/by-sa/4.0/legalcode</url>
+		</license>
+	</licenses>
+
+	<build>
+		<!-- exclude git repository from JAR -->
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<excludes>
+					<exclude>.git</exclude>
+				</excludes>
+			</resource>
+        </resources>
+
+		<!-- prevent deployment of artifact to servers -->
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>
