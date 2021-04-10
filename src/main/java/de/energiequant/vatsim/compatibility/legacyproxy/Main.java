@@ -3,10 +3,13 @@ package de.energiequant.vatsim.compatibility.legacyproxy;
 import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -26,6 +29,7 @@ import de.energiequant.vatsim.compatibility.legacyproxy.attribution.AttributionP
 import de.energiequant.vatsim.compatibility.legacyproxy.attribution.CopyrightNotice;
 import de.energiequant.vatsim.compatibility.legacyproxy.attribution.License;
 import de.energiequant.vatsim.compatibility.legacyproxy.attribution.Project;
+import de.energiequant.vatsim.compatibility.legacyproxy.attribution.VatSpyMetaData;
 import de.energiequant.vatsim.compatibility.legacyproxy.gui.MainWindow;
 import de.energiequant.vatsim.compatibility.legacyproxy.logging.BufferAppender;
 import de.energiequant.vatsim.compatibility.legacyproxy.server.Server;
@@ -37,7 +41,7 @@ public class Main {
     private static final Collection<Project> DEPENDENCIES = AttributionParser.getProjects();
 
     private static final String DISCLAIMER = ResourceUtils
-        .getResourceContentAsString(Main.class, "disclaimer.txt", StandardCharsets.UTF_8)
+        .getRelativeResourceContentAsString(Main.class, "disclaimer.txt", StandardCharsets.UTF_8)
         .orElseThrow(DisclaimerNotFound::new);
 
     private static Configuration configuration;
@@ -62,6 +66,10 @@ public class Main {
     private static final String OPTION_NAME_SHOW_LICENSE = "license";
 
     private static final String DEFAULT_CONFIG_PATH = "legacy-status-proxy-vatsim.properties";
+
+    private static final DateTimeFormatter UTC_HUMAN_READABLE_DATE_FORMATTER = DateTimeFormatter
+        .ofPattern("d MMMM YYYY", Locale.US)
+        .withZone(ZoneId.of("UTC"));
 
     private static class DisclaimerNotFound extends RuntimeException {
         public DisclaimerNotFound() {
@@ -169,6 +177,11 @@ public class Main {
     private static void printVersion() {
         System.out.println(APPLICATION_NAME);
         System.out.println("version " + APPLICATION_VERSION);
+        System.out.println("includes VAT-Spy data from "
+            + VatSpyMetaData.getIncludedDataTimestamp()
+                .map(UTC_HUMAN_READABLE_DATE_FORMATTER::format)
+                .orElse("unknown date") //
+        );
         System.out.println(APPLICATION_URL);
         License license = getEffectiveLicense();
         System.out.println("released under " + license.getCanonicalName() + " [" + license.name() + "]");

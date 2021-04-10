@@ -19,10 +19,13 @@ import java.awt.font.TextAttribute;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -42,6 +45,7 @@ import de.energiequant.vatsim.compatibility.legacyproxy.Main;
 import de.energiequant.vatsim.compatibility.legacyproxy.attribution.CopyrightNotice;
 import de.energiequant.vatsim.compatibility.legacyproxy.attribution.License;
 import de.energiequant.vatsim.compatibility.legacyproxy.attribution.Project;
+import de.energiequant.vatsim.compatibility.legacyproxy.attribution.VatSpyMetaData;
 
 public class AboutThisProgramPanel extends JPanel {
     private static final Logger LOGGER = LoggerFactory.getLogger(AboutThisProgramPanel.class);
@@ -50,6 +54,10 @@ public class AboutThisProgramPanel extends JPanel {
 
     private static final boolean CAN_BROWSE = Desktop.isDesktopSupported()
         && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE);
+
+    private static final DateTimeFormatter UTC_HUMAN_READABLE_DATE_FORMATTER = DateTimeFormatter
+        .ofPattern("d MMMM YYYY", Locale.US)
+        .withZone(ZoneId.of("UTC"));
 
     public AboutThisProgramPanel(Collection<Project> dependencies, Consumer<License> licenseClickedCallback) {
         super();
@@ -80,6 +88,14 @@ public class AboutThisProgramPanel extends JPanel {
 
         gbc.gridy++;
         add(new JLabel("Version " + Main.getApplicationVersion()), gbc);
+
+        gbc.gridy++;
+        add(new JLabel(
+            "Includes VAT-Spy data from "
+                + VatSpyMetaData.getIncludedDataTimestamp()
+                    .map(UTC_HUMAN_READABLE_DATE_FORMATTER::format)
+                    .orElse("unknown date") //
+        ), gbc);
 
         gbc.gridy++;
         add(applicationUrlLabel, gbc);

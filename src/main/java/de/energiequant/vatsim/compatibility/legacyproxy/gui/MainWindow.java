@@ -215,7 +215,7 @@ public class MainWindow extends JFrame {
     }
 
     private String getDefaultHtml() {
-        return ResourceUtils.getResourceContentAsString(getClass(), "LogOutput.html", StandardCharsets.UTF_8) //
+        return ResourceUtils.getRelativeResourceContentAsString(getClass(), "LogOutput.html", StandardCharsets.UTF_8) //
             .orElseThrow(() -> new RuntimeException("missing log output template"));
     }
 

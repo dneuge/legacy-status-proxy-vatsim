@@ -89,7 +89,7 @@ public enum License {
     }
 
     private String loadLicenseText(String filePath) {
-        return ResourceUtils.getResourceContentAsString(getClass(), filePath, StandardCharsets.UTF_8) //
+        return ResourceUtils.getRelativeResourceContentAsString(getClass(), filePath, StandardCharsets.UTF_8) //
             .orElseThrow(() -> new LicenseViolation(
                 "missing license text for " + this + ": resource " + filePath + " not found" //
             ));
