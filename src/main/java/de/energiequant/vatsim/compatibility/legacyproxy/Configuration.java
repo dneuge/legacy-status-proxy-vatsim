@@ -35,6 +35,7 @@ public class Configuration {
     private static final boolean DEFAULT_DISCLAIMER_ACCEPTED = false;
     private static final boolean DEFAULT_PARSER_LOG = false;
     private static final boolean DEFAULT_QUIRK_LEGACY_DATAFILE_UTF8 = false;
+    private static final boolean DEFAULT_UPSTREAM_BASE_URL_OVERRIDDEN = false;
     private static final String DEFAULT_UPSTREAM_BASE_URL = "http://status.vatsim.net";
     private static final String DEFAULT_LOCAL_HOST_NAME = "localhost";
     private static final int DEFAULT_SERVER_PORT = 8080;
@@ -49,7 +50,8 @@ public class Configuration {
     );
     private final AtomicBoolean isParserLogEnabled = new AtomicBoolean();
     private final AtomicReference<File> vatSpyBaseDirectory = new AtomicReference<>(null);
-    private final AtomicReference<String> upstreamBaseUrl = new AtomicReference<>(DEFAULT_UPSTREAM_BASE_URL);
+    private final AtomicReference<String> upstreamBaseUrlOverride = new AtomicReference<>(DEFAULT_UPSTREAM_BASE_URL);
+    private final AtomicBoolean isUpstreamBaseUrlOverridden = new AtomicBoolean(DEFAULT_UPSTREAM_BASE_URL_OVERRIDDEN);
     private final AtomicReference<String> localHostName = new AtomicReference<>(DEFAULT_LOCAL_HOST_NAME);
     private final AtomicInteger serverPort = new AtomicInteger(DEFAULT_SERVER_PORT);
     private final Set<String> allowedIps = Collections.synchronizedSet(new HashSet<>(DEFAULT_ALLOWED_IPS));
@@ -62,7 +64,8 @@ public class Configuration {
     private static final String KEY_PARSER_LOG = "parserLog";
     private static final String KEY_QUIRK_LEGACY_DATAFILE_UTF8 = "quirks.datafile.legacy.UTF8";
     private static final String KEY_SERVER_PORT = "serverPort";
-    private static final String KEY_UPSTREAM_BASE_URL = "upstreamBaseUrl";
+    private static final String KEY_UPSTREAM_BASE_URL_OVERRIDE = "upstreamBaseUrl";
+    private static final String KEY_UPSTREAM_BASE_URL_OVERRIDDEN = "upstreamBaseUrl.overrideEnabled";
     private static final String KEY_VATSPY_BASE_DIRECTORY = "vatSpyBaseDirectory";
     private static final String BASEKEY_ALLOWED_IPS = "allowedIps.";
 
@@ -117,10 +120,18 @@ public class Configuration {
         setParserLogEnabled(
             readBoolean(properties, KEY_PARSER_LOG, DEFAULT_PARSER_LOG) //
         );
-        setUpstreamBaseUrl(readString(properties, KEY_UPSTREAM_BASE_URL, DEFAULT_UPSTREAM_BASE_URL));
+        setUpstreamBaseUrl(readString(properties, KEY_UPSTREAM_BASE_URL_OVERRIDE, DEFAULT_UPSTREAM_BASE_URL));
         setLocalHostName(readString(properties, KEY_LOCAL_HOST_NAME, DEFAULT_LOCAL_HOST_NAME));
         setServerPort(readInteger(properties, KEY_SERVER_PORT, DEFAULT_SERVER_PORT));
         setAllowedIps(readStringsFromMultipleKeys(properties, BASEKEY_ALLOWED_IPS, DEFAULT_ALLOWED_IPS));
+
+        // migration: keep custom URL if previously set, guard override if default URL
+        // was used before
+        setUpstreamBaseUrlOverridden(readBoolean(
+            properties,
+            KEY_UPSTREAM_BASE_URL_OVERRIDDEN,
+            !DEFAULT_UPSTREAM_BASE_URL.equals(getUpstreamBaseUrlOverride()) //
+        ));
 
         logConfig();
     }
@@ -182,7 +193,11 @@ public class Configuration {
     private void logConfig() {
         LOGGER.debug("Configuration file path:        {}", configFile.getAbsolutePath());
         LOGGER.debug("Configured disclaimer accepted: {}", isDisclaimerAccepted.get());
-        LOGGER.debug("Configured upstream base URL:   {}", upstreamBaseUrl.get());
+        LOGGER.debug(
+            "Configured upstream base URL:   {} ({})",
+            upstreamBaseUrlOverride.get(),
+            isUpstreamBaseUrlOverridden.get() ? "active" : "not used" //
+        );
         LOGGER.debug("Configured local host name:     {}", localHostName.get());
         LOGGER.debug("Configured server port:         {}", serverPort.get());
         LOGGER.debug("Configured UTF8 quirk:          {}", isQuirkLegacyDataFileUtf8Enabled.get());
@@ -206,7 +221,8 @@ public class Configuration {
             Boolean.toString(isQuirkLegacyDataFileUtf8Enabled.get()) //
         );
         properties.setProperty(KEY_SERVER_PORT, Integer.toString(serverPort.get()));
-        properties.setProperty(KEY_UPSTREAM_BASE_URL, upstreamBaseUrl.get());
+        properties.setProperty(KEY_UPSTREAM_BASE_URL_OVERRIDE, upstreamBaseUrlOverride.get());
+        properties.setProperty(KEY_UPSTREAM_BASE_URL_OVERRIDDEN, Boolean.toString(isUpstreamBaseUrlOverridden.get()));
         properties.setProperty(
             KEY_VATSPY_BASE_DIRECTORY,
             getVatSpyBaseDirectory()
@@ -271,7 +287,11 @@ public class Configuration {
         upstreamBaseUrl = removeTrailingSlashes(upstreamBaseUrl);
         requireData("upstream base URL", upstreamBaseUrl);
 
-        this.upstreamBaseUrl.set(upstreamBaseUrl);
+        this.upstreamBaseUrlOverride.set(upstreamBaseUrl);
+    }
+
+    public void setUpstreamBaseUrlOverridden(boolean isUpstreamBaseUrlOverridden) {
+        this.isUpstreamBaseUrlOverridden.set(isUpstreamBaseUrlOverridden);
     }
 
     public void setVatSpyBaseDirectory(File directory) {
@@ -298,6 +318,10 @@ public class Configuration {
         return isQuirkLegacyDataFileUtf8Enabled.get();
     }
 
+    public boolean isUpstreamBaseUrlOverridden() {
+        return isUpstreamBaseUrlOverridden.get();
+    }
+
     public String getLocalHostName() {
         return localHostName.get();
     }
@@ -306,8 +330,12 @@ public class Configuration {
         return serverPort.get();
     }
 
+    public String getUpstreamBaseUrlOverride() {
+        return upstreamBaseUrlOverride.get();
+    }
+
     public String getUpstreamBaseUrl() {
-        return upstreamBaseUrl.get();
+        return isUpstreamBaseUrlOverridden() ? getUpstreamBaseUrlOverride() : DEFAULT_UPSTREAM_BASE_URL;
     }
 
     public Optional<File> getVatSpyBaseDirectory() {

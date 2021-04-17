@@ -88,12 +88,14 @@ public class ConfigurationWindow extends JFrame {
     }
 
     private class UpstreamPanel extends JPanel {
+        final JCheckBox upstreamBaseUrlOverrideCheckBox = new JCheckBox("Override default with custom URL");
         final JTextField upstreamBaseUrlField = new JTextField();
 
         public UpstreamPanel() {
             super();
 
             onChange(upstreamBaseUrlField, this::onUpstreamBaseUrlFieldAction);
+            onChange(upstreamBaseUrlOverrideCheckBox, this::onUpstreamBaseUrlOverrideChanged);
 
             setBorder(BorderFactory.createTitledBorder("Upstream connection (VATSIM data source)"));
 
@@ -107,14 +109,20 @@ public class ConfigurationWindow extends JFrame {
             gbc.fill = GridBagConstraints.HORIZONTAL;
             gbc.anchor = GridBagConstraints.WEST;
             add(stylePlain(new JLabel(
-                "<html>Only change upstream connection data if you know what you are doing, usually no changes should be required. The base URL is appended with further paths and cannot end with a slash. Changes to the upstream connection require a full restart of the proxy application (run/stop is insufficient).</html>")),
+                "<html>Usually no changes to upstream connection should be required. The base URL is appended with further paths and cannot end with a slash. Changes to the upstream connection require a full restart of the proxy application (run/stop is insufficient).</html>")),
                 gbc);
+
+            gbc.gridy++;
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+            gbc.gridwidth = 2;
+            add(upstreamBaseUrlOverrideCheckBox, gbc);
 
             gbc.gridy++;
             gbc.weightx = 0.0;
             gbc.fill = GridBagConstraints.NONE;
             gbc.gridwidth = 1;
-            add(new JLabel("Base URL:"), gbc);
+            JLabel upstreamBaseUrlLabel = new JLabel("Custom base URL:");
+            add(upstreamBaseUrlLabel, gbc);
 
             gbc.gridx++;
             gbc.weightx = 1.0;
@@ -123,7 +131,17 @@ public class ConfigurationWindow extends JFrame {
         }
 
         private void updateAllOptions() {
-            upstreamBaseUrlField.setText(Main.getConfiguration().getUpstreamBaseUrl());
+            Configuration config = Main.getConfiguration();
+            boolean isUpstreamBaseUrlOverridden = config.isUpstreamBaseUrlOverridden();
+
+            upstreamBaseUrlOverrideCheckBox.setSelected(isUpstreamBaseUrlOverridden);
+            upstreamBaseUrlField.setText(config.getUpstreamBaseUrlOverride());
+            upstreamBaseUrlField.setEnabled(isUpstreamBaseUrlOverridden);
+        }
+
+        private void onUpstreamBaseUrlOverrideChanged() {
+            Main.getConfiguration().setUpstreamBaseUrlOverridden(upstreamBaseUrlOverrideCheckBox.isSelected());
+            updateAllOptions();
         }
 
         private void onUpstreamBaseUrlFieldAction() {
