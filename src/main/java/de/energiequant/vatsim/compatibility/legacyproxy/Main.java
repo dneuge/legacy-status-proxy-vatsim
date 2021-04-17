@@ -59,7 +59,8 @@ public class Main {
     private static final String OPTION_NAME_HELP = "help";
     private static final String OPTION_NAME_SHOW_DISCLAIMER = "disclaimer";
     private static final String OPTION_NAME_ACCEPT_DISCLAIMER = "accept-disclaimer-and-licenses";
-    private static final String OPTION_NAME_NO_GUI = "no-gui";
+    private static final String OPTION_NAME_NO_GUI = Launcher.OPTION_NAME_NO_GUI;
+    private static final String OPTION_NAME_NO_CLASSPATH_CHECK = Launcher.OPTION_NAME_NO_CLASSPATH_CHECK;
     private static final String OPTION_NAME_CONFIG_PATH = "config";
     private static final String OPTION_NAME_SAVE_CONFIG = "save-config";
     private static final String OPTION_NAME_VERSION = "version";
@@ -288,6 +289,12 @@ public class Main {
             .builder()
             .longOpt(OPTION_NAME_NO_GUI)
             .desc("disables GUI to force running headless on CLI")
+            .build());
+
+        options.addOption(Option
+            .builder()
+            .longOpt(OPTION_NAME_NO_CLASSPATH_CHECK)
+            .desc("disables check for possibly broken Java class path at application startup")
             .build());
 
         options.addOption(Option

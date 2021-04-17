@@ -123,6 +123,7 @@ Arguments are appended to the end of the command. Available options are:
 | Option                             | Description                                                                                             |
 | ---------------------------------- | ------------------------------------------------------------------------------------------------------- |
 | `--no-gui`                         | force to stay on CLI, do not start GUI even if available                                                |
+| `--no-classpath-check`             | disables check for possibly broken Java class path at application startup                               |
 | `--help`                           | displays a complete list of all available options                                                       |
 | `--version`                        | displays version and dependency information together with the associated licenses                       |
 | `--license LICENSE`                | displays the specified license identified by the keys shown on `--help` or `--version`                  |
@@ -186,6 +187,14 @@ Check if the client should really be allowed to access the server and add the IP
 **Cause:** The affected client did not call the proxy server by its configured host name.
 
 Check the local host name (default: `localhost`) in your server configuration. Choose a host name or IPv4 address that can be accessed by all wanted clients and only refer to that exact host name on all clients.
+
+### An exception prevents the application from starting
+
+**Possible cause:** The file path leading up to the JAR file contains a directory ending with an exclamation mark (`!`).
+
+Java is unable to access such paths properly. Please rename the offending directory or move the JAR file to another location.
+
+**Any other cause may exist.** Please run the proxy from command line to see all log output and debug information. That information may already contain a message indicating the reason for startup failure. If you are unable to resolve or think this may be a common issue please provide these details to the developer for analysis.
 
 ## Compilation
 
