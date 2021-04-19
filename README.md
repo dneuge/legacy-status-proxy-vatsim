@@ -200,10 +200,9 @@ Java is unable to access such paths properly. Please rename the offending direct
 
 ### Install unpublished dependencies
 
-Some dependencies have no stable release version and thus are currently not available from Maven central, so they have to be installed locally:
+Some dependencies are not available from Maven central yet, so they have to be installed locally:
 
 - [Web Data Retrieval](https://github.com/dneuge/web-data-retrieval) at version `0.2`
-- VATPlanner's [VATSIM Public Data Formats](https://github.com/vatplanner/dataformats-vatsim-public) library at version `0.1-pre210402`
 
 In addition, the following projects do not have Maven artifacts nor an official POM file, so they need to be fetched, repackaged and installed locally as well:
 
