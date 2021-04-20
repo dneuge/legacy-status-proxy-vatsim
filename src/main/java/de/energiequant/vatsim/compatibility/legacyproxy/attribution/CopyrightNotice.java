@@ -141,10 +141,10 @@ public class CopyrightNotice {
             "Copyright (c) 2004-2017 QOS.ch\n"
                 + " All rights reserved." //
         );
-        add("org.vatplanner", "dataformats-vatsim-public", "0.1-pre210402", //
+        add("org.vatplanner", "dataformats-vatsim-public", "0.1-pre210419", //
             "Copyright (c) 2016 Daniel Neugebauer" //
         );
-        add("de.energiequant.common", "webdataretrieval", "0.2", //
+        add("de.energiequant.common", "webdataretrieval", "0.2.1", //
             "Copyright (c) 2016 Daniel Neugebauer" //
         );
         add("_inofficial.com.github.vatsimnetwork", "vatspy-data-project", "4f3ae5ecce72ace70c26c22ef751cd3bc03201de", //
