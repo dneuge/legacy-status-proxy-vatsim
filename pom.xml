@@ -21,7 +21,7 @@
 
 		<!-- runtime dependencies -->
 		<vatplanner.dataformatsVatsimPublic.version>0.1-pre210419</vatplanner.dataformatsVatsimPublic.version>
-		<webDataRetrieval.version>0.2</webDataRetrieval.version>
+		<webDataRetrieval.version>0.2.1</webDataRetrieval.version>
 		<vatspyData.version>4f3ae5ecce72ace70c26c22ef751cd3bc03201de</vatspyData.version>
 		
 		<slf4j.version>1.7.30</slf4j.version>

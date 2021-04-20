@@ -200,11 +200,7 @@ Java is unable to access such paths properly. Please rename the offending direct
 
 ### Install unpublished dependencies
 
-Some dependencies are not available from Maven central yet, so they have to be installed locally:
-
-- [Web Data Retrieval](https://github.com/dneuge/web-data-retrieval) at version `0.2`
-
-In addition, the following projects do not have Maven artifacts nor an official POM file, so they need to be fetched, repackaged and installed locally as well:
+The following projects do not have Maven artifacts nor an official POM file, so they need to be fetched, repackaged and installed locally as well:
 
 - [VAT-Spy Client Data](https://github.com/vatsimnetwork/vatspy-data-project) at revision `4f3ae5ecce72ace70c26c22ef751cd3bc03201de`
 
