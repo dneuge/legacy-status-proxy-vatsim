@@ -29,6 +29,7 @@ import org.vatplanner.dataformats.vatsimpublic.parser.vatspy.VatSpyFile;
 import org.vatplanner.dataformats.vatsimpublic.parser.vatspy.VatSpyFileParser;
 
 import de.energiequant.vatsim.compatibility.legacyproxy.Main;
+import de.energiequant.vatsim.compatibility.legacyproxy.utils.GeoMath;
 import de.energiequant.vatsim.compatibility.legacyproxy.utils.ResourceUtils;
 
 public class VatSpyStationLocator {
@@ -181,7 +182,7 @@ public class VatSpyStationLocator {
                 continue;
             }
 
-            GeoPoint2D centerPoint = average(centerPoints);
+            GeoPoint2D centerPoint = GeoMath.average(centerPoints);
             LOGGER.trace(
                 "Center point for UIR \"{}\" has been calculated to {}",
                 uir.getId(), centerPoint //
@@ -291,19 +292,11 @@ public class VatSpyStationLocator {
             return boundaries.iterator().next().getCenterPoint();
         }
 
-        double sumLatitudes = 0.0;
-        double sumLongitudes = 0.0;
+        List<GeoPoint2D> points = boundaries.stream()
+            .map(FIRBoundary::getCenterPoint)
+            .collect(Collectors.toList());
 
-        for (FIRBoundary boundary : boundaries) {
-            GeoPoint2D singleCenter = boundary.getCenterPoint();
-            sumLatitudes += singleCenter.getLatitude();
-            sumLongitudes += singleCenter.getLongitude();
-        }
-
-        GeoPoint2D calculated = new GeoPoint2D(
-            sumLatitudes / numBoundaries,
-            sumLongitudes / numBoundaries //
-        );
+        GeoPoint2D calculated = GeoMath.average(points);
 
         if (LOGGER.isTraceEnabled()) {
             LOGGER.trace(
@@ -311,36 +304,11 @@ public class VatSpyStationLocator {
                 boundaries.iterator().next().getId(),
                 calculated,
                 numBoundaries,
-                boundaries.stream()
-                    .map(FIRBoundary::getCenterPoint)
+                points.stream()
                     .map(GeoPoint2D::toString)
                     .collect(Collectors.joining(", ")) //
             );
         }
-
-        return calculated;
-    }
-
-    private GeoPoint2D average(Collection<GeoPoint2D> points) {
-        // FIXME: combine with calculateCenterPoint
-
-        int numPoints = points.size();
-        if (numPoints == 1) {
-            return points.iterator().next();
-        }
-
-        double sumLatitudes = 0.0;
-        double sumLongitudes = 0.0;
-
-        for (GeoPoint2D point : points) {
-            sumLatitudes += point.getLatitude();
-            sumLongitudes += point.getLongitude();
-        }
-
-        GeoPoint2D calculated = new GeoPoint2D(
-            sumLatitudes / numPoints,
-            sumLongitudes / numPoints //
-        );
 
         return calculated;
     }
