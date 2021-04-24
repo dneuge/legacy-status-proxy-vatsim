@@ -88,14 +88,14 @@ public class ConfigurationWindow extends JFrame {
     }
 
     private class UpstreamPanel extends JPanel {
-        final JCheckBox upstreamBaseUrlOverrideCheckBox = new JCheckBox("Override default with custom URL");
+        final JCheckBox upstreamBaseUrlDefaultCheckBox = new JCheckBox("Use VATSIM default URL");
         final JTextField upstreamBaseUrlField = new JTextField();
 
         public UpstreamPanel() {
             super();
 
             onChange(upstreamBaseUrlField, this::onUpstreamBaseUrlFieldAction);
-            onChange(upstreamBaseUrlOverrideCheckBox, this::onUpstreamBaseUrlOverrideChanged);
+            onChange(upstreamBaseUrlDefaultCheckBox, this::onUpstreamBaseUrlOverrideChanged);
 
             setBorder(BorderFactory.createTitledBorder("Upstream connection (VATSIM data source)"));
 
@@ -115,7 +115,7 @@ public class ConfigurationWindow extends JFrame {
             gbc.gridy++;
             gbc.fill = GridBagConstraints.HORIZONTAL;
             gbc.gridwidth = 2;
-            add(upstreamBaseUrlOverrideCheckBox, gbc);
+            add(upstreamBaseUrlDefaultCheckBox, gbc);
 
             gbc.gridy++;
             gbc.weightx = 0.0;
@@ -134,13 +134,13 @@ public class ConfigurationWindow extends JFrame {
             Configuration config = Main.getConfiguration();
             boolean isUpstreamBaseUrlOverridden = config.isUpstreamBaseUrlOverridden();
 
-            upstreamBaseUrlOverrideCheckBox.setSelected(isUpstreamBaseUrlOverridden);
+            upstreamBaseUrlDefaultCheckBox.setSelected(!isUpstreamBaseUrlOverridden);
             upstreamBaseUrlField.setText(config.getUpstreamBaseUrlOverride());
             upstreamBaseUrlField.setEnabled(isUpstreamBaseUrlOverridden);
         }
 
         private void onUpstreamBaseUrlOverrideChanged() {
-            Main.getConfiguration().setUpstreamBaseUrlOverridden(upstreamBaseUrlOverrideCheckBox.isSelected());
+            Main.getConfiguration().setUpstreamBaseUrlOverridden(!upstreamBaseUrlDefaultCheckBox.isSelected());
             updateAllOptions();
         }
 
