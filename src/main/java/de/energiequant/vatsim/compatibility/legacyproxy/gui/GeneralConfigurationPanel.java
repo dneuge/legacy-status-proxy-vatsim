@@ -4,7 +4,6 @@ import static de.energiequant.vatsim.compatibility.legacyproxy.gui.SwingHelper.o
 import static de.energiequant.vatsim.compatibility.legacyproxy.gui.SwingHelper.stylePlain;
 import static de.energiequant.vatsim.compatibility.legacyproxy.gui.SwingHelper.unformattedNumericSpinner;
 
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -18,7 +17,6 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JFormattedTextField;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -31,11 +29,10 @@ import javax.swing.SpinnerNumberModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.energiequant.vatsim.compatibility.legacyproxy.AppConstants;
 import de.energiequant.vatsim.compatibility.legacyproxy.Configuration;
 import de.energiequant.vatsim.compatibility.legacyproxy.Main;
 
-public class GeneralConfigurationPanel extends JFrame {
+public class GeneralConfigurationPanel extends JPanel {
     private static final Logger LOGGER = LoggerFactory.getLogger(GeneralConfigurationPanel.class);
 
     private final UpstreamPanel upstreamPanel = new UpstreamPanel();
@@ -43,10 +40,7 @@ public class GeneralConfigurationPanel extends JFrame {
     private final AccessPanel accessPanel = new AccessPanel();
 
     public GeneralConfigurationPanel() {
-        super("Configuration");
-
-        setSize(new Dimension(640, 480));
-        setMinimumSize(new Dimension(640, 480));
+        super();
 
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -64,19 +58,6 @@ public class GeneralConfigurationPanel extends JFrame {
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         add(accessPanel, gbc);
-
-        gbc.gridy++;
-        gbc.weightx = 0.0;
-        gbc.weighty = 0.0;
-        gbc.fill = GridBagConstraints.NONE;
-        gbc.anchor = GridBagConstraints.EAST;
-        JButton saveButton = new JButton("Save configuration");
-        saveButton.addActionListener(this::onSaveClicked);
-        if (!Main.getConfiguration().isSaneLocation()) {
-            saveButton.setEnabled(false);
-            saveButton.setToolTipText(AppConstants.SAVING_DISABLED_TOOLTIP);
-        }
-        add(saveButton, gbc);
 
         updateAllOptions();
     }
@@ -438,7 +419,4 @@ public class GeneralConfigurationPanel extends JFrame {
         }
     }
 
-    private void onSaveClicked(ActionEvent event) {
-        Main.getConfiguration().save();
-    }
 }
