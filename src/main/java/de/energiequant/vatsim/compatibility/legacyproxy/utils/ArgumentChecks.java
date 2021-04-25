@@ -28,4 +28,11 @@ public class ArgumentChecks {
             }
         }
     }
+
+    public static void requireAtLeast(String what, int actual, int requiredMinimum) {
+        if (actual < requiredMinimum) {
+            throw new IllegalArgumentException(what + " must be at least " + requiredMinimum);
+        }
+    }
+
 }

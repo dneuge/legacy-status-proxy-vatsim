@@ -25,6 +25,51 @@ public class StationLocator {
         NONE;
     }
 
+    public static enum Strategy {
+        DISABLE(
+            "disabled",
+            "do not locate stations" //
+        ),
+        ONLY_VATSPY(
+            "vatspy",
+            "locate only from static VAT-Spy data" //
+        ),
+        FIRST_VATSPY_THEN_TRANSCEIVERS(
+            "vatspyAndTransceivers",
+            "locate from static VAT-Spy data, then complete through online transceivers" //
+        ),
+        ONLY_TRANSCEIVERS(
+            "transceivers",
+            "locate only through online transceivers" //
+        );
+
+        private final String configValue;
+        private final String description;
+
+        private Strategy(String configValue, String description) {
+            this.configValue = configValue;
+            this.description = description;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public String getConfigValue() {
+            return configValue;
+        }
+
+        public static Optional<Strategy> byConfigValue(String configValue) {
+            for (Strategy strategy : values()) {
+                if (strategy.getConfigValue().equals(configValue)) {
+                    return Optional.of(strategy);
+                }
+            }
+
+            return Optional.empty();
+        }
+    }
+
     public StationLocator() {
         this.vatSpyStationLocator = initializeVatSpyStationLocator();
     }

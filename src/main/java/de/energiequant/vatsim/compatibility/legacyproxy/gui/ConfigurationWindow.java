@@ -22,8 +22,8 @@ public class ConfigurationWindow extends JFrame {
     public ConfigurationWindow() {
         super("Configuration");
 
-        setSize(new Dimension(640, 480));
-        setMinimumSize(new Dimension(640, 480));
+        setSize(new Dimension(750, 700));
+        setMinimumSize(new Dimension(750, 700));
 
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -35,6 +35,7 @@ public class ConfigurationWindow extends JFrame {
         gbc.fill = GridBagConstraints.BOTH;
         JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.addTab("General", new GeneralConfigurationPanel());
+        tabbedPane.addTab("Station Locator", new StationLocatorPanel());
         add(tabbedPane, gbc);
 
         gbc.gridy++;
