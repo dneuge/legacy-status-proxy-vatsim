@@ -7,6 +7,7 @@ import static de.energiequant.vatsim.compatibility.legacyproxy.gui.SwingHelper.u
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -39,6 +40,8 @@ public class GeneralConfigurationPanel extends JPanel {
     private final HttpServerPanel httpServerPanel = new HttpServerPanel();
     private final AccessPanel accessPanel = new AccessPanel();
 
+    private static final Insets CHECKBOX_WIDTH_INSETS = new Insets(0, 22, 0, 0);
+
     public GeneralConfigurationPanel() {
         super();
 
@@ -70,6 +73,8 @@ public class GeneralConfigurationPanel extends JPanel {
 
     private class UpstreamPanel extends JPanel {
         final JCheckBox upstreamBaseUrlDefaultCheckBox = new JCheckBox("Use VATSIM default URL");
+
+        final JLabel upstreamBaseUrlLabel = new JLabel("Custom base URL:");
         final JTextField upstreamBaseUrlField = new JTextField();
 
         public UpstreamPanel() {
@@ -102,7 +107,7 @@ public class GeneralConfigurationPanel extends JPanel {
             gbc.weightx = 0.0;
             gbc.fill = GridBagConstraints.NONE;
             gbc.gridwidth = 1;
-            JLabel upstreamBaseUrlLabel = new JLabel("Custom base URL:");
+            gbc.insets = CHECKBOX_WIDTH_INSETS;
             add(upstreamBaseUrlLabel, gbc);
 
             gbc.gridx++;
@@ -117,11 +122,23 @@ public class GeneralConfigurationPanel extends JPanel {
 
             upstreamBaseUrlDefaultCheckBox.setSelected(!isUpstreamBaseUrlOverridden);
             upstreamBaseUrlField.setText(config.getUpstreamBaseUrlOverride());
+
+            upstreamBaseUrlLabel.setEnabled(isUpstreamBaseUrlOverridden);
             upstreamBaseUrlField.setEnabled(isUpstreamBaseUrlOverridden);
         }
 
         private void onUpstreamBaseUrlOverrideChanged() {
-            Main.getConfiguration().setUpstreamBaseUrlOverridden(!upstreamBaseUrlDefaultCheckBox.isSelected());
+            boolean newValue = !upstreamBaseUrlDefaultCheckBox.isSelected();
+
+            Configuration config = Main.getConfiguration();
+            boolean oldValue = config.isUpstreamBaseUrlOverridden();
+            if (oldValue == newValue) {
+                return;
+            }
+
+            LOGGER.debug("setting override of upstream URL to {}", newValue);
+            Main.getConfiguration().setUpstreamBaseUrlOverridden(newValue);
+
             updateAllOptions();
         }
 
