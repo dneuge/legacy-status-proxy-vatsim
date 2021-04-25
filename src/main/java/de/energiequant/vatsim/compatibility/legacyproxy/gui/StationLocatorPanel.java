@@ -427,7 +427,7 @@ public class StationLocatorPanel extends JPanel {
         private void updateAllOptions() {
             Configuration config = Main.getConfiguration();
 
-            boolean isActive = isVatSpyMethodSelected(config.getStationLocatorStrategy());
+            boolean isActive = config.getStationLocatorStrategy().enablesVatSpy();
             if (isActive) {
                 setBorder(BorderFactory.createTitledBorder(TITLE));
             } else {
@@ -450,11 +450,6 @@ public class StationLocatorPanel extends JPanel {
             externalDataButton.setEnabled(shouldUseExternalData);
             externalDataFallbackLabel.setEnabled(shouldUseExternalData);
             externalDataCheckLabel.setEnabled(shouldUseExternalData);
-        }
-
-        private boolean isVatSpyMethodSelected(Strategy strategy) {
-            // FIXME: move to enum
-            return (strategy == Strategy.FIRST_VATSPY_THEN_TRANSCEIVERS) || (strategy == Strategy.ONLY_VATSPY);
         }
     }
 
@@ -626,7 +621,7 @@ public class StationLocatorPanel extends JPanel {
         private void updateAllOptions() {
             Configuration config = Main.getConfiguration();
 
-            boolean isActive = isTransceiverMethodSelected(config.getStationLocatorStrategy());
+            boolean isActive = config.getStationLocatorStrategy().enablesOnlineTransceivers();
             if (isActive) {
                 setBorder(BorderFactory.createTitledBorder(TITLE));
             } else {
@@ -646,11 +641,6 @@ public class StationLocatorPanel extends JPanel {
             cacheLabel.setEnabled(shouldUseOverride);
             cacheSpinner.setEnabled(shouldUseOverride);
             cacheUnitLabel.setEnabled(shouldUseOverride);
-        }
-
-        private boolean isTransceiverMethodSelected(Strategy strategy) {
-            // FIXME: move to enum
-            return (strategy == Strategy.FIRST_VATSPY_THEN_TRANSCEIVERS) || (strategy == Strategy.ONLY_TRANSCEIVERS);
         }
     }
 

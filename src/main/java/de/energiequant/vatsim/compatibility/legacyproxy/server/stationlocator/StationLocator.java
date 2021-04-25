@@ -28,27 +28,39 @@ public class StationLocator {
     public static enum Strategy {
         DISABLE(
             "disabled",
-            "do not locate stations" //
+            "do not locate stations",
+            false,
+            false //
         ),
         ONLY_VATSPY(
             "vatspy",
-            "locate only from static VAT-Spy data" //
+            "locate only from static VAT-Spy data",
+            true,
+            false //
         ),
         FIRST_VATSPY_THEN_TRANSCEIVERS(
             "vatspyAndTransceivers",
-            "locate from static VAT-Spy data, then complete through online transceivers" //
+            "locate from static VAT-Spy data, then complete through online transceivers",
+            true,
+            true //
         ),
         ONLY_TRANSCEIVERS(
             "transceivers",
-            "locate only through online transceivers" //
+            "locate only through online transceivers",
+            false,
+            true //
         );
 
         private final String configValue;
         private final String description;
+        private final boolean enablesVatSpy;
+        private final boolean enablesOnlineTransceivers;
 
-        private Strategy(String configValue, String description) {
+        private Strategy(String configValue, String description, boolean enablesVatSpy, boolean enablesOnlineTransceivers) {
             this.configValue = configValue;
             this.description = description;
+            this.enablesVatSpy = enablesVatSpy;
+            this.enablesOnlineTransceivers = enablesOnlineTransceivers;
         }
 
         public String getDescription() {
@@ -67,6 +79,14 @@ public class StationLocator {
             }
 
             return Optional.empty();
+        }
+
+        public boolean enablesOnlineTransceivers() {
+            return enablesOnlineTransceivers;
+        }
+
+        public boolean enablesVatSpy() {
+            return enablesVatSpy;
         }
     }
 
