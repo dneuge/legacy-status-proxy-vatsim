@@ -147,7 +147,7 @@ public class CopyrightNotice {
         add("de.energiequant.common", "webdataretrieval", "0.2.1", //
             "Copyright (c) 2016 Daniel Neugebauer" //
         );
-        add("_inofficial.com.github.vatsimnetwork", "vatspy-data-project", "4f3ae5ecce72ace70c26c22ef751cd3bc03201de", //
+        add("_inofficial.com.github.vatsimnetwork", "vatspy-data-project", "487beca0f11f1cee5cb32c001591cd6845241e6a", //
             // based on README file
             "Copyright (c) 2019-2021 Néstor Pérez, Niels Voogd, Adrian Bjerke, Alex Long and contributors\n"
                 + "VAT-Spy is being developed by Ross Carlson\n"

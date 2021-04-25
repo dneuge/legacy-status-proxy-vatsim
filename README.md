@@ -202,7 +202,7 @@ Java is unable to access such paths properly. Please rename the offending direct
 
 The following projects do not have Maven artifacts nor an official POM file, so they need to be fetched, repackaged and installed locally as well:
 
-- [VAT-Spy Client Data](https://github.com/vatsimnetwork/vatspy-data-project) at revision `4f3ae5ecce72ace70c26c22ef751cd3bc03201de`
+- [VAT-Spy Client Data](https://github.com/vatsimnetwork/vatspy-data-project) at revision `487beca0f11f1cee5cb32c001591cd6845241e6a`
 
 Automated checkout, build and installation can be performed on Linux systems by running [install-unpublished-dependencies.sh](install-unpublished-dependencies.sh).
 
