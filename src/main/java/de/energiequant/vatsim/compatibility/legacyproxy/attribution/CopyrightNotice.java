@@ -63,12 +63,12 @@ public class CopyrightNotice {
                 + "\n"
                 + "\"LZMA SDK is placed in the public domain.\" (http://www.7-zip.org/sdk.html)" //
         );
-        add("commons-io", "commons-io", "2.6", //
+        add("commons-io", "commons-io", "2.8.0", //
             "Apache Commons IO\n"
-                + "Copyright 2002-2017 The Apache Software Foundation\n"
+                + "Copyright 2002-2020 The Apache Software Foundation\n"
                 + "\n"
                 + "This product includes software developed at\n"
-                + "The Apache Software Foundation (http://www.apache.org/)." //
+                + "The Apache Software Foundation (https://www.apache.org/)." //
         );
         add("org.apache.commons", "commons-lang3", "3.12.0", //
             "Apache Commons Lang\n"
@@ -144,7 +144,7 @@ public class CopyrightNotice {
         add("org.vatplanner", "dataformats-vatsim-public", "0.1-pre210419", //
             "Copyright (c) 2016 Daniel Neugebauer" //
         );
-        add("de.energiequant.common", "webdataretrieval", "0.2.1", //
+        add("de.energiequant.common", "webdataretrieval", "0.2.2", //
             "Copyright (c) 2016 Daniel Neugebauer" //
         );
         add("_inofficial.com.github.vatsimnetwork", "vatspy-data-project", "487beca0f11f1cee5cb32c001591cd6845241e6a", //
