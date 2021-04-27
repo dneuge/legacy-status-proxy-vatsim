@@ -6,7 +6,12 @@ import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.vatplanner.dataformats.vatsimpublic.entities.status.ControllerRating;
+import org.vatplanner.dataformats.vatsimpublic.parser.Client;
+import org.vatplanner.dataformats.vatsimpublic.parser.ClientType;
+import org.vatplanner.dataformats.vatsimpublic.parser.DataFile;
 
+import de.energiequant.vatsim.compatibility.legacyproxy.Configuration;
 import de.energiequant.vatsim.compatibility.legacyproxy.Main;
 import de.energiequant.vatsim.compatibility.legacyproxy.server.stationlocator.Cache.Entry;
 
@@ -19,6 +24,16 @@ public class StationLocator {
     private static final Duration POSITIVE_RESULT_TIMEOUT = Duration.ofMinutes(10);
 
     private final VatSpyStationLocator vatSpyStationLocator;
+
+    private final Configuration config = Main.getConfiguration();
+    private final Strategy strategy = config.getStationLocatorStrategy();
+    private final boolean shouldIdentifyObserverByCallsign = config.shouldIdentifyObserverByCallsign();
+    private final boolean shouldWarnAboutUnlocatableATC = config.shouldWarnAboutUnlocatableATC();
+    private final boolean shouldWarnAboutUnlocatableObserver = config.shouldWarnAboutUnlocatableObserver();
+    private final boolean shouldLocateObserverByVatSpy = config.shouldLocateObserverByVatSpy();
+    private final boolean shouldLocateObserverByTransceivers = config.shouldLocateObserverByTransceivers();
+    private final boolean shouldLocateObserver = shouldLocateObserverByTransceivers || shouldLocateObserverByVatSpy;
+    private final boolean shouldIgnorePlaceholderFrequency = config.shouldIgnorePlaceholderFrequency();
 
     public static enum Source {
         VATSPY,
@@ -126,7 +141,7 @@ public class StationLocator {
         return null;
     }
 
-    public Optional<Station> locate(String callsign) {
+    public Optional<Station> locate(String callsign, boolean isObserver) {
         Entry<String, Station, Source> cached = cache.get(callsign).orElse(null);
         if (cached != null) {
             LOGGER.trace("location for \"{}\" was available from cache, source: {}", callsign, cached.getMetaData());
@@ -135,7 +150,10 @@ public class StationLocator {
 
         Station station = null;
 
-        if (vatSpyStationLocator != null) {
+        boolean shouldLocateByVatSpy = (vatSpyStationLocator != null)
+            && strategy.enablesVatSpy()
+            && (!isObserver || shouldLocateObserverByVatSpy);
+        if (shouldLocateByVatSpy) {
             station = vatSpyStationLocator.locate(callsign).orElse(null);
             if (station != null) {
                 LOGGER.trace("location for \"{}\" was available from VATSpy data, caching", callsign);
@@ -147,5 +165,52 @@ public class StationLocator {
         // TODO: negative cache?
 
         return Optional.empty();
+    }
+
+    public void injectTo(DataFile dataFile) {
+        // FIXME: add copyright/license notice to data file
+
+        LOGGER.debug("Injecting station locations...");
+        for (Client client : dataFile.getClients()) {
+            ClientType clientType = client.getRawClientType();
+            boolean isATC = (clientType == ClientType.ATC_CONNECTED) || (clientType == ClientType.ATIS);
+            boolean isObserver = (client.getControllerRating() == ControllerRating.OBS);
+            boolean hasLocation = !(Double.isNaN(client.getLatitude()) || Double.isNaN(client.getLongitude()));
+            boolean hasActiveFrequency = (client
+                .getServedFrequencyKilohertz() < Client.FREQUENCY_KILOHERTZ_PLACEHOLDER_MINIMUM //
+            );
+
+            if (shouldIdentifyObserverByCallsign && !isObserver) {
+                isObserver = client.getCallsign().toUpperCase().endsWith("_OBS");
+            }
+
+            boolean shouldLocate = isATC
+                && (!isObserver || shouldLocateObserver)
+                && !hasLocation
+                && (hasActiveFrequency || !shouldIgnorePlaceholderFrequency);
+            if (!shouldLocate) {
+                continue;
+            }
+
+            String callsign = client.getCallsign();
+            Station station = locate(callsign, isObserver).orElse(null);
+
+            if (station == null) {
+                if (isObserver) {
+                    if (shouldWarnAboutUnlocatableObserver) {
+                        LOGGER.warn("observer station {} could not be located", callsign);
+                    }
+                } else if (isATC && shouldWarnAboutUnlocatableATC) {
+                    LOGGER.warn("ATC station {} could not be located", callsign);
+                }
+            } else {
+                double latitude = station.getLatitude();
+                double longitude = station.getLongitude();
+
+                LOGGER.debug("injecting location for {} ({} / {})", callsign, latitude, longitude);
+                client.setLatitude(latitude);
+                client.setLongitude(longitude);
+            }
+        }
     }
 }

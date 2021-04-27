@@ -28,6 +28,7 @@ import org.vatplanner.dataformats.vatsimpublic.parser.vatspy.UpperInformationReg
 import org.vatplanner.dataformats.vatsimpublic.parser.vatspy.VatSpyFile;
 import org.vatplanner.dataformats.vatsimpublic.parser.vatspy.VatSpyFileParser;
 
+import de.energiequant.vatsim.compatibility.legacyproxy.Configuration;
 import de.energiequant.vatsim.compatibility.legacyproxy.Main;
 import de.energiequant.vatsim.compatibility.legacyproxy.utils.GeoMath;
 import de.energiequant.vatsim.compatibility.legacyproxy.utils.ResourceUtils;
@@ -44,6 +45,9 @@ public class VatSpyStationLocator {
         + EXPECTED_FILE_NAME_VATSPY_DAT;
     private static final String INCLUDED_FIR_BOUNDARIES_DAT_PATH = "com/github/vatsimnetwork/vatspy-data-project/"
         + EXPECTED_FILE_NAME_FIR_BOUNDARIES_DAT;
+
+    private final Configuration config = Main.getConfiguration();
+    private final boolean shouldAliasUSStations = config.shouldVatSpyAliasUSStations();
 
     private final Map<String, GeoPoint2D> centerPointsByCallsignPrefix = new HashMap<>();
 
@@ -235,14 +239,27 @@ public class VatSpyStationLocator {
             }
         }
 
-        // TODO: maybe make US aliases a configurable option?
+        if (shouldAliasUSStations) {
+            Map<String, GeoPoint2D> aliasedCenterPoints = aliasUSStations(centerPointsByCallsignPrefix);
+            centerPointsByCallsignPrefix.putAll(aliasedCenterPoints);
+        }
 
-        // US stations (ICAO prefix K) often log in without the ICAO prefix and
-        // sometimes do not match any other registered prefix either. This is a
-        // well-known issue with a good chance of it just putting a K in front
-        // matching the correct station, so we alias all US stations to omit their K
-        // prefix if no other call sign collides to increase our chance to provide
-        // as many locations as possible from VAT-Spy data.
+        return centerPointsByCallsignPrefix;
+    }
+
+    /**
+     * US stations (ICAO prefix K) often log in without the ICAO prefix and
+     * sometimes do not match any other registered prefix either. This is a
+     * well-known issue with a good chance of it just putting a K in front matching
+     * the correct station, so we alias all US stations to omit their K prefix if no
+     * other call sign collides to increase our chance to provide as many locations
+     * as possible from VAT-Spy data.
+     * 
+     * @param centerPointsByCallsignPrefix all locations indexed by callsign prefix
+     *        so far
+     * @return stations to be aliased, collision-free
+     */
+    private Map<String, GeoPoint2D> aliasUSStations(Map<String, GeoPoint2D> centerPointsByCallsignPrefix) {
         Map<String, GeoPoint2D> aliasedCenterPoints = new HashMap<>();
         for (Map.Entry<String, GeoPoint2D> entry : centerPointsByCallsignPrefix.entrySet()) {
             String originalCallsignPrefix = entry.getKey();
@@ -265,10 +282,7 @@ public class VatSpyStationLocator {
 
             aliasedCenterPoints.put(alias, centerPoint);
         }
-
-        centerPointsByCallsignPrefix.putAll(aliasedCenterPoints);
-
-        return centerPointsByCallsignPrefix;
+        return aliasedCenterPoints;
     }
 
     private Map<String, GeoPoint2D> indexCenterPointsByBoundaryId(FIRBoundaryFile firBoundaryFile) {

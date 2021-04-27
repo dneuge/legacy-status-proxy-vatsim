@@ -169,6 +169,10 @@ public class Main {
 
     private static void warnAboutOldVatSpyData() {
         // TODO: warn only if not overridden by an external data source
+        if (!configuration.shouldWarnAboutOldIntegratedVatSpyDatabase()) {
+            return;
+        }
+
         if (VatSpyMetaData.isOlderThan(AppConstants.VATSPY_AGE_WARNING_THRESHOLD)) {
             LOGGER.warn(
                 "VAT-Spy data is {} days old and may be outdated. Please check for updates.",
