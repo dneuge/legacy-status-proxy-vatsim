@@ -28,8 +28,10 @@ import org.vatplanner.dataformats.vatsimpublic.parser.vatspy.UpperInformationReg
 import org.vatplanner.dataformats.vatsimpublic.parser.vatspy.VatSpyFile;
 import org.vatplanner.dataformats.vatsimpublic.parser.vatspy.VatSpyFileParser;
 
+import de.energiequant.vatsim.compatibility.legacyproxy.AppConstants;
 import de.energiequant.vatsim.compatibility.legacyproxy.Configuration;
 import de.energiequant.vatsim.compatibility.legacyproxy.Main;
+import de.energiequant.vatsim.compatibility.legacyproxy.attribution.VatSpyMetaData;
 import de.energiequant.vatsim.compatibility.legacyproxy.utils.GeoMath;
 import de.energiequant.vatsim.compatibility.legacyproxy.utils.ResourceUtils;
 
@@ -80,6 +82,8 @@ public class VatSpyStationLocator {
     }
 
     public VatSpyStationLocator() throws LoadingFailed {
+        warnAboutOldVatSpyData();
+
         VatSpyFile vatSpyFile = parse(
             ResourceUtils.getAbsoluteResourceContentAsString(
                 VatSpyStationLocator.class,
@@ -109,6 +113,21 @@ public class VatSpyStationLocator {
 
         Map<String, GeoPoint2D> centerPointsByBoundaryId = indexCenterPointsByBoundaryId(firBoundaryFile);
         centerPointsByCallsignPrefix.putAll(indexCenterPointsByCallsignPrefix(vatSpyFile, centerPointsByBoundaryId));
+    }
+
+    private static void warnAboutOldVatSpyData() {
+        if (!Main.getConfiguration().shouldWarnAboutOldIntegratedVatSpyDatabase()) {
+            return;
+        }
+
+        if (VatSpyMetaData.isOlderThan(AppConstants.VATSPY_AGE_WARNING_THRESHOLD)) {
+            LOGGER.warn(
+                "VAT-Spy data is {} days old and may be outdated. Please check for updates.",
+                VatSpyMetaData.getAge() //
+                    .map(age -> Long.toString(age.toHours() / 24))
+                    .orElse("?") //
+            );
+        }
     }
 
     private Map<String, GeoPoint2D> indexCenterPointsByCallsignPrefix(VatSpyFile vatSpyFile, Map<String, GeoPoint2D> centerPointsByBoundaryId) {
