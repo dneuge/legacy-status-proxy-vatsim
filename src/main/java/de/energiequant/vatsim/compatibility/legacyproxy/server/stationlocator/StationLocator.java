@@ -106,16 +106,13 @@ public class StationLocator {
     }
 
     public StationLocator() {
-        this.vatSpyStationLocator = initializeVatSpyStationLocator();
+        this.vatSpyStationLocator = shouldLocateObserverByVatSpy
+            ? initializeVatSpyStationLocator()
+            : null;
     }
 
     private VatSpyStationLocator initializeVatSpyStationLocator() {
-        // FIXME: add option to disable VAT-Spy lookup
-        // FIXME: add options to configuration dialog
         File vatSpyBaseDir = Main.getConfiguration().getVatSpyBaseDirectory().orElse(null);
-        boolean shouldFailover = true; // FIXME: configure
-
-        VatSpyStationLocator vatSpyStationLocator = null;
         if (vatSpyBaseDir != null) {
             LOGGER.info("Loading external VAT-Spy data from {}", vatSpyBaseDir.getAbsolutePath());
 
@@ -123,11 +120,6 @@ public class StationLocator {
                 return new VatSpyStationLocator(vatSpyBaseDir);
             } catch (Exception ex) {
                 LOGGER.warn("Failed to load external VAT-Spy data from {}", vatSpyBaseDir.getAbsolutePath(), ex);
-            }
-
-            if (!shouldFailover) {
-                LOGGER.warn("Failover to included VAT-Spy data has been disabled, VAT-Spy data will not be used.");
-                return null;
             }
         }
 
