@@ -71,6 +71,9 @@ public class StationLocatorPanel extends JPanel {
         "warn about unlocateable observers in log" //
     );
 
+    private static final String TOOLTIP_LOG_UNLOCATABLE_STATIONS = "Warnings will only be issued for stations that were attempted to be located depending on other options such as"
+        + "selected strategy, general activation of lookups, filtered by client type, callsign or (placeholder) frequency.";
+
     public StationLocatorPanel() {
         super();
 
@@ -80,16 +83,8 @@ public class StationLocatorPanel extends JPanel {
         onChange(warnAboutUnlocatableATCCheckBox, this::onWarnAboutUnlocatableATCChanged);
         onChange(warnAboutUnlocatableObserverCheckBox, this::onWarnAboutUnlocatableObserverChanged);
 
-        /*
-         * TODO: confusing option: warning about unlocatable OBS will only take effect
-         * if location of OBS was actually attempted, i.e. either option for VAT-Spy or
-         * transceivers is active; grey out or add tooltip?
-         */
-
-        /*
-         * TODO: confusing option: OBS usually have no primary frequency so they are not
-         * being located if "ignore placeholder freq" is active
-         */
+        warnAboutUnlocatableObserverCheckBox.setToolTipText(TOOLTIP_LOG_UNLOCATABLE_STATIONS);
+        warnAboutUnlocatableATCCheckBox.setToolTipText(TOOLTIP_LOG_UNLOCATABLE_STATIONS);
 
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
