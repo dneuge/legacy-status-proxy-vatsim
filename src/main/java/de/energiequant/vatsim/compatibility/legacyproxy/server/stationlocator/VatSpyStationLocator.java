@@ -295,7 +295,7 @@ public class VatSpyStationLocator {
 
             GeoPoint2D centerPoint = entry.getValue();
             LOGGER.trace(
-                "Aliasing \"{}\" to \"{}\" (%d)",
+                "Aliasing \"{}\" to \"{}\" at {}",
                 alias,
                 originalCallsignPrefix,
                 centerPoint //
