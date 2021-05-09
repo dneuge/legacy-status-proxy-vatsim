@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -133,10 +134,10 @@ public class VatSpyStationLocator {
 
     private Map<String, GeoPoint2D> indexCenterPointsByCallsignPrefix(VatSpyFile vatSpyFile, Map<String, GeoPoint2D> centerPointsByBoundaryId) {
         // TODO: refactor to simplify
-        // FIXME: change to collect all points, then average instead of overwriting
-        Map<String, GeoPoint2D> centerPointsByCallsignPrefix = new HashMap<>();
+        // FIXME: change all Collections to Sets when comparison is implemented
+        Map<String, Collection<GeoPoint2D>> multipleCenterPointsByCallsignPrefix = new HashMap<>();
 
-        Map<String, List<GeoPoint2D>> centerPointsByFirId = new HashMap<>();
+        Map<String, Collection<GeoPoint2D>> centerPointsByFirId = new HashMap<>();
         for (FlightInformationRegion fir : vatSpyFile.getFlightInformationRegions()) {
             String boundaryId = fir.getBoundaryId().orElseGet(fir::getId);
 
@@ -150,7 +151,8 @@ public class VatSpyStationLocator {
                 continue;
             }
 
-            centerPointsByFirId.computeIfAbsent(fir.getId(), x -> new ArrayList<>())
+            centerPointsByFirId
+                .computeIfAbsent(fir.getId(), x -> new ArrayList<>())
                 .add(centerPoint);
 
             // even if callsign prefixes are configured, some stations still log in with
@@ -158,28 +160,16 @@ public class VatSpyStationLocator {
             // optional)
             String callsignPrefix = fir.getCallsignPrefix().map(this::unifyCallsign).orElse(null);
             if (callsignPrefix != null) {
-                GeoPoint2D previousCenterPoint = centerPointsByCallsignPrefix.put(callsignPrefix, centerPoint);
-                if (previousCenterPoint != null) {
-                    LOGGER.warn(
-                        "Multiple center points with callsign prefix \"{}\", was {}, is now {}",
-                        callsignPrefix,
-                        previousCenterPoint,
-                        centerPoint //
-                    );
-                }
+                multipleCenterPointsByCallsignPrefix
+                    .computeIfAbsent(callsignPrefix, x -> new ArrayList<>())
+                    .add(centerPoint);
             }
 
             String idAsCallsign = unifyCallsign(fir.getId());
             if (!idAsCallsign.equals(callsignPrefix)) {
-                GeoPoint2D previousCenterPoint = centerPointsByCallsignPrefix.put(idAsCallsign, centerPoint);
-                if (previousCenterPoint != null) {
-                    LOGGER.warn(
-                        "Multiple center points with callsign prefix \"{}\", was {}, is now {}",
-                        idAsCallsign,
-                        previousCenterPoint,
-                        centerPoint //
-                    );
-                }
+                multipleCenterPointsByCallsignPrefix
+                    .computeIfAbsent(idAsCallsign, x -> new ArrayList<>())
+                    .add(centerPoint);
             }
         }
 
@@ -188,8 +178,8 @@ public class VatSpyStationLocator {
 
             Collection<GeoPoint2D> centerPoints = new ArrayList<>();
             for (String firId : uir.getFlightInformationRegionIds()) {
-                List<GeoPoint2D> firCenterPoints = centerPointsByFirId.get(firId);
-                if (firCenterPoints == null) {
+                Collection<GeoPoint2D> firCenterPoints = centerPointsByFirId.get(firId);
+                if ((firCenterPoints == null) || firCenterPoints.isEmpty()) {
                     LOGGER.warn(
                         "Missing center points for FIR \"{}\" referenced by UIR \"{}\"",
                         firId, uir.getId() //
@@ -206,65 +196,51 @@ public class VatSpyStationLocator {
                 continue;
             }
 
-            GeoPoint2D centerPoint = GeoMath.average(centerPoints);
-            LOGGER.trace(
-                "Center point for UIR \"{}\" has been calculated to {}",
-                uir.getId(), centerPoint //
-            );
-
-            GeoPoint2D previousCenterPoint = centerPointsByCallsignPrefix.put(callsignPrefix, centerPoint);
-            if (previousCenterPoint != null) {
-                LOGGER.warn(
-                    "Multiple center points with callsign prefix \"{}\", was {}, is now {}",
-                    callsignPrefix,
-                    previousCenterPoint,
-                    centerPoint //
-                );
-            }
+            multipleCenterPointsByCallsignPrefix
+                .computeIfAbsent(callsignPrefix, x -> new ArrayList<>())
+                .addAll(centerPoints);
         }
 
         for (Airport airport : vatSpyFile.getAirports()) {
             String airportIcaoCallsignPrefix = unifyCallsign(airport.getIcaoCode());
-            if (centerPointsByCallsignPrefix.containsKey(airportIcaoCallsignPrefix)) {
-                LOGGER.warn(
-                    "Center point for callsign prefix \"{}\" is already set, not adding location for airport {}",
-                    airportIcaoCallsignPrefix,
-                    airport.getIcaoCode() //
-                );
-            } else {
-                centerPointsByCallsignPrefix.put(
-                    airportIcaoCallsignPrefix,
-                    airport.getLocation() //
-                );
-            }
+            multipleCenterPointsByCallsignPrefix
+                .computeIfAbsent(airportIcaoCallsignPrefix, x -> new ArrayList<>())
+                .add(airport.getLocation());
 
             String airportAlternativeCodeCallsignPrefix = airport.getAlternativeCode()
                 .map(this::unifyCallsign)
                 .orElse(null);
             if ((airportAlternativeCodeCallsignPrefix != null)
                 && !airportIcaoCallsignPrefix.equals(airportAlternativeCodeCallsignPrefix)) {
-                if (centerPointsByCallsignPrefix.containsKey(airportAlternativeCodeCallsignPrefix)) {
-                    LOGGER.warn(
-                        "Center point for callsign prefix \"{}\" is already set, not adding location for airport {} (alternative code {})",
-                        airportAlternativeCodeCallsignPrefix,
-                        airport.getIcaoCode(),
-                        airport.getAlternativeCode().orElse(null) //
-                    );
-                } else {
-                    centerPointsByCallsignPrefix.put(
-                        airportAlternativeCodeCallsignPrefix,
-                        airport.getLocation() //
-                    );
-                }
+
+                multipleCenterPointsByCallsignPrefix
+                    .computeIfAbsent(airportAlternativeCodeCallsignPrefix, x -> new ArrayList<>())
+                    .add(airport.getLocation());
             }
         }
 
-        if (shouldAliasUSStations) {
-            Map<String, GeoPoint2D> aliasedCenterPoints = aliasUSStations(centerPointsByCallsignPrefix);
-            centerPointsByCallsignPrefix.putAll(aliasedCenterPoints);
+        Map<String, GeoPoint2D> singleCenterPointsByCallsignPrefix = new HashMap<>();
+        for (Entry<String, Collection<GeoPoint2D>> entry : multipleCenterPointsByCallsignPrefix.entrySet()) {
+            String callsign = entry.getKey();
+            Collection<GeoPoint2D> centerPoints = entry.getValue();
+            GeoPoint2D averageCenterPoint = GeoMath.average(centerPoints);
+
+            LOGGER.trace(
+                "calculated center point for {} is {}, source: {}",
+                callsign,
+                averageCenterPoint,
+                centerPoints //
+            );
+
+            singleCenterPointsByCallsignPrefix.put(callsign, averageCenterPoint);
         }
 
-        return centerPointsByCallsignPrefix;
+        if (shouldAliasUSStations) {
+            Map<String, GeoPoint2D> aliasedCenterPoints = aliasUSStations(singleCenterPointsByCallsignPrefix);
+            singleCenterPointsByCallsignPrefix.putAll(aliasedCenterPoints);
+        }
+
+        return singleCenterPointsByCallsignPrefix;
     }
 
     /**
