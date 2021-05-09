@@ -32,6 +32,7 @@ import de.energiequant.vatsim.compatibility.legacyproxy.AppConstants;
 import de.energiequant.vatsim.compatibility.legacyproxy.Configuration;
 import de.energiequant.vatsim.compatibility.legacyproxy.Main;
 import de.energiequant.vatsim.compatibility.legacyproxy.attribution.VatSpyMetaData;
+import de.energiequant.vatsim.compatibility.legacyproxy.utils.CallsignHelper;
 import de.energiequant.vatsim.compatibility.legacyproxy.utils.GeoMath;
 import de.energiequant.vatsim.compatibility.legacyproxy.utils.ResourceUtils;
 
@@ -282,7 +283,8 @@ public class VatSpyStationLocator {
         Map<String, GeoPoint2D> aliasedCenterPoints = new HashMap<>();
         for (Map.Entry<String, GeoPoint2D> entry : centerPointsByCallsignPrefix.entrySet()) {
             String originalCallsignPrefix = entry.getKey();
-            if ((originalCallsignPrefix.length() < 2) || !originalCallsignPrefix.startsWith("K")) {
+
+            if (!originalCallsignPrefix.startsWith("K") || !CallsignHelper.isUsIcaoCallsign(originalCallsignPrefix)) {
                 continue;
             }
 
