@@ -157,7 +157,7 @@ public class CopyrightNotice {
 
         // FIXME: pin version before release
         add("org.vatplanner", "dataformats-vatsim-public", "0.1-SNAPSHOT", //
-            "Copyright (c) 2016 Daniel Neugebauer" //
+            "Copyright (c) 2016-2021 Daniel Neugebauer" //
         );
     }
 
