@@ -2,7 +2,7 @@ package de.energiequant.vatsim.compatibility.legacyproxy.utils;
 
 import java.util.Collection;
 
-import org.vatplanner.dataformats.vatsimpublic.parser.vatspy.GeoPoint2D;
+import org.vatplanner.dataformats.vatsimpublic.utils.GeoPoint2D;
 
 /**
  * Helper methods to perform geographic calculations.

@@ -15,7 +15,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.vatplanner.dataformats.vatsimpublic.parser.vatspy.GeoPoint2D;
+import org.vatplanner.dataformats.vatsimpublic.utils.GeoPoint2D;
 
 import de.energiequant.vatsim.compatibility.legacyproxy.utils.GeoMath.OutOfRange;
 

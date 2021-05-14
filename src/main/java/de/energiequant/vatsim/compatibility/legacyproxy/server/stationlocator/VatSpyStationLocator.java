@@ -25,10 +25,10 @@ import org.vatplanner.dataformats.vatsimpublic.parser.vatspy.FIRBoundary;
 import org.vatplanner.dataformats.vatsimpublic.parser.vatspy.FIRBoundaryFile;
 import org.vatplanner.dataformats.vatsimpublic.parser.vatspy.FIRBoundaryFileParser;
 import org.vatplanner.dataformats.vatsimpublic.parser.vatspy.FlightInformationRegion;
-import org.vatplanner.dataformats.vatsimpublic.parser.vatspy.GeoPoint2D;
 import org.vatplanner.dataformats.vatsimpublic.parser.vatspy.UpperInformationRegion;
 import org.vatplanner.dataformats.vatsimpublic.parser.vatspy.VatSpyFile;
 import org.vatplanner.dataformats.vatsimpublic.parser.vatspy.VatSpyFileParser;
+import org.vatplanner.dataformats.vatsimpublic.utils.GeoPoint2D;
 
 import de.energiequant.vatsim.compatibility.legacyproxy.AppConstants;
 import de.energiequant.vatsim.compatibility.legacyproxy.Configuration;
