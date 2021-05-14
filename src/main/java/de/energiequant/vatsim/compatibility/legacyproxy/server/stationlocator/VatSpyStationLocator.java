@@ -176,18 +176,37 @@ public class VatSpyStationLocator {
         // TODO: refactor to simplify
         Map<String, Set<GeoPoint2D>> multipleCenterPointsByCallsignPrefix = new HashMap<>();
 
+        Map<String, Set<GeoPoint2D>> multipleAirportCenterPointsByFirId = new HashMap<>();
+        for (Airport airport : vatSpyFile.getAirports()) {
+            String firId = airport.getFlightInformationRegionId();
+            multipleAirportCenterPointsByFirId.computeIfAbsent(firId, x -> new HashSet<>())
+                .add(airport.getLocation());
+        }
+
         Map<String, Set<GeoPoint2D>> centerPointsByFirId = new HashMap<>();
         for (FlightInformationRegion fir : vatSpyFile.getFlightInformationRegions()) {
             String boundaryId = fir.getBoundaryId().orElseGet(fir::getId);
 
             GeoPoint2D centerPoint = centerPointsByBoundaryId.get(boundaryId);
             if (centerPoint == null) {
-                warn(
-                    "Missing center point for FIR \"{}\", boundary ID \"{}\"",
+                Set<GeoPoint2D> airportCenterPoints = multipleAirportCenterPointsByFirId.get(fir.getId());
+                if (airportCenterPoints == null) {
+                    warn(
+                        "Missing center point for FIR \"{}\", boundary ID \"{}\"; no airports covered by FIR",
+                        fir.getId(),
+                        boundaryId //
+                    );
+
+                    continue;
+                }
+
+                centerPoint = GeoMath.average(airportCenterPoints);
+                debug(
+                    "Missing center point for FIR \"{}\", boundary ID \"{}\" has been substituted using covered airports: {}",
                     fir.getId(),
-                    boundaryId //
+                    boundaryId,
+                    centerPoint //
                 );
-                continue;
             }
 
             centerPointsByFirId
@@ -447,6 +466,12 @@ public class VatSpyStationLocator {
     private void warn(String format, Object... arguments) {
         if (isLoggingAllowed) {
             LOGGER.warn(format, arguments);
+        }
+    }
+
+    private void debug(String format, Object... arguments) {
+        if (isLoggingAllowed) {
+            LOGGER.debug(format, arguments);
         }
     }
 
