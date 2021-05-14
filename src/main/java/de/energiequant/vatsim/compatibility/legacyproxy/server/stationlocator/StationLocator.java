@@ -112,14 +112,21 @@ public class StationLocator {
     }
 
     private VatSpyStationLocator initializeVatSpyStationLocator() {
-        File vatSpyBaseDir = Main.getConfiguration().getVatSpyBaseDirectory().orElse(null);
-        if (vatSpyBaseDir != null) {
-            LOGGER.info("Loading external VAT-Spy data from {}", vatSpyBaseDir.getAbsolutePath());
+        Configuration config = Main.getConfiguration();
+        boolean isExternalDirectoryEnabled = config.isVatSpyBaseDirectoryEnabled();
+        if (isExternalDirectoryEnabled) {
+            File vatSpyBaseDir = config.getVatSpyBaseDirectory().orElse(null);
+            if (vatSpyBaseDir != null) {
+                LOGGER.info("Loading external VAT-Spy data from {}", vatSpyBaseDir.getAbsolutePath());
 
-            try {
-                return new VatSpyStationLocator(vatSpyBaseDir);
-            } catch (Exception ex) {
-                LOGGER.warn("Failed to load external VAT-Spy data from {}", vatSpyBaseDir.getAbsolutePath(), ex);
+                try {
+                    return new VatSpyStationLocator(vatSpyBaseDir);
+                } catch (Exception ex) {
+                    LOGGER.warn(
+                        "Failed to load external VAT-Spy data from {}, switching to included data",
+                        vatSpyBaseDir.getAbsolutePath(), ex //
+                    );
+                }
             }
         }
 
