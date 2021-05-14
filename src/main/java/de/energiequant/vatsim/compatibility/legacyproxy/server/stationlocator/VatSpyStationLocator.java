@@ -4,14 +4,15 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -173,10 +174,9 @@ public class VatSpyStationLocator {
 
     private Map<String, GeoPoint2D> indexCenterPointsByCallsignPrefix(VatSpyFile vatSpyFile, Map<String, GeoPoint2D> centerPointsByBoundaryId) {
         // TODO: refactor to simplify
-        // FIXME: change all Collections to Sets when comparison is implemented
-        Map<String, Collection<GeoPoint2D>> multipleCenterPointsByCallsignPrefix = new HashMap<>();
+        Map<String, Set<GeoPoint2D>> multipleCenterPointsByCallsignPrefix = new HashMap<>();
 
-        Map<String, Collection<GeoPoint2D>> centerPointsByFirId = new HashMap<>();
+        Map<String, Set<GeoPoint2D>> centerPointsByFirId = new HashMap<>();
         for (FlightInformationRegion fir : vatSpyFile.getFlightInformationRegions()) {
             String boundaryId = fir.getBoundaryId().orElseGet(fir::getId);
 
@@ -191,7 +191,7 @@ public class VatSpyStationLocator {
             }
 
             centerPointsByFirId
-                .computeIfAbsent(fir.getId(), x -> new ArrayList<>())
+                .computeIfAbsent(fir.getId(), x -> new HashSet<>())
                 .add(centerPoint);
 
             // even if callsign prefixes are configured, some stations still log in with
@@ -200,14 +200,14 @@ public class VatSpyStationLocator {
             String callsignPrefix = fir.getCallsignPrefix().map(this::unifyCallsign).orElse(null);
             if (callsignPrefix != null) {
                 multipleCenterPointsByCallsignPrefix
-                    .computeIfAbsent(callsignPrefix, x -> new ArrayList<>())
+                    .computeIfAbsent(callsignPrefix, x -> new HashSet<>())
                     .add(centerPoint);
             }
 
             String idAsCallsign = unifyCallsign(fir.getId());
             if (!idAsCallsign.equals(callsignPrefix)) {
                 multipleCenterPointsByCallsignPrefix
-                    .computeIfAbsent(idAsCallsign, x -> new ArrayList<>())
+                    .computeIfAbsent(idAsCallsign, x -> new HashSet<>())
                     .add(centerPoint);
             }
         }
@@ -215,9 +215,9 @@ public class VatSpyStationLocator {
         for (UpperInformationRegion uir : vatSpyFile.getUpperInformationRegions()) {
             String callsignPrefix = unifyCallsign(uir.getId());
 
-            Collection<GeoPoint2D> centerPoints = new ArrayList<>();
+            Set<GeoPoint2D> centerPoints = new HashSet<>();
             for (String firId : uir.getFlightInformationRegionIds()) {
-                Collection<GeoPoint2D> firCenterPoints = centerPointsByFirId.get(firId);
+                Set<GeoPoint2D> firCenterPoints = centerPointsByFirId.get(firId);
                 if ((firCenterPoints == null) || firCenterPoints.isEmpty()) {
                     warn(
                         "Missing center points for FIR \"{}\" referenced by UIR \"{}\"",
@@ -236,14 +236,14 @@ public class VatSpyStationLocator {
             }
 
             multipleCenterPointsByCallsignPrefix
-                .computeIfAbsent(callsignPrefix, x -> new ArrayList<>())
+                .computeIfAbsent(callsignPrefix, x -> new HashSet<>())
                 .addAll(centerPoints);
         }
 
         for (Airport airport : vatSpyFile.getAirports()) {
             String airportIcaoCallsignPrefix = unifyCallsign(airport.getIcaoCode());
             multipleCenterPointsByCallsignPrefix
-                .computeIfAbsent(airportIcaoCallsignPrefix, x -> new ArrayList<>())
+                .computeIfAbsent(airportIcaoCallsignPrefix, x -> new HashSet<>())
                 .add(airport.getLocation());
 
             String airportAlternativeCodeCallsignPrefix = airport.getAlternativeCode()
@@ -253,15 +253,15 @@ public class VatSpyStationLocator {
                 && !airportIcaoCallsignPrefix.equals(airportAlternativeCodeCallsignPrefix)) {
 
                 multipleCenterPointsByCallsignPrefix
-                    .computeIfAbsent(airportAlternativeCodeCallsignPrefix, x -> new ArrayList<>())
+                    .computeIfAbsent(airportAlternativeCodeCallsignPrefix, x -> new HashSet<>())
                     .add(airport.getLocation());
             }
         }
 
         Map<String, GeoPoint2D> singleCenterPointsByCallsignPrefix = new HashMap<>();
-        for (Entry<String, Collection<GeoPoint2D>> entry : multipleCenterPointsByCallsignPrefix.entrySet()) {
+        for (Entry<String, Set<GeoPoint2D>> entry : multipleCenterPointsByCallsignPrefix.entrySet()) {
             String callsign = entry.getKey();
-            Collection<GeoPoint2D> centerPoints = entry.getValue();
+            Set<GeoPoint2D> centerPoints = entry.getValue();
             GeoPoint2D averageCenterPoint = GeoMath.average(centerPoints);
 
             trace(
@@ -344,6 +344,7 @@ public class VatSpyStationLocator {
 
         List<GeoPoint2D> points = boundaries.stream()
             .map(FIRBoundary::getCenterPoint)
+            .distinct()
             .collect(Collectors.toList());
 
         GeoPoint2D calculated = GeoMath.average(points);
