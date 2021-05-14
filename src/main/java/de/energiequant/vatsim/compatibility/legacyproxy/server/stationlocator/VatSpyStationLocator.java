@@ -28,6 +28,7 @@ import org.vatplanner.dataformats.vatsimpublic.parser.vatspy.FlightInformationRe
 import org.vatplanner.dataformats.vatsimpublic.parser.vatspy.UpperInformationRegion;
 import org.vatplanner.dataformats.vatsimpublic.parser.vatspy.VatSpyFile;
 import org.vatplanner.dataformats.vatsimpublic.parser.vatspy.VatSpyFileParser;
+import org.vatplanner.dataformats.vatsimpublic.utils.GeoMath;
 import org.vatplanner.dataformats.vatsimpublic.utils.GeoPoint2D;
 
 import de.energiequant.vatsim.compatibility.legacyproxy.AppConstants;
@@ -35,7 +36,6 @@ import de.energiequant.vatsim.compatibility.legacyproxy.Configuration;
 import de.energiequant.vatsim.compatibility.legacyproxy.Main;
 import de.energiequant.vatsim.compatibility.legacyproxy.attribution.VatSpyMetaData;
 import de.energiequant.vatsim.compatibility.legacyproxy.utils.CallsignHelper;
-import de.energiequant.vatsim.compatibility.legacyproxy.utils.GeoMath;
 import de.energiequant.vatsim.compatibility.legacyproxy.utils.ResourceUtils;
 
 public class VatSpyStationLocator {
