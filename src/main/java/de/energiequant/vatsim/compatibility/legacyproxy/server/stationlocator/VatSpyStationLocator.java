@@ -55,6 +55,10 @@ public class VatSpyStationLocator {
 
     private final Map<String, GeoPoint2D> centerPointsByCallsignPrefix = new HashMap<>();
 
+    private final boolean isLoggingAllowed;
+
+    private static final int CHECK_MINIMUM_CALLSIGNS = 10000;
+
     public static class LoadingFailed extends Exception {
         private LoadingFailed(String message) {
             super(message);
@@ -66,6 +70,12 @@ public class VatSpyStationLocator {
     }
 
     public VatSpyStationLocator(File baseDirectory) throws LoadingFailed {
+        this(baseDirectory, true);
+    }
+
+    private VatSpyStationLocator(File baseDirectory, boolean isLoggingAllowed) throws LoadingFailed {
+        this.isLoggingAllowed = isLoggingAllowed;
+
         if (!baseDirectory.isDirectory()) {
             throw new IllegalArgumentException(baseDirectory.getAbsolutePath() + " is not a directory");
         }
@@ -84,6 +94,7 @@ public class VatSpyStationLocator {
     }
 
     public VatSpyStationLocator() throws LoadingFailed {
+        this.isLoggingAllowed = true;
         warnAboutOldVatSpyData();
 
         VatSpyFile vatSpyFile = parse(
@@ -107,8 +118,36 @@ public class VatSpyStationLocator {
         load(vatSpyFile, firBoundaryFile);
     }
 
+    /**
+     * Checks if data can be loaded from given base directory without any obvious
+     * issues.
+     * 
+     * @param baseDirectory directory containing VAT-Spy data to be checked
+     * @return message describing possible error, empty if data seems usable
+     */
+    public static Optional<String> check(File baseDirectory) {
+        LOGGER.debug("Checking {}", baseDirectory);
+
+        VatSpyStationLocator locator = null;
+        try {
+            locator = new VatSpyStationLocator(baseDirectory, false);
+        } catch (Exception ex) {
+            return Optional.of(ex.getMessage());
+        }
+
+        int numCallsigns = locator.centerPointsByCallsignPrefix.size();
+        if (numCallsigns < CHECK_MINIMUM_CALLSIGNS) {
+            return Optional.of(
+                "low number of callsigns after import (found " + numCallsigns
+                    + ", expected at least " + CHECK_MINIMUM_CALLSIGNS + ")" //
+            );
+        }
+
+        return Optional.empty();
+    }
+
     private void load(VatSpyFile vatSpyFile, FIRBoundaryFile firBoundaryFile) {
-        if (Main.getConfiguration().isParserLogEnabled()) {
+        if (isLoggingAllowed && Main.getConfiguration().isParserLogEnabled()) {
             logParserMessages(EXPECTED_FILE_NAME_VATSPY_DAT, vatSpyFile);
             logParserMessages(EXPECTED_FILE_NAME_FIR_BOUNDARIES_DAT, firBoundaryFile);
         }
@@ -143,7 +182,7 @@ public class VatSpyStationLocator {
 
             GeoPoint2D centerPoint = centerPointsByBoundaryId.get(boundaryId);
             if (centerPoint == null) {
-                LOGGER.warn(
+                warn(
                     "Missing center point for FIR \"{}\", boundary ID \"{}\"",
                     fir.getId(),
                     boundaryId //
@@ -180,7 +219,7 @@ public class VatSpyStationLocator {
             for (String firId : uir.getFlightInformationRegionIds()) {
                 Collection<GeoPoint2D> firCenterPoints = centerPointsByFirId.get(firId);
                 if ((firCenterPoints == null) || firCenterPoints.isEmpty()) {
-                    LOGGER.warn(
+                    warn(
                         "Missing center points for FIR \"{}\" referenced by UIR \"{}\"",
                         firId, uir.getId() //
                     );
@@ -189,7 +228,7 @@ public class VatSpyStationLocator {
             }
 
             if (centerPoints.isEmpty()) {
-                LOGGER.warn(
+                warn(
                     "Missing center points for UIR \"{}\"",
                     uir.getId() //
                 );
@@ -225,7 +264,7 @@ public class VatSpyStationLocator {
             Collection<GeoPoint2D> centerPoints = entry.getValue();
             GeoPoint2D averageCenterPoint = GeoMath.average(centerPoints);
 
-            LOGGER.trace(
+            trace(
                 "calculated center point for {} is {}, source: {}",
                 callsign,
                 averageCenterPoint,
@@ -270,7 +309,7 @@ public class VatSpyStationLocator {
             }
 
             GeoPoint2D centerPoint = entry.getValue();
-            LOGGER.trace(
+            trace(
                 "Aliasing \"{}\" to \"{}\" at {}",
                 alias,
                 originalCallsignPrefix,
@@ -310,7 +349,7 @@ public class VatSpyStationLocator {
         GeoPoint2D calculated = GeoMath.average(points);
 
         if (LOGGER.isTraceEnabled()) {
-            LOGGER.trace(
+            trace(
                 "Calculated center point for {} as {} from {} boundaries: {}",
                 boundaries.iterator().next().getId(),
                 calculated,
@@ -353,7 +392,7 @@ public class VatSpyStationLocator {
         // exceptions/stack traces are not logged as they are only useful for
         // development and would clutter the log in the main window beyond readability
         for (ParserLogEntry entry : logCollector.getParserLogEntries()) {
-            LOGGER.warn(
+            warn(
                 "Failed to parse from {}{}, section {}, {}: {}", //
                 fileName, //
                 entry.isLineRejected() ? " (rejected)" : "", //
@@ -363,7 +402,7 @@ public class VatSpyStationLocator {
     }
 
     public Optional<Station> locate(String callsign) {
-        LOGGER.trace("locating \"{}\"", callsign);
+        trace("locating \"{}\"", callsign);
 
         String[] callsignSegments = splitCallsignUppercased(callsign);
         for (int usedSegments = callsignSegments.length; usedSegments > 0; usedSegments--) {
@@ -382,10 +421,10 @@ public class VatSpyStationLocator {
 
         GeoPoint2D centerPoint = centerPointsByCallsignPrefix.get(callsign);
         if (centerPoint == null) {
-            LOGGER.trace("no match for callsign prefix \"{}\"", callsign);
+            trace("no match for callsign prefix \"{}\"", callsign);
             return null;
         } else {
-            LOGGER.trace("callsign prefix \"{}\" matched", callsign);
+            trace("callsign prefix \"{}\" matched", callsign);
             return new Station(callsign, centerPoint.getLatitude(), centerPoint.getLongitude());
         }
     }
@@ -396,5 +435,29 @@ public class VatSpyStationLocator {
 
     private String unifyCallsign(String callsign) {
         return String.join(CALLSIGN_DELIMITER, splitCallsignUppercased(callsign));
+    }
+
+    private void warn(String format, Object arg) {
+        if (isLoggingAllowed) {
+            LOGGER.warn(format, arg);
+        }
+    }
+
+    private void warn(String format, Object... arguments) {
+        if (isLoggingAllowed) {
+            LOGGER.warn(format, arguments);
+        }
+    }
+
+    private void trace(String format, Object arg) {
+        if (isLoggingAllowed) {
+            LOGGER.trace(format, arg);
+        }
+    }
+
+    private void trace(String format, Object... arguments) {
+        if (isLoggingAllowed) {
+            LOGGER.trace(format, arguments);
+        }
     }
 }

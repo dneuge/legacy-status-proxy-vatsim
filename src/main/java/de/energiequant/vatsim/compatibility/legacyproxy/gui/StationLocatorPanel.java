@@ -9,6 +9,7 @@ import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
 import java.io.File;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -21,6 +22,7 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -37,6 +39,7 @@ import de.energiequant.vatsim.compatibility.legacyproxy.Configuration;
 import de.energiequant.vatsim.compatibility.legacyproxy.Main;
 import de.energiequant.vatsim.compatibility.legacyproxy.attribution.VatSpyMetaData;
 import de.energiequant.vatsim.compatibility.legacyproxy.server.stationlocator.StationLocator.Strategy;
+import de.energiequant.vatsim.compatibility.legacyproxy.server.stationlocator.VatSpyStationLocator;
 
 public class StationLocatorPanel extends JPanel {
     private static final Logger LOGGER = LoggerFactory.getLogger(StationLocatorPanel.class);
@@ -252,6 +255,14 @@ public class StationLocatorPanel extends JPanel {
         private final Optional<Instant> includedDate = VatSpyMetaData.getIncludedDataTimestamp();
 
         private static final String EXTERNAL_CHECK_PREFIX = "Pre-check: ";
+        private static final String EXTERNAL_CHECK_RESULT_INIT = EXTERNAL_CHECK_PREFIX + "pending";
+        private static final String EXTERNAL_CHECK_RESULT_DISABLED = EXTERNAL_CHECK_PREFIX
+            + "not checked because internal database is selected";
+        private static final String EXTERNAL_CHECK_RESULT_UNCONFIGURED = EXTERNAL_CHECK_PREFIX
+            + "no directory selected";
+        private static final String EXTERNAL_CHECK_RESULT_INACCESSIBLE = EXTERNAL_CHECK_PREFIX
+            + "selected directory is inaccessible";
+        private static final String EXTERNAL_CHECK_RESULT_SUCCESS = EXTERNAL_CHECK_PREFIX + "OK";
 
         private static final String TITLE = "VAT-Spy data";
 
@@ -269,7 +280,7 @@ public class StationLocatorPanel extends JPanel {
         private final JLabel externalDataFallbackLabel = new JLabel(
             "Integrated data will still be used if the external database is unavailable." //
         );
-        private final JLabel externalDataCheckLabel = new JLabel(EXTERNAL_CHECK_PREFIX + " pending");
+        private final JLabel externalDataCheckLabel = new JLabel(EXTERNAL_CHECK_RESULT_INIT);
 
         private final JCheckBox aliasUSStationsCheckBox = new JCheckBox(
             "alias US stations to omit ICAO prefix K unless conflicted" //
@@ -286,7 +297,7 @@ public class StationLocatorPanel extends JPanel {
             onChange(aliasUSStationsCheckBox, this::onAliasUSStationsChanged);
             onChange(observerCallsignAsStationCheckBox, this::onObserverCallsignAsStationChanged);
 
-            // FIXME: register filechooser to externalDataButton
+            externalDataButton.addActionListener(this::onExternalDataButtonClicked);
 
             setBorder(BorderFactory.createTitledBorder(TITLE));
 
@@ -376,6 +387,33 @@ public class StationLocatorPanel extends JPanel {
             updateAllOptions();
         }
 
+        private String checkExternalData() {
+            Configuration config = Main.getConfiguration();
+
+            if (!config.isVatSpyBaseDirectoryEnabled()) {
+                return EXTERNAL_CHECK_RESULT_DISABLED;
+            }
+
+            File directory = config.getVatSpyBaseDirectory().orElse(null);
+            if (directory == null) {
+                return EXTERNAL_CHECK_RESULT_UNCONFIGURED;
+            }
+            if (!directory.isDirectory()) {
+                return EXTERNAL_CHECK_RESULT_INACCESSIBLE;
+            }
+
+            LOGGER.debug("Running pre-check for external VAT-Spy database");
+
+            String error = VatSpyStationLocator.check(directory).orElse(null);
+            if (error != null) {
+                LOGGER.debug("Pre-check for external VAT-Spy database failed: {}", error);
+                return EXTERNAL_CHECK_PREFIX + error;
+            }
+
+            LOGGER.debug("Pre-check for external VAT-Spy database succeeded");
+            return EXTERNAL_CHECK_RESULT_SUCCESS;
+        }
+
         private void onWarnOnOldDataChanged() {
             boolean newValue = warnOnOldDataCheckBox.isSelected();
 
@@ -400,6 +438,41 @@ public class StationLocatorPanel extends JPanel {
 
             LOGGER.debug("setting usage of external VAT-Spy directory to {}", newValue);
             Main.getConfiguration().setVatSpyBaseDirectoryEnabled(newValue);
+
+            updateAllOptions();
+        }
+
+        private void onExternalDataButtonClicked(ActionEvent event) {
+            Configuration config = Main.getConfiguration();
+            File previousDirectory = config.getVatSpyBaseDirectory().orElse(null);
+            JFileChooser chooser = new JFileChooser(previousDirectory);
+            chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            int result = chooser.showOpenDialog(this);
+            if (result != JFileChooser.APPROVE_OPTION) {
+                LOGGER.debug("external VAT-Spy directory selection aborted, ignoring change");
+                return;
+            }
+
+            File newDirectory = chooser.getSelectedFile();
+
+            // ignore illegal changes
+            if (newDirectory == null) {
+                LOGGER.debug("external VAT-Spy directory deselected, ignoring change");
+                return;
+            } else if (!newDirectory.isDirectory()) {
+                LOGGER.debug("new selection for external VAT-Spy data is not a directory, ignoring change");
+                return;
+            }
+
+            // save change
+            if (!newDirectory.equals(previousDirectory)) {
+                LOGGER.debug(
+                    "external VAT-Spy directory selection changed from {} to {}",
+                    previousDirectory, newDirectory //
+                );
+
+                config.setVatSpyBaseDirectory(newDirectory);
+            }
 
             updateAllOptions();
         }
@@ -450,13 +523,14 @@ public class StationLocatorPanel extends JPanel {
             aliasUSStationsCheckBox.setSelected(config.shouldVatSpyAliasUSStations());
             observerCallsignAsStationCheckBox.setSelected(config.shouldLocateObserverByVatSpy());
 
-            // FIXME: implement pre-check of external database
-
             externalDataField.setEnabled(shouldUseExternalData);
             externalDataButton.setEnabled(shouldUseExternalData);
             externalDataFallbackLabel.setEnabled(shouldUseExternalData);
             externalDataCheckLabel.setEnabled(shouldUseExternalData);
+
+            externalDataCheckLabel.setText(checkExternalData());
         }
+
     }
 
     private class TransceiversPanel extends JPanel {
