@@ -5,6 +5,13 @@ import java.time.Duration;
 import org.vatplanner.dataformats.vatsimpublic.parser.DataFileFormat;
 
 public class AppConstants {
+    // TODO: set application meta data automatically during build
+    public static final String APPLICATION_JAR_NAME = "legacy-status-proxy-vatsim.jar";
+    public static final String APPLICATION_NAME = "Legacy status proxy for VATSIM";
+    public static final String APPLICATION_VERSION = "0.81dev";
+    public static final String APPLICATION_URL = "https://github.com/dneuge/legacy-status-proxy-vatsim";
+    public static final String APPLICATION_COPYRIGHT = "Copyright (c) 2021 Daniel Neugebauer";
+
     public static final String USER_AGENT = "LegacyStatusProxy/" + Main.getApplicationVersion();
     public static final Duration EXTERNAL_REQUEST_TIMEOUT = Duration.ofSeconds(30);
     public static final DataFileFormat UPSTREAM_DATA_FILE_FORMAT = DataFileFormat.JSON3;

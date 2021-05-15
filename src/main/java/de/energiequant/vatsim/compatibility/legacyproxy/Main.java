@@ -1,5 +1,11 @@
 package de.energiequant.vatsim.compatibility.legacyproxy;
 
+import static de.energiequant.vatsim.compatibility.legacyproxy.AppConstants.APPLICATION_COPYRIGHT;
+import static de.energiequant.vatsim.compatibility.legacyproxy.AppConstants.APPLICATION_JAR_NAME;
+import static de.energiequant.vatsim.compatibility.legacyproxy.AppConstants.APPLICATION_NAME;
+import static de.energiequant.vatsim.compatibility.legacyproxy.AppConstants.APPLICATION_URL;
+import static de.energiequant.vatsim.compatibility.legacyproxy.AppConstants.APPLICATION_VERSION;
+
 import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -46,13 +52,6 @@ public class Main {
 
     private static Configuration configuration;
     private static Server server;
-
-    // TODO: set application meta data automatically during build
-    private static final String APPLICATION_JAR_NAME = "legacy-status-proxy-vatsim.jar";
-    private static final String APPLICATION_NAME = "Legacy status proxy for VATSIM";
-    private static final String APPLICATION_VERSION = "0.81dev";
-    private static final String APPLICATION_URL = "https://github.com/dneuge/legacy-status-proxy-vatsim";
-    private static final String APPLICATION_COPYRIGHT = "Copyright (c) 2021 Daniel Neugebauer";
 
     private static final License EFFECTIVE_LICENSE = License.MIT;
 
