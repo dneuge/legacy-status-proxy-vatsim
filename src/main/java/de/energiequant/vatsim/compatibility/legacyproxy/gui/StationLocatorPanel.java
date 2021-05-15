@@ -69,7 +69,7 @@ public class StationLocatorPanel extends JPanel {
     private final JCheckBox singleStrategyCheckBox = new JCheckBox("locate stations using VAT-Spy data");
 
     private final JCheckBox obsCallsignIsObserverCheckBox = new JCheckBox(
-        "assume callsigns ending in _OBS to be observers" //
+        "assume callsigns ending in OBS to be observers" //
     );
     private final JCheckBox ignorePlaceholderFrequencyCheckBox = new JCheckBox(
         "ignore clients on placeholder frequencies ("
