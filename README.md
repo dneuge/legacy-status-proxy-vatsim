@@ -44,8 +44,8 @@ By using the server you agree with all terms of the [MIT license](LICENSE.md), i
 - non-ASCII characters on served data may be wrong
 - some information may have been removed from recent formats and may be replaced by placeholders
 - some information may only be available in recent formats (e.g. pilot ratings); no compatibility is provided for such data
-- missing coordinates can not be computed from [online transceivers](https://api.vatsim.dev/#operation/TransceiverData) yet (see #7)
-- HTTP server listens on all network interfaces, even if only localhost is served (see #6)
+- missing coordinates can not be computed from [online transceivers](https://api.vatsim.dev/#operation/TransceiverData) yet (see [#7](issues/7))
+- HTTP server listens on all network interfaces, even if only localhost is served (see [#6](issues/6))
 
 ## How to configure and run
 
