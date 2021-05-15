@@ -78,8 +78,12 @@ public class Launcher {
         System.err.println("======================================================");
 
         if (shouldUseGui) {
-            JOptionPane.showMessageDialog(null, BROKEN_CLASSPATH_MESSAGE, "Startup may fail",
-                JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(
+                null,
+                BROKEN_CLASSPATH_MESSAGE,
+                AppConstants.APPLICATION_NAME,
+                JOptionPane.WARNING_MESSAGE //
+            );
         }
     }
 
