@@ -141,8 +141,8 @@ public class CopyrightNotice {
             "Copyright (c) 2004-2017 QOS.ch\n"
                 + " All rights reserved." //
         );
-        add("org.vatplanner", "dataformats-vatsim-public", "0.1-pre210419", //
-            "Copyright (c) 2016 Daniel Neugebauer" //
+        add("org.vatplanner", "dataformats-vatsim-public", "0.1-pre210515", //
+            "Copyright (c) 2016-2021 Daniel Neugebauer" //
         );
         add("de.energiequant.common", "webdataretrieval", "0.2.2", //
             "Copyright (c) 2016 Daniel Neugebauer" //
@@ -154,11 +154,6 @@ public class CopyrightNotice {
                 + "VAT-Spy is being developed by Ross Carlson\n"
                 + "\n"
                 + "Please visit the linked website to view the full list of contributors." //
-        );
-
-        // FIXME: pin version before release
-        add("org.vatplanner", "dataformats-vatsim-public", "0.1-SNAPSHOT", //
-            "Copyright (c) 2016-2021 Daniel Neugebauer" //
         );
     }
 
