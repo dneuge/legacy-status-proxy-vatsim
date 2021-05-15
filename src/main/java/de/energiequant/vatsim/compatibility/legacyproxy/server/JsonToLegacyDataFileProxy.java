@@ -50,6 +50,13 @@ public class JsonToLegacyDataFileProxy extends GetOnlyRequestHandler {
 
     private static final Charset FALLBACK_CHARACTER_SET = StandardCharsets.UTF_8;
 
+    private final String header = stationLocator.usesVatSpySource()
+        ? AppConstants.SERVER_DISCLAIMER_HEADER //
+            + (stationLocator.isVatSpySourceExternal()
+                ? AppConstants.SERVER_VAT_SPY_EXTERNAL_HEADER
+                : AppConstants.SERVER_VAT_SPY_INTERNAL_HEADER) //
+        : AppConstants.SERVER_DISCLAIMER_HEADER;
+
     public JsonToLegacyDataFileProxy(Parser<DataFile> parser, Supplier<String> jsonUrlSupplier) {
         this.jsonUrlSupplier = jsonUrlSupplier;
 
@@ -104,7 +111,7 @@ public class JsonToLegacyDataFileProxy extends GetOnlyRequestHandler {
 
         LOGGER.debug("Encoding legacy data file");
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        Writer<DataFile> writer = new LegacyDataFileWriter();
+        Writer<DataFile> writer = new LegacyDataFileWriter(header);
         writer.serialize(dataFile, baos);
         baos.flush();
         byte[] bytes = baos.toByteArray();

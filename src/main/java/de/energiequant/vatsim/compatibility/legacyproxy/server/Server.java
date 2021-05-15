@@ -46,16 +46,6 @@ public class Server {
     private static final Duration NETWORK_INFORMATION_UPDATE_INTERVAL = Duration.ofHours(6);
     private static final Duration NETWORK_INFORMATION_RETRY_INTERVAL = Duration.ofMinutes(5);
 
-    private static final String DISCLAIMER_HEADER = "; YOU ARE ACCESSING THE COMPATIBILITY ADAPTER PROXY FOR VATSIM DATA FILES\n" //
-        + ";\n" //
-        + "; This proxy server is supposed to be used only in order to establish compatibility between legacy applications and later revisions of status/data files. The intended use does not cover clients used for active participation on the VATSIM network (e.g. pilot/ATC clients).\n" //
-        + ";\n" //
-        + "; The proxy is inofficial and not supported by VATSIM. Please avoid running pilot or ATC clients using files provided through this proxy.\n" //
-        + ";\n" //
-        + "; If, even if you do not have connected an active client through this proxy, you experience any issues accessing data or connecting to VATSIM please disable the proxy server and try again.\n" //
-        + ";\n" //
-        + "; VATSIM data served by this server remains under copyright of VATSIM. Usage of that data remains subject to conditions defined by VATSIM.\n";
-
     private final LegacyNetworkInformationFetcher legacyNetworkInformationFetcher;
     private final JsonNetworkInformationFetcher jsonNetworkInformationFetcher;
     private final AtomicReference<HttpAsyncServer> httpServer = new AtomicReference<>();
@@ -161,7 +151,7 @@ public class Server {
 
         AsyncServerRequestHandler<Message<HttpRequest, Void>> legacyNetworkInformationRequestHandler = new InjectingLegacyNetworkInformationProxy(
             "http://" + localHostname + ":" + localPort,
-            new LegacyNetworkInformationWriter(DISCLAIMER_HEADER),
+            new LegacyNetworkInformationWriter(AppConstants.SERVER_DISCLAIMER_HEADER),
             legacyNetworkInformationFetcher::getLastFetchedNetworkInformation,
             jsonNetworkInformationFetcher::getLastFetchedNetworkInformation,
             legacyNetworkInformationFetcher::getLastAggregatedStartupMessages);

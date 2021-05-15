@@ -212,4 +212,28 @@ public class StationLocator {
             }
         }
     }
+
+    /**
+     * Returns true if VAT-Spy data source is used to locate stations, false if not.
+     * 
+     * @return true if VAT-Spy data source is used to locate stations, false if not
+     */
+    public boolean usesVatSpySource() {
+        return (vatSpyStationLocator != null);
+    }
+
+    /**
+     * Returns true if VAT-Spy data source is used to locate stations and data has
+     * been loaded from an external source, false if either unavailable or internal
+     * data is used.
+     * 
+     * @return true if VAT-Spy data source is used to locate stations and data has
+     *         been loaded from an external source, false if either unavailable or
+     *         internal data is used
+     * @see VatSpyStationLocator#usesExternalDataSource()
+     * @see #usesVatSpySource()
+     */
+    public boolean isVatSpySourceExternal() {
+        return (vatSpyStationLocator != null) && vatSpyStationLocator.usesExternalDataSource();
+    }
 }

@@ -149,6 +149,7 @@ public class CopyrightNotice {
         );
         add("_inofficial.com.github.vatsimnetwork", "vatspy-data-project", "487beca0f11f1cee5cb32c001591cd6845241e6a", //
             // based on README file
+            // also needs to be incorporated to AppConstants.SERVER_VAT_SPY_INTERNAL_HEADER
             "Copyright (c) 2019-2021 Néstor Pérez, Niels Voogd, Adrian Bjerke, Alex Long and contributors\n"
                 + "VAT-Spy is being developed by Ross Carlson\n"
                 + "\n"

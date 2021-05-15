@@ -57,6 +57,7 @@ public class VatSpyStationLocator {
     private final Map<String, GeoPoint2D> centerPointsByCallsignPrefix = new HashMap<>();
 
     private final boolean isLoggingAllowed;
+    private final boolean usesExternalDataSource;
 
     private static final int CHECK_MINIMUM_CALLSIGNS = 10000;
 
@@ -76,6 +77,7 @@ public class VatSpyStationLocator {
 
     private VatSpyStationLocator(File baseDirectory, boolean isLoggingAllowed) throws LoadingFailed {
         this.isLoggingAllowed = isLoggingAllowed;
+        this.usesExternalDataSource = true;
 
         if (!baseDirectory.isDirectory()) {
             throw new IllegalArgumentException(baseDirectory.getAbsolutePath() + " is not a directory");
@@ -96,6 +98,7 @@ public class VatSpyStationLocator {
 
     public VatSpyStationLocator() throws LoadingFailed {
         this.isLoggingAllowed = true;
+        this.usesExternalDataSource = false;
         warnAboutOldVatSpyData();
 
         VatSpyFile vatSpyFile = parse(
@@ -455,6 +458,17 @@ public class VatSpyStationLocator {
 
     private String unifyCallsign(String callsign) {
         return String.join(CALLSIGN_DELIMITER, splitCallsignUppercased(callsign));
+    }
+
+    /**
+     * Returns true if locations are provided from an external data source, false if
+     * included data source is used.
+     * 
+     * @return true if locations are provided from an external data source, false if
+     *         included data source is used
+     */
+    public boolean usesExternalDataSource() {
+        return usesExternalDataSource;
     }
 
     private void warn(String format, Object arg) {
