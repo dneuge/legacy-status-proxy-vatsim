@@ -33,16 +33,17 @@ By using the server you agree with all terms of the [MIT license](LICENSE.md), i
 ## Current state
 
 - legacy Whazzup data files can be generated from JSON v3 data files
+  - coordinates missing in JSON files are by default computed from [VAT-Spy data](https://github.com/vatsimnetwork/vatspy-data-project)
 - network information ("URL index") is combined from legacy and JSON formats
 
 ## Known limitations
 
 - providing service via IPv6 requires a host name (i.e. just an IPv6 address cannot be used as a local host name)
 - non-ASCII characters on served data may be wrong
-- restarting the server in quick succession is not possible (Socket bind failure for socket / Address already in use)
-- some information may have been removed from recent formats and will be replaced by placeholders (e.g. flight plan revision numbers or controller coordinates)
-  - clients may be unable to locate unknown online ATC stations as a result of ATC coordinates having been removed
+- some information may have been removed from recent formats and may be replaced by placeholders
 - some information may only be available in recent formats (e.g. pilot ratings); no compatibility is provided for such data
+- missing coordinates can not be computed from [online transceivers](https://api.vatsim.dev/#operation/TransceiverData) yet (see #7)
+- HTTP server listens on all network interfaces, even if only localhost is served (see #6)
 
 ## How to configure and run
 
@@ -74,13 +75,43 @@ Closing the main window or clicking "Quit" will stop the server.
 
 Click the "Configure" button on the main window to open see the available options.
 
-**Upstream connection**/**Base URL** should usually not be changed (default: `http://status.vatsim.net`). This is the first part of the address that will be used to fetch data from VATSIM. Changing the base URL requires the whole application to be restarted for the new setting to become effective.
+**Save configuration** will, if not already done, create a file to persist your current settings (by default: `legacy-status-proxy-vatsim.properties` in the directory you started the JAR from). This will also save whether you accepted the disclaimer or rejected it (same as in the "About" dialog).
 
-Settings in **HTTP Server** may need to be changed if you want to open access to other computers or the default port is already used by another application. **Host name** should be set to the domain name or IPv4 address seen by all clients that are supposed to access the proxy (default: `localhost`). **Port** (default: `8080`) can be chosen freely but ports below 1024 may be reserved and generally unavailable depending on your system (e.g. on Linux). **Encode data file in UTF-8 instead of ISO-8859-1** should be toggled if the client you are using displays ATIS information without line-breaks and free-text information such as pilot or controller names are truncated or contain garbage. Note that this setting depends on the client being used; serving multiple clients at the same time may require a second instance configured differently (see the CLI options below). To apply any of the HTTP server settings the server needs to be restarted using the "Run/Stop" button. Changing the host name may also require a restart of all previously connected clients.
+##### General options
+
+**Upstream connection**/**Base URL** should usually not be changed (default: `http://status.vatsim.net`). The base URL is the first part of the address that will be used to fetch data from VATSIM. **Use VATSIM default URL** is used to protect the URL against any unwanted modification. Changing the base URL requires the whole application to be restarted for the new setting to become effective.
+
+Settings in **HTTP Server** may need to be changed if you want to open access to other computers or the default port is already used by another application. **Host name** should be set to the domain name or IPv4 address seen by all clients that are supposed to access the proxy (default: `localhost`). **Port** (default: `8080`) can be chosen freely but ports below 1024 may be reserved and generally unavailable depending on your system (e.g. on Linux). **Encode data file in UTF-8 instead of ISO-8859-1** should be toggled if the client you are using displays ATIS information without line-breaks and free-text information such as pilot or controller names are truncated or contain garbage. Note that this setting depends on the client being used; serving multiple clients at the same time may require a second instance configured differently (see the CLI options below). To apply any of the HTTP server settings the server needs to be restarted using the "Run/Stop" button. Changing the host name may also require a restart of all previously connected clients. **Log parser errors** can be enabled to help debugging possible errors in processing upstream data (usually not required).
 
 **Access (IP Filter)** controls which clients are allowed to access the proxy server. You can add a new IPv4 or IPv6 address by entering it in the **IP Address** field and clicking **Add**. Addresses need to be entered exactly as printed on the log; if in doubt first access the server from a blocked machine and copy & paste the IP address from the log to the configuration window. To block access for a previously allowed client select its IP address from the list and click **Remove**. Clicking **Reset** will revert to the default configuration ("localhost" meaning IPv4 address `127.0.0.1` and IPv6 address `::1` expanded to `0:0:0:0:0:0:0:1`). All changes to the IP filter are immediately effective as shown in the list. Every change is also confirmed by a log message `Access is now allowed from ...`.
 
-**Save configuration** will, if not already done, create a file to persist your current settings (by default: `legacy-status-proxy-vatsim.properties` in the directory you started the JAR from). This will also save whether you accepted the disclaimer or rejected it (same as in the "About" dialog).
+##### Station Locator options
+
+Any change to the Station Locator options requires a server restart to become effective.
+
+If **locate stations using VAT-Spy data** is enabled, the proxy will attempt to substitute missing station coordinates by looking up the callsign on a VAT-Spy database. Disabling the option will cause only the coordinates originally present in JSON v3 data to be used (which is currently missing all controller coordinates). Other options of the Station Locator will have no effect when disabling VAT-Spy data. It is highly recommended to leave this option enabled.
+
+**Assume callsigns ending in OBS to be observers:** Observers can be indicated by client permission level but sometimes that information is not sufficient. Enable this option to additionally assume any station calling itself `something_OBS` or `something-OBS` to be an observer as well.
+
+**Ignore clients on placeholder frequencies:** ATC clients indicate their primary frequency on data files. Controllers who do not actively provide any service to pilots usually indicate a placeholder frequency far beyond the air band used by real-world ATC. If you are only interested in actively services stations from a pilot's perspective, it is generally safe to ignore those clients. However, if you are monitoring overall network activity, it may be useful to also look up such "unserviced" stations.
+
+**Warn about unlocatable ATC stations in log:** If an ATC client, who is not an observer, was supposed to be located according to other options but no location could be determined, the affected callsign will be logged as a warning on the main window, when enabled. This option is mainly useful for debugging; it is safe to keep it disabled.
+
+**Warn about unlocateable observers in log:** The same as above but for observers. It is safe to keep this option disabled.
+
+###### VAT-Spy data
+
+This group allows to configure how VAT-Spy data should be handled by the proxy.
+
+The proxy ships with a database that will eventually outdate if the proxy is not being updated regularly. Outdated data can cause issues such as stations being unknown/unlocatable or showing up at wrong locations.
+
+When the proxy's internal database is being used, it checks the data age and by default warns at startup when the data is older than 270 days (9 months). This can be disabled via the **warn if integrated database older than 270 days is used** option if you want to silence that warning while continuing to use the outdated internal database. It is highly recommended to leave this option enabled and instead switch to an external database if no update is possible.
+
+In case no updates for the proxy server should be available, you can [download the required data manually](https://github.com/vatsimnetwork/vatspy-data-project) and set it up as an external database: Enable **use external database** and **browse** to the directory containing the `VATSpy.dat` and `FIRBoundaries.dat` files. A **pre-check** will attempt to load the database from that location and report either **OK** or an error message. Note that even if an external database has been set up, the proxy will automatically fall back to its internal database in case the database is unreadable.
+
+**Alias US stations to omit ICAO prefix K unless conflicted:** Multiple US stations have been observed to be online with callsigns that are not registered in the VAT-Spy database. The callsign is usually simply the FAA 3-letter code which can also be guessed by omitting the leading `K` from ICAO codes. As this is a commonly known and repeating issue, this option allows all ICAO codes starting with `K` to be aliased to a 3-letter code omitting the leading `K` which increases the chances of finding a location for such stations. Aliases will only be registered if no other station is known by the resulting shortened callsign. It is recommended to leave this option enabled.
+
+**Locate observers by assuming callsign to indicate an ATC station:** Only if this option is enabled, ATC observers will be attempted to be located.
 
 ### Setting up clients
 
@@ -136,17 +167,36 @@ Configuration via CLI is not supported yet. It is recommended to create a config
 
 ## FAQ / Common issues
 
+### General troubleshooting
+
+When experiencing issues, a solution may be easily possible by:
+
+- making sure you use the latest release version
+- resetting the proxy configuration by renaming/moving or deleting the generated configuration file (default: `legacy-status-proxy-vatsim.properties` in same directory as the JAR file)
+
+Support is primarily available through:
+
+- [GitHub Discussions](https://github.com/dneuge/legacy-status-proxy-vatsim/discussions) (English preferred)
+- [thread on main VATSIM forums](https://forums.vatsim.net/topic/31116-legacy-status-proxy-providing-data-feed-compatibility-to-passive-clients-not-migrated-to-json-yet/) (English)
+- [thread on VATSIM Germany forums](https://board.vatsim-germany.org/threads/legacy-status-proxy-data-feed-kompatibilit%C3%A4t-f%C3%BCr-unmigrierte-passive-clients.66112/) (German)
+
 ### ATIS has no line breaks / free text is truncated or contains weird characters
 
 **Cause:** Clients are not served in their expected character set.
 
 Try to change the **encode data file in UTF-8 instead of ISO-8859-1** option and restart the server (see above for details). This will depend on the client you are using: VATSIM changed the character set in the last years of the old CSV-like data file format and some (pre-release versions of) clients had already been migrated, others not. Serving multiple clients at the same time may require a second server instance to work around this incompatibility.
 
-### Some controllers are not visible
+### Some controllers are not visible or not shown correctly (e.g. missing labels in QuteScoop)
 
-**Possible cause:** The client misses airspace data for affected controllers.
+Check that you are running the latest version. Version 0.90 introduced a "Station Locator" to add estimated controller coordinates back to the legacy format (they are missing in the new JSON v3 format).
 
-Check if there is updated airspace information for the affected client. Before JSON format version 3 all online controllers had coordinates and many clients relied on that information to display unknown ATC stations. JSON v3 removed those coordinates. Currently, there is no good way such data could be supplied by the proxy.
+**Possible cause 1:** Station Locator has been deactivated or set up wrong.
+
+Open *Configure/Station Locator* and check that *locate stations using VAT-Spy data* is enabled. Check if any options for the Station Locator have been set up in a way that could cause a disappearance of certain controllers from your client. Remember to restart the server after making any changes.
+
+**Possible cause 2:** The client misses airspace data for affected controllers.
+
+Check if there is updated airspace information for the affected client.
 
 ### Saving configuration is not possible (disabled)
 
@@ -168,7 +218,9 @@ Quit either instance.
 
 **Cause 3:** The proxy server has recently been restarted.
 
-Proxy restarts in quick succession are currently not possible if clients have accessed the server recently. Wait a moment and try again; the port should become available again after approximately 30 to 60 seconds.
+Check if you are running the latest version (an issue causing that behaviour has been fixed in version 0.90).
+
+It may still occasionally happen that proxy restarts in quick succession are not possible if clients have accessed the server recently. Wait a moment and try again; the port should become available again after one to four minutes. Check that any previously started instance of the proxy really has been terminated.
 
 #### Permission denied
 
