@@ -178,7 +178,8 @@ public class StationLocator {
             );
 
             if (shouldIdentifyObserverByCallsign && !isObserver) {
-                isObserver = client.getCallsign().toUpperCase().endsWith("_OBS");
+                String callsignUpperCase = client.getCallsign().toUpperCase();
+                isObserver = callsignUpperCase.endsWith("_OBS") || callsignUpperCase.endsWith("-OBS");
             }
 
             boolean shouldLocate = isATC
