@@ -15,6 +15,8 @@ import javax.swing.JOptionPane;
  * initializations to fail.
  */
 public class Launcher {
+    // NOTE: needs to be local to this class in case of broken class path
+    public static final String APPLICATION_NAME = "Legacy status proxy for VATSIM";
 
     private static final String LONG_OPTION_PREFIX = "--";
     public static final String OPTION_NAME_NO_GUI = "no-gui";
@@ -81,7 +83,7 @@ public class Launcher {
             JOptionPane.showMessageDialog(
                 null,
                 BROKEN_CLASSPATH_MESSAGE,
-                AppConstants.APPLICATION_NAME,
+                APPLICATION_NAME,
                 JOptionPane.WARNING_MESSAGE //
             );
         }
