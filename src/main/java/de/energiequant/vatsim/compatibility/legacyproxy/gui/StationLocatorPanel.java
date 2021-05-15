@@ -80,7 +80,7 @@ public class StationLocatorPanel extends JPanel {
         "warn about unlocatable ATC stations in log" //
     );
     private final JCheckBox warnAboutUnlocatableObserverCheckBox = new JCheckBox(
-        "warn about unlocateable observers in log" //
+        "warn about unlocatable observers in log" //
     );
 
     private static final String TOOLTIP_LOG_UNLOCATABLE_STATIONS = "Warnings will only be issued for stations that were attempted to be located depending on other options such as "
