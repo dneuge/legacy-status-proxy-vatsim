@@ -1,61 +1,16 @@
-# Legacy status proxy for VATSIM
+This is the user manual for the legacy status proxy for VATSIM.
 
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.md)
-
-This project provides a simple HTTP proxy server translating current VATSIM status file formats to outdated legacy formats to provide compatibility to monitor applications.
-
-Click [here](https://github.com/dneuge/legacy-status-proxy-vatsim/releases/latest/download/legacy-status-proxy-vatsim.jar) to download the latest released version.
-
-## Disclaimer and Intended Use
-
-*This is a copy of [disclaimer.txt](src/main/resources/de/energiequant/vatsim/compatibility/legacyproxy/disclaimer.txt). The disclaimer has to be accepted before the server can be started.*
-
-This disclaimer is a more application-specific addition to the general points stated in the [MIT license](LICENSE.md).
-
-By using the application and accepting this disclaimer you confirm that you also accept all related software licenses. This includes (but may not be limited to) the MIT and Apache 2.0 licenses. See the list of dependencies for more information (available from "About" dialog on GUI or by running with `--version` on CLI). Generic copies of all license texts are available at runtime from the "About" dialog or by running `--license <LICENSE>` on CLI (see `--help` or `--version` for more information on usage). Redistribution of this software in binary form may be subject to the restrictions set by combination of the software licenses of all included dependencies.
-
-The server is intended to enable "passive" clients (e.g. status monitors) to access more current data formats than they originally support. A "passive" client only consumes status information but does not perform any interaction with the live VATSIM network.
-
-The server shall **not** be used to provide information to unsupported "active" clients (pilot or ATC clients) which directly interact with the actual VATSIM network (not just consuming status information). Providing manipulated information to such clients may result in unintended behaviour or enable otherwise unapproved or outdated software to access VATSIM. This may be a violation of the [Code of Conduct](https://www.vatsim.net/documents/code-of-conduct) (e.g. item A7 as of March 2021).
-
-All data processed and served by the proxy server is subject to policies and restrictions set by VATSIM. By default requests are only served to local applications (identified by IP addresses `127.0.0.1` or `::1`). Depending on your local regulation served data may be considered privacy-relevant and thus should be handled carefully in accordance to local regulations and legal requirements as well as all other applicable policies. It is recommended to host this server strictly private and **not** open access to the general public.
-
-By using the server you agree with all terms of the [MIT license](LICENSE.md), including (but not limited to) the general disclaimer:
-
-> THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-> IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-> FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-> AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-> LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-> OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-> THE SOFTWARE.
-
-## Current state
-
-- legacy Whazzup data files can be generated from JSON v3 data files
-  - coordinates missing in JSON files are by default computed from [VAT-Spy data](https://github.com/vatsimnetwork/vatspy-data-project)
-- network information ("URL index") is combined from legacy and JSON formats
-
-## Known limitations
-
-- providing service via IPv6 requires a host name (i.e. just an IPv6 address cannot be used as a local host name)
-- non-ASCII characters on served data may be wrong
-- some information may have been removed from recent formats and may be replaced by placeholders
-- some information may only be available in recent formats (e.g. pilot ratings); no compatibility is provided for such data
-- missing coordinates can not be computed from [online transceivers](https://api.vatsim.dev/#operation/TransceiverData) yet (see #7)
-- HTTP server listens on all network interfaces, even if only localhost is served (see #6)
-
-## How to configure and run
+For general information and the [disclaimer](../disclaimer.txt) please refer to the [readme file](../README.md).
 
 The proxy server can be used as a GUI desktop application or via command line (CLI). You can use `--no-gui` to enforce the CLI version on a desktop system.
 
 When running in default settings a local host name of `localhost` and a server port of `8080` will be assumed. By default, the server only serves content to clients with IP addresses `127.0.0.1` (IPv4 "localhost") or `::1` (IPv6 "localhost"). However, that IP filter is mainly useful to protect against unintentional serving of VATSIM data to third parties and should not be considered a security feature in regards to software vulnerabilities. It is still necessary to use a properly configured restrictive firewall/packet filter and to regularly check for updates as the server will be listening on all network interfaces and thus may pose a security risk even when configured correctly.
 
-### Required software
+# Required software
 
 You will need to have Java installed in order to run the proxy server. Minimum supported Java version is 1.8, maximum tested version is Java 11. If you don't have Java installed and don't know where to get it you may want to check [AdoptOpenJDK](https://adoptopenjdk.net/) and download a their Java 11 HotSpot JVM.
 
-### Using the GUI (desktop application)
+# Using the GUI (desktop application)
 
 Download a released version as a JAR file and start it.
 
@@ -71,13 +26,13 @@ It is strongly recommended to run the proxy server on the same machine you are r
 
 Closing the main window or clicking "Quit" will stop the server.
 
-#### Configuration options
+## Configuration options
 
 Click the "Configure" button on the main window to open see the available options.
 
 **Save configuration** will, if not already done, create a file to persist your current settings (by default: `legacy-status-proxy-vatsim.properties` in the directory you started the JAR from). This will also save whether you accepted the disclaimer or rejected it (same as in the "About" dialog).
 
-##### General options
+### General options
 
 **Upstream connection**/**Base URL** should usually not be changed (default: `http://status.vatsim.net`). The base URL is the first part of the address that will be used to fetch data from VATSIM. **Use VATSIM default URL** is used to protect the URL against any unwanted modification. Changing the base URL requires the whole application to be restarted for the new setting to become effective.
 
@@ -85,7 +40,7 @@ Settings in **HTTP Server** may need to be changed if you want to open access to
 
 **Access (IP Filter)** controls which clients are allowed to access the proxy server. You can add a new IPv4 or IPv6 address by entering it in the **IP Address** field and clicking **Add**. Addresses need to be entered exactly as printed on the log; if in doubt first access the server from a blocked machine and copy & paste the IP address from the log to the configuration window. To block access for a previously allowed client select its IP address from the list and click **Remove**. Clicking **Reset** will revert to the default configuration ("localhost" meaning IPv4 address `127.0.0.1` and IPv6 address `::1` expanded to `0:0:0:0:0:0:0:1`). All changes to the IP filter are immediately effective as shown in the list. Every change is also confirmed by a log message `Access is now allowed from ...`.
 
-##### Station Locator options
+### Station Locator options
 
 Any change to the Station Locator options requires a server restart to become effective.
 
@@ -99,7 +54,7 @@ If **locate stations using VAT-Spy data** is enabled, the proxy will attempt to 
 
 **Warn about unlocateable observers in log:** The same as above but for observers. It is safe to keep this option disabled.
 
-###### VAT-Spy data
+#### VAT-Spy data
 
 This group allows to configure how VAT-Spy data should be handled by the proxy.
 
@@ -113,7 +68,7 @@ In case no updates for the proxy server should be available, you can [download t
 
 **Locate observers by assuming callsign to indicate an ATC station:** Only if this option is enabled, ATC observers will be attempted to be located.
 
-### Setting up clients
+# Setting up clients
 
 Before setting up a client please check if an updated version of the client has already been made available. It may not be necessary to use this proxy server.
 
@@ -121,29 +76,29 @@ If your wanted client is not listed here check the client settings if it allows 
 
 In addition to this description please refer to the GitHub discussions for [compatibility](https://github.com/dneuge/legacy-status-proxy-vatsim/discussions/categories/compatibility) for any questions or to describe how to set up additional clients.
 
-#### QuteScoop
+## QuteScoop
 
 Open QuteScoop's Preferences dialog. In the "Network" tab change "network" from "VATSIM" to "user defined network" and enter the URL to your proxy server (default: `http://localhost:8080/`). Re-enable "ATC bookings" or bookings will be missing. Restart QuteScoop to get rid of any cached information. The status line should display "User Network - today ....z: ... clients" and you should see all pilots and controllers as usual.
 
 View the text of some ATIS station. If you do not see line breaks try changing the *encode data file in UTF-8 instead of ISO-8859-1* option as described above, restart the proxy server and reload the data in QuteScoop (F5).
 
-#### ServInfo
+## ServInfo
 
 The status proxy needs to be configured as a network, do *not* configure anything in *Proxy settings*.
 
-##### as a custom network
+### as a custom network
 
 Open *Options/Connection Parameters*. In section *Custom Network Settings* select a free slot such as *Custom Network 1*. Choose a *Network name* (for example `VATSIM Legacy`) and enter the proxy address as *Locator path url* (default: `http://localhost:8080/`). Confirm the settings with *OK*.
 
 Use the icon with two networked computers to retrieve data through the proxy; do not click the VATSIM logo.
 
-##### as "VATSIM"
+### as "VATSIM"
 
 Close ServInfo and navigate to the application's folder. Open `servinfo.ini` with a text editor. Find the `VATSIM Servers Locator Url` setting and change the URL to your server address (default: `http://localhost:8080/`). Save the file, close the editor and start ServInfo.
 
 Click the VATSIM logo to retrieve data through the proxy.
 
-### Using the CLI (command-line)
+# Using the CLI (command-line)
 
 The CLI is useful if you want to start multiple instances, run it without a window in the background or on a server machine.
 
@@ -165,9 +120,9 @@ Arguments are appended to the end of the command. Available options are:
 
 Configuration via CLI is not supported yet. It is recommended to create a configuration via the GUI and use the resulting configuration file for CLI. It is also possible to persist the configuration using `--save-config` in the state immediately after parsing CLI options. Combining `--save-config` with a non-existing `--config FILE` thus creates a new file with default values that can be edited manually in a text editor. Saving a configuration with `--accept-disclaimer` will persist the agreement.
 
-## FAQ / Common issues
+# FAQ / Common issues
 
-### General troubleshooting
+## General troubleshooting
 
 When experiencing issues, a solution may be easily possible by:
 
@@ -180,13 +135,13 @@ Support is primarily available through:
 - [thread on main VATSIM forums](https://forums.vatsim.net/topic/31116-legacy-status-proxy-providing-data-feed-compatibility-to-passive-clients-not-migrated-to-json-yet/) (English)
 - [thread on VATSIM Germany forums](https://board.vatsim-germany.org/threads/legacy-status-proxy-data-feed-kompatibilit%C3%A4t-f%C3%BCr-unmigrierte-passive-clients.66112/) (German)
 
-### ATIS has no line breaks / free text is truncated or contains weird characters
+## ATIS has no line breaks / free text is truncated or contains weird characters
 
 **Cause:** Clients are not served in their expected character set.
 
 Try to change the **encode data file in UTF-8 instead of ISO-8859-1** option and restart the server (see above for details). This will depend on the client you are using: VATSIM changed the character set in the last years of the old CSV-like data file format and some (pre-release versions of) clients had already been migrated, others not. Serving multiple clients at the same time may require a second server instance to work around this incompatibility.
 
-### Some controllers are not visible or not shown correctly (e.g. missing labels in QuteScoop)
+## Some controllers are not visible or not shown correctly (e.g. missing labels in QuteScoop)
 
 Check that you are running the latest version. Version 0.90 introduced a "Station Locator" to add estimated controller coordinates back to the legacy format (they are missing in the new JSON v3 format).
 
@@ -198,15 +153,15 @@ Open *Configure/Station Locator* and check that *locate stations using VAT-Spy d
 
 Check if there is updated airspace information for the affected client.
 
-### Saving configuration is not possible (disabled)
+## Saving configuration is not possible (disabled)
 
 **Cause:** The proxy was launched from a system directory, for example by using special functions such as "recent files" on Windows.
 
 The configuration file is assumed to be located at the current working directory which may not be a valid location in some cases. Try to launch the proxy from the directory it is actually located in (i.e. navigate to the correct folder in Windows Explorer). You can also create a shortcut which allows you to choose the working directory. Alternatively, you can run the proxy with a specific configuration file path provided by command-line argument `--config FILE`.
 
-### Server cannot be started
+## Server cannot be started
 
-#### Socket bind failure for socket / Address already in use
+### Socket bind failure for socket / Address already in use
 
 **Cause 1:** Another application already runs on the selected port.
 
@@ -222,79 +177,28 @@ Check if you are running the latest version (an issue causing that behaviour has
 
 It may still occasionally happen that proxy restarts in quick succession are not possible if clients have accessed the server recently. Wait a moment and try again; the port should become available again after one to four minutes. Check that any previously started instance of the proxy really has been terminated.
 
-#### Permission denied
+### Permission denied
 
 **Cause:** You are not allowed to run a server on the selected port.
 
 Configure the proxy to use another port or check your system permissions (e.g. ports below 1024 are reserved on Linux).
 
-### Server responds with "Forbidden" (log: rejecting connection from...)
+## Server responds with "Forbidden" (log: rejecting connection from...)
 
 **Cause:** The affected client's IP address has not been allowed to access the server. By default, proxy service is limited to "localhost" (`127.0.0.1` or `::1`).
 
 Check if the client should really be allowed to access the server and add the IP address exactly as printed on the server log to your configuration.
 
-### Server responds with "Not authoritative" (HTTP status 421 Misdirected Request)
+## Server responds with "Not authoritative" (HTTP status 421 Misdirected Request)
 
 **Cause:** The affected client did not call the proxy server by its configured host name.
 
 Check the local host name (default: `localhost`) in your server configuration. Choose a host name or IPv4 address that can be accessed by all wanted clients and only refer to that exact host name on all clients.
 
-### An exception prevents the application from starting
+## An exception prevents the application from starting
 
 **Possible cause:** The file path leading up to the JAR file contains a directory ending with an exclamation mark (`!`).
 
 Java is unable to access such paths properly. Please rename the offending directory or move the JAR file to another location.
 
 **Any other cause may exist.** Please run the proxy from command line to see all log output and debug information. That information may already contain a message indicating the reason for startup failure. If you are unable to resolve or think this may be a common issue please provide these details to the developer for analysis.
-
-## Compilation
-
-### Install unpublished dependencies
-
-The following projects do not have Maven artifacts nor an official POM file, so they need to be fetched, repackaged and installed locally as well:
-
-- [VAT-Spy Client Data](https://github.com/vatsimnetwork/vatspy-data-project) at revision `487beca0f11f1cee5cb32c001591cd6845241e6a`
-
-Automated checkout, build and installation can be performed on Linux systems by running [install-unpublished-dependencies.sh](install-unpublished-dependencies.sh).
-
-#### Updating/packaging VAT-Spy data
-
-Unfortunately, VAT-Spy data is not available through an official artifact and needs to be packaged locally using [deps/vatspy-data-project/install.sh](deps/vatspy-data-project/install.sh). To package a specific commit hash provide the hash as first argument, otherwise the latest official version will be determined from VATSIM API.
-
-The script is only available for Linux systems but may work on MacOS or in Windows git bash.
-
-Please do not deploy the unofficial package to any servers, only install it locally on the build machine.
-
-### Compilation
-
-Make sure all dependencies have been installed locally in Maven.
-
-Run `mvn clean install` to compile, locally install the status proxy and generate a "shaded" JAR file containing all dependencies as `target/legacy-status-proxy-vatsim.jar`.
-
-### Updating dependencies
-
-[Attribution Maven Plugin](https://github.com/jinnovations/attribution-maven-plugin) is used on every build to ensure all artifacts are listed in `src-gen/main/resources/de/energiequant/vatsim/compatibility/legacyproxy/attribution/attribution.xml`. At application startup that file is used to check that all required licenses have been included and copyright notices have been recorded for every dependency.
-
-This requires additional changes to be made after adding a new dependency or changing versions in the POM file:
-
-- All copyright notices must be recorded in [CopyrightNotice](src/main/java/de/energiequant/vatsim/compatibility/legacyproxy/attribution/CopyrightNotice.java) class, otherwise an exception will be thrown when starting the proxy.
-  - Use the official copyright notice if available, preferably from files included within the used JAR artifacts.
-  - Some licenses or projects may require specific file contents to be included, for example some "notice" file for Apache 2.0 licensed projects.
-  - Copyright, license or additional notices may change between version updates. Check that the copyright information is up-to-date. Fully replace the information if in doubt.
-- If known licenses are referred by unknown aliases, adapt [License.java](src/main/java/de/energiequant/vatsim/compatibility/legacyproxy/attribution/License.java) enum.
-- If new licenses are introduced:
-  - check license compatibility and implications on effective license for binary distribution
-  - add a copy of the official license text to [src/main/resources/de/energiequant/vatsim/compatibility/legacyproxy/attribution/](src/main/resources/de/energiequant/vatsim/compatibility/legacyproxy/attribution/)
-  - adapt [License.java](src/main/java/de/energiequant/vatsim/compatibility/legacyproxy/attribution/License.java) enum
-  - if distribution license is affected:
-    - confirm with project lead that the new license will not lead to any complications for development or future use and are really okay to be introduced to the project
-    - change `EFFECTIVE_LICENSE` in [Main](src/main/java/de/energiequant/vatsim/compatibility/legacyproxy/Main.java) class
-    - check if the disclaimers or any program behaviour (mandatory license confirmation etc.) need to be adapted
-    - update all accompanying documentation
-
-## License
-
-The implementation and accompanying files (not including copies of license texts themselves) are released under [MIT license](LICENSE.md). Dependencies are subject to their individual licenses. Binary redistribution is subject to the combination of all licenses. See the disclaimer for more information.
-
-All processed and served data is subject to policies and restrictions set by VATSIM and your local regulations. See section *Disclaimer and Intended Use* for more details.
