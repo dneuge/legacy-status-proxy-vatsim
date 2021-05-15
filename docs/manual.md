@@ -1,6 +1,6 @@
 This is the user manual for the legacy status proxy for VATSIM.
 
-For general information and the [disclaimer](../disclaimer.txt) please refer to the [readme file](../README.md).
+For general information and the [disclaimer](../src/main/resources/de/energiequant/vatsim/compatibility/legacyproxy/disclaimer.txt) please refer to the [readme file](../README.md).
 
 The proxy server can be used as a GUI desktop application or via command line (CLI). You can use `--no-gui` to enforce the CLI version on a desktop system.
 
