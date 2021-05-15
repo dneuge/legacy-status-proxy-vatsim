@@ -55,7 +55,7 @@ For further details including an FAQ please refer to the [user manual](docs/manu
 
 ## Development
 
-If you are interested in developing the proxy, please refer to the [development notices](docs/development.md) for details. Compilation requires installation of unpublished Maven artifacts, which is described in further detail.
+If you are interested in developing the proxy, please refer to the [development notes](docs/development.md) for details. Compilation requires installation of unpublished Maven artifacts, which is described in further detail.
 
 ## License
 
