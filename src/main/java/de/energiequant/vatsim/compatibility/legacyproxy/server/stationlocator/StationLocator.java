@@ -167,8 +167,6 @@ public class StationLocator {
     }
 
     public void injectTo(DataFile dataFile) {
-        // FIXME: add copyright/license notice to data file
-
         LOGGER.debug("Injecting station locations...");
         for (Client client : dataFile.getClients()) {
             ClientType clientType = client.getRawClientType();

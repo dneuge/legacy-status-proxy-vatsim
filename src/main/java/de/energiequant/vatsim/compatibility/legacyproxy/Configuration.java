@@ -28,6 +28,8 @@ import de.energiequant.vatsim.compatibility.legacyproxy.server.IPFilter;
 import de.energiequant.vatsim.compatibility.legacyproxy.server.stationlocator.StationLocator.Strategy;
 
 public class Configuration {
+    // TODO: switch from File to Path?
+
     private static final Logger LOGGER = LoggerFactory.getLogger(Configuration.class);
 
     private final File configFile;
@@ -324,8 +326,6 @@ public class Configuration {
     }
 
     private File readFile(Properties properties, String key, String defaultValue) {
-        // FIXME: may have issues with spaces or special chars in filenames
-
         String path = readString(properties, key, defaultValue);
         if (path.trim().isEmpty()) {
             return null;
