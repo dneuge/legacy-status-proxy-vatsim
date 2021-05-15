@@ -157,7 +157,10 @@ public class Server {
             legacyNetworkInformationFetcher::getLastAggregatedStartupMessages);
 
         HttpAsyncServer myHttpServer = AsyncServerBootstrap.bootstrap()
-            .setIOReactorConfig(IOReactorConfig.DEFAULT)
+            .setIOReactorConfig(IOReactorConfig.custom()
+                .setSoReuseAddress(true)
+                .build() //
+            )
             .addFilterFirst("ipFilter", ipFilter)
             .setCanonicalHostName(localHostname)
             .setConnectionReuseStrategy(NEVER_REUSE_CONNECTIONS)
