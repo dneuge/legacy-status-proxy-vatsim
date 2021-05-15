@@ -106,7 +106,7 @@ public class StationLocator {
     }
 
     public StationLocator() {
-        this.vatSpyStationLocator = shouldLocateObserverByVatSpy
+        this.vatSpyStationLocator = strategy.enablesVatSpy()
             ? initializeVatSpyStationLocator()
             : null;
     }
