@@ -2,7 +2,7 @@
 
 set -e
 
-vatspy_commit_hash='487beca0f11f1cee5cb32c001591cd6845241e6a'
+vatspy_commit_hash='a1d0aae8aaae62834bc436e2d801a75976d2c6e3'
 
 repos=""
 # https://github.com/vatplanner/dataformats-vatsim-public.git@v0.1-pre210402
