@@ -28,6 +28,18 @@ if [[ ! "$commit_hash" =~ ^[0-9a-f]{40}$ ]]; then
     die "Bad format for a commit hash: ${commit_hash}"
 fi
 
+# check if artifact already exists
+expected_path="$HOME/.m2/repository/_inofficial/com/github/vatsimnetwork/vatspy-data-project/${commit_hash}/vatspy-data-project-${commit_hash}.jar"
+if [ -e "$expected_path" ]; then
+    if [ "$FORCE_REBUILD" != "$checkout_name" ]; then
+            echo "Artifact already exists at ${expected_path} - skipping build"
+            echo "To force rebuilding either delete the artifact from Maven your repository or rerun with FORCE_REBUILD='${checkout_name}'"
+        exit 0
+    fi
+
+    echo "Forcing rebuild although artifact already exists at ${expected_path}"
+fi
+
 # generate POM
 sed -e "s/##VERSION##/${commit_hash}/" pom.xml.template >pom.xml || die 'Failed to generate POM'
 
