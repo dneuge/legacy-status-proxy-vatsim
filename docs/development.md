@@ -4,7 +4,7 @@ This is the development-related documentation. For other information please refe
 
 The following projects do not have Maven artifacts nor an official POM file, so they need to be fetched, repackaged and installed locally as well:
 
-- [VAT-Spy Client Data](https://github.com/vatsimnetwork/vatspy-data-project) at revision `487beca0f11f1cee5cb32c001591cd6845241e6a`
+- [VAT-Spy Client Data](https://github.com/vatsimnetwork/vatspy-data-project) at revision `f215fdc0b9fc6c7fc6976c05eca6c1aae9c1b26d`
 
 Automated checkout, build and installation can be performed on Linux systems by running [install-unpublished-dependencies.sh](../install-unpublished-dependencies.sh).
 
