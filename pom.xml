@@ -22,7 +22,7 @@
 		<!-- runtime dependencies -->
 		<vatplanner.dataformatsVatsimPublic.version>0.1-pre210515</vatplanner.dataformatsVatsimPublic.version>
 		<webDataRetrieval.version>0.2.2</webDataRetrieval.version>
-		<vatspyData.version>f215fdc0b9fc6c7fc6976c05eca6c1aae9c1b26d</vatspyData.version>
+		<vatspyData.version>0f143b8fddf426e63ac060224db7215f0864c289</vatspyData.version>
 
 		<slf4j.version>1.7.30</slf4j.version>
 		<log4j.version>2.13.3</log4j.version>
