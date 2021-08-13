@@ -8,7 +8,7 @@ public class AppConstants {
     // TODO: set application meta data automatically during build
     public static final String APPLICATION_JAR_NAME = "legacy-status-proxy-vatsim.jar";
     public static final String APPLICATION_NAME = Launcher.APPLICATION_NAME;
-    public static final String APPLICATION_VERSION = "0.90.4";
+    public static final String APPLICATION_VERSION = "0.91dev";
     public static final String APPLICATION_URL = "https://github.com/dneuge/legacy-status-proxy-vatsim";
     public static final String APPLICATION_COPYRIGHT = "Copyright (c) 2021 Daniel Neugebauer";
 
