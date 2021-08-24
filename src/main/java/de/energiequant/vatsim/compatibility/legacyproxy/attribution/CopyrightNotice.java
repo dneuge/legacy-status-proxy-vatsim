@@ -199,6 +199,11 @@ public class CopyrightNotice {
                 + "\n"
                 + "Please visit the linked website to view the full list of contributors." //
         );
+
+        // FIXME: remove on reset to published version
+        add("org.vatplanner", "dataformats-vatsim-public", "0.1-SNAPSHOT", //
+            "Copyright (c) 2016-2021 Daniel Neugebauer" //
+        );
     }
 
     private static String buildKey(String groupId, String artifactId, String version) {

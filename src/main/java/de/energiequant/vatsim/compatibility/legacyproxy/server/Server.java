@@ -171,12 +171,12 @@ public class Server {
                         Set<URL> combined = new HashSet<>();
                         combined.addAll(
                             jsonNetworkInformationFetcher.getLastFetchedNetworkInformation() //
-                                .map(x -> x.getDataFileUrls(AppConstants.UPSTREAM_DATA_FILE_FORMAT)) //
+                                .map(x -> x.getDataUrls(AppConstants.UPSTREAM_DATA_FILE_FORMAT)) //
                                 .orElse(new ArrayList<>()) //
                         );
                         combined.addAll(
                             legacyNetworkInformationFetcher.getLastFetchedNetworkInformation() //
-                                .map(x -> x.getDataFileUrls(AppConstants.UPSTREAM_DATA_FILE_FORMAT)) //
+                                .map(x -> x.getDataUrls(AppConstants.UPSTREAM_DATA_FILE_FORMAT)) //
                                 .orElse(new ArrayList<>()) //
                         );
 

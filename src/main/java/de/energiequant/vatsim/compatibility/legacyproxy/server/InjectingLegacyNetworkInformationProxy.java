@@ -73,7 +73,7 @@ public class InjectingLegacyNetworkInformationProxy extends GetOnlyRequestHandle
         NetworkInformation out = new NetworkInformation();
         out.setWhazzUpString(merged.getWhazzUpString());
 
-        Map<String, List<URL>> urlsByJsonKey = merged.getAllDataFileUrls();
+        Map<String, List<URL>> urlsByJsonKey = merged.getAllUrlsByDataKey();
         for (Entry<String, List<URL>> entry : urlsByJsonKey.entrySet()) {
             String jsonKey = entry.getKey();
 
@@ -84,12 +84,12 @@ public class InjectingLegacyNetworkInformationProxy extends GetOnlyRequestHandle
 
             Set<URL> deduplicatedUrls = new HashSet<>(entry.getValue());
             for (URL url : deduplicatedUrls) {
-                out.addAsDataFileUrl(jsonKey, url.toString());
+                out.addAsDataUrl(jsonKey, url.toString());
             }
         }
 
-        out.addAsDataFileUrl(
-            DataFileFormat.LEGACY.getJsonNetworkInformationKey(), //
+        out.addAsDataUrl(
+            DataFileFormat.LEGACY.getNetworkInformationDataKey(), //
             localBaseUrl + ServiceEndpoints.DATA_FILE_LEGACY //
         );
 
