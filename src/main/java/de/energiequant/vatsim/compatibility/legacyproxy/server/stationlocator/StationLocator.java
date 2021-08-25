@@ -13,6 +13,7 @@ import org.vatplanner.dataformats.vatsimpublic.parser.DataFile;
 
 import de.energiequant.vatsim.compatibility.legacyproxy.Configuration;
 import de.energiequant.vatsim.compatibility.legacyproxy.Main;
+import de.energiequant.vatsim.compatibility.legacyproxy.fetching.OnlineTransceiversFileFetcher;
 import de.energiequant.vatsim.compatibility.legacyproxy.server.stationlocator.Cache.Entry;
 
 public class StationLocator {
@@ -24,6 +25,7 @@ public class StationLocator {
     private static final Duration POSITIVE_RESULT_TIMEOUT = Duration.ofMinutes(10);
 
     private final VatSpyStationLocator vatSpyStationLocator;
+    private final OnlineTransceiversStationLocator onlineTransceiversStationLocator;
 
     private final Configuration config = Main.getConfiguration();
     private final Strategy strategy = config.getStationLocatorStrategy();
@@ -34,11 +36,6 @@ public class StationLocator {
     private final boolean shouldLocateObserverByTransceivers = config.shouldLocateObserverByTransceivers();
     private final boolean shouldLocateObserver = shouldLocateObserverByTransceivers || shouldLocateObserverByVatSpy;
     private final boolean shouldIgnorePlaceholderFrequency = config.shouldIgnorePlaceholderFrequency();
-
-    public static enum Source {
-        VATSPY,
-        NONE;
-    }
 
     public static enum Strategy {
         DISABLE(
@@ -105,10 +102,12 @@ public class StationLocator {
         }
     }
 
-    public StationLocator() {
+    public StationLocator(OnlineTransceiversFileFetcher onlineTransceiversFileFetcher) {
         this.vatSpyStationLocator = strategy.enablesVatSpy()
             ? initializeVatSpyStationLocator()
             : null;
+
+        this.onlineTransceiversStationLocator = new OnlineTransceiversStationLocator(onlineTransceiversFileFetcher);
     }
 
     private VatSpyStationLocator initializeVatSpyStationLocator() {
@@ -152,13 +151,22 @@ public class StationLocator {
         boolean shouldLocateByVatSpy = (vatSpyStationLocator != null)
             && strategy.enablesVatSpy()
             && (!isObserver || shouldLocateObserverByVatSpy);
+
         if (shouldLocateByVatSpy) {
             station = vatSpyStationLocator.locate(callsign).orElse(null);
-            if (station != null) {
-                LOGGER.trace("location for \"{}\" was available from VATSpy data, caching", callsign);
-                cache.add(callsign, station, Source.VATSPY, POSITIVE_RESULT_TIMEOUT);
-                return Optional.of(station);
-            }
+        }
+
+        boolean shouldLocateByTransceivers = strategy.enablesOnlineTransceivers()
+            && (!isObserver || shouldLocateObserverByTransceivers);
+
+        if ((station == null) && shouldLocateByTransceivers) {
+            station = onlineTransceiversStationLocator.locate(callsign).orElse(null);
+        }
+
+        if (station != null) {
+            LOGGER.trace("location for \"{}\" was available from {}, caching", callsign, station.getSource());
+            cache.add(callsign, station, station.getSource(), POSITIVE_RESULT_TIMEOUT);
+            return Optional.of(station);
         }
 
         // TODO: negative cache?
@@ -205,7 +213,8 @@ public class StationLocator {
                 double latitude = station.getLatitude();
                 double longitude = station.getLongitude();
 
-                LOGGER.debug("injecting location for {} ({} / {})", callsign, latitude, longitude);
+                LOGGER.debug("injecting location for {} ({}: {} / {})", callsign, station.getSource(), latitude,
+                    longitude);
                 client.setLatitude(latitude);
                 client.setLongitude(longitude);
             }

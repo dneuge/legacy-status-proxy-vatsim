@@ -69,12 +69,20 @@ public abstract class PeriodicRunnable implements Runnable {
                 }
             }
         }
+
+        isStarted.set(false);
+        shouldStop.set(false);
     }
 
     /**
      * Spawns a new periodically repeating {@link Thread}.
      */
     public void start() {
+        if (shouldStop.get()) {
+            LOGGER.warn("Previous thread is shutting down, cannot start again before completed.");
+            return;
+        }
+
         if (!isStarted.getAndSet(true)) {
             LOGGER.debug("Starting new thread");
             new Thread(this).start();
@@ -87,6 +95,14 @@ public abstract class PeriodicRunnable implements Runnable {
      * Attempts to stop the {@link Thread}.
      */
     public void stop() {
+        if (!isStarted.get()) {
+            LOGGER.debug("Not started");
+            return;
+        } else if (shouldStop.get()) {
+            LOGGER.debug("Already stopping");
+            return;
+        }
+
         LOGGER.debug("Stopping thread");
 
         shouldStop.set(true);
@@ -95,5 +111,16 @@ public abstract class PeriodicRunnable implements Runnable {
         if (runningThread != null) {
             runningThread.interrupt();
         }
+    }
+
+    /**
+     * Checks if the runner is running and not instructed to shut down.
+     * 
+     * @return <code>true</code> if running and not shutting down,
+     *         <code>false</code> if already stopped or shutdown is in progress
+     */
+    public boolean isAlive() {
+        Thread currentThread = thread.get();
+        return isStarted.get() && !shouldStop.get() && currentThread.isAlive();
     }
 }

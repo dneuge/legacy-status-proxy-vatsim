@@ -448,7 +448,7 @@ public class VatSpyStationLocator {
             return null;
         } else {
             trace("callsign prefix \"{}\" matched", callsign);
-            return new Station(callsign, centerPoint.getLatitude(), centerPoint.getLongitude());
+            return new Station(callsign, centerPoint.getLatitude(), centerPoint.getLongitude(), Source.VATSPY);
         }
     }
 

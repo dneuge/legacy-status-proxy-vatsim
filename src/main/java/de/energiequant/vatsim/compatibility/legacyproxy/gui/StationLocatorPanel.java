@@ -56,17 +56,9 @@ public class StationLocatorPanel extends JPanel {
     private static final Insets BOTTOM_INSETS = new Insets(0, 0, 10, 0);
     private static final Insets TOP_INSETS = new Insets(10, 0, 0, 0);
 
-    // TODO: implement online transceivers, then remove
-    private static final boolean ONLINE_TRANSCEIVERS_IMPLEMENTED = false;
-
-    private static final String TITLE_POSTFIX_NOT_ACTIVE = ONLINE_TRANSCEIVERS_IMPLEMENTED
-        ? " (not used by selected strategy)"
-        : " (disabled)";
+    private static final String TITLE_POSTFIX_NOT_ACTIVE = " (not used by selected strategy)";
 
     private final JComboBox<Strategy> strategyComboBox = new JComboBox<>(Strategy.values());
-
-    // TODO: implement online transceivers, then remove
-    private final JCheckBox singleStrategyCheckBox = new JCheckBox("locate stations using VAT-Spy data");
 
     private final JCheckBox obsCallsignIsObserverCheckBox = new JCheckBox(
         "assume callsigns ending in OBS to be observers" //
@@ -84,14 +76,12 @@ public class StationLocatorPanel extends JPanel {
     );
 
     private static final String TOOLTIP_LOG_UNLOCATABLE_STATIONS = "Warnings will only be issued for stations that were attempted to be located depending on other options such as "
-        + (ONLINE_TRANSCEIVERS_IMPLEMENTED ? "selected strategy, general activation of lookups, " : "")
-        + "filtering by client type, callsign or (placeholder) frequency.";
+        + "selected strategy, general activation of lookups, filtering by client type, callsign or (placeholder) frequency.";
 
     public StationLocatorPanel() {
         super();
 
         onSelect(strategyComboBox, this::onStrategySelected);
-        onChange(singleStrategyCheckBox, this::onSingleStrategyChanged);
 
         onChange(obsCallsignIsObserverCheckBox, this::onObsCallsignIsObserverChanged);
         onChange(ignorePlaceholderFrequencyCheckBox, this::onIgnorePlaceholderFrequencyChanged);
@@ -119,40 +109,33 @@ public class StationLocatorPanel extends JPanel {
 
         gbc.gridx = 0;
         gbc.gridy++;
-        if (!ONLINE_TRANSCEIVERS_IMPLEMENTED) {
-            gbc.gridwidth = 2;
-            gbc.weightx = 1.0;
-            gbc.fill = GridBagConstraints.HORIZONTAL;
-            add(singleStrategyCheckBox, gbc);
-        } else {
-            gbc.gridwidth = 1;
-            gbc.weightx = 0.0;
-            gbc.fill = GridBagConstraints.NONE;
-            add(new JLabel("Strategy:"), gbc);
+        gbc.gridwidth = 1;
+        gbc.weightx = 0.0;
+        gbc.fill = GridBagConstraints.NONE;
+        add(new JLabel("Strategy:"), gbc);
 
-            gbc.gridx++;
-            gbc.weightx = 1.0;
-            gbc.fill = GridBagConstraints.HORIZONTAL;
-            strategyComboBox.setEditable(false);
-            strategyComboBox.setRenderer(new DefaultListCellRenderer() {
-                @Override
-                public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                    Component component = super.getListCellRendererComponent(list, value, index, isSelected,
-                        cellHasFocus);
-                    if (value == null) {
-                        return component;
-                    }
-
-                    if (!(component instanceof JLabel)) {
-                        LOGGER.warn("DefaultListCellRenderer is not a JLabel");
-                    } else {
-                        ((JLabel) component).setText(((Strategy) value).getDescription());
-                    }
+        gbc.gridx++;
+        gbc.weightx = 1.0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        strategyComboBox.setEditable(false);
+        strategyComboBox.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                Component component = super.getListCellRendererComponent(list, value, index, isSelected,
+                    cellHasFocus);
+                if (value == null) {
                     return component;
                 }
-            });
-            add(strategyComboBox, gbc);
-        }
+
+                if (!(component instanceof JLabel)) {
+                    LOGGER.warn("DefaultListCellRenderer is not a JLabel");
+                } else {
+                    ((JLabel) component).setText(((Strategy) value).getDescription());
+                }
+                return component;
+            }
+        });
+        add(strategyComboBox, gbc);
 
         gbc.gridx = 0;
         gbc.gridy++;
@@ -186,11 +169,7 @@ public class StationLocatorPanel extends JPanel {
         gbc.gridy++;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.weighty = 1.0;
-        if (!ONLINE_TRANSCEIVERS_IMPLEMENTED) {
-            add(new JPanel(), gbc);
-        } else {
-            add(transceiversPanel, gbc);
-        }
+        add(transceiversPanel, gbc);
 
         updateAllOptions();
     }
@@ -208,17 +187,6 @@ public class StationLocatorPanel extends JPanel {
         Main.getConfiguration().setStationLocatorStrategy(newValue);
 
         updateAllOptions();
-    }
-
-    private void onSingleStrategyChanged() {
-        // TODO: implement online transceivers, then remove
-        Strategy strategy = singleStrategyCheckBox.isSelected()
-            ? Strategy.FIRST_VATSPY_THEN_TRANSCEIVERS
-            : Strategy.DISABLE;
-
-        strategyComboBox.setSelectedItem(strategy);
-
-        onStrategySelected();
     }
 
     private void onObsCallsignIsObserverChanged() {
@@ -278,7 +246,6 @@ public class StationLocatorPanel extends JPanel {
 
         Strategy strategy = config.getStationLocatorStrategy();
         strategyComboBox.setSelectedItem(strategy);
-        singleStrategyCheckBox.setSelected(strategy.enablesVatSpy());
 
         obsCallsignIsObserverCheckBox.setSelected(config.shouldIdentifyObserverByCallsign());
         ignorePlaceholderFrequencyCheckBox.setSelected(config.shouldIgnorePlaceholderFrequency());
@@ -413,16 +380,14 @@ public class StationLocatorPanel extends JPanel {
             gbc.gridy++;
             add(observerCallsignAsStationCheckBox, gbc);
 
-            if (ONLINE_TRANSCEIVERS_IMPLEMENTED) {
-                gbc.gridy++;
-                gbc.insets = CHECKBOX_WIDTH_INSETS;
-                add(
-                    stylePlain(new JLabel(
-                        "If disabled, observers can only be located via transceivers." //
-                    )),
-                    gbc //
-                );
-            }
+            gbc.gridy++;
+            gbc.insets = CHECKBOX_WIDTH_INSETS;
+            add(
+                stylePlain(new JLabel(
+                    "If disabled, observers can only be located via transceivers." //
+                )),
+                gbc //
+            );
 
             updateAllOptions();
         }

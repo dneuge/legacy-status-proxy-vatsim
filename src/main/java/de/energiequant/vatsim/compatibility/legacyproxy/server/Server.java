@@ -32,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vatplanner.dataformats.vatsimpublic.export.LegacyNetworkInformationWriter;
 import org.vatplanner.dataformats.vatsimpublic.parser.DataFileParserFactory;
+import org.vatplanner.dataformats.vatsimpublic.parser.OnlineTransceiversFile;
 
 import de.energiequant.vatsim.compatibility.legacyproxy.AppConstants;
 import de.energiequant.vatsim.compatibility.legacyproxy.Configuration;
@@ -39,6 +40,7 @@ import de.energiequant.vatsim.compatibility.legacyproxy.Main;
 import de.energiequant.vatsim.compatibility.legacyproxy.ServiceEndpoints;
 import de.energiequant.vatsim.compatibility.legacyproxy.fetching.JsonNetworkInformationFetcher;
 import de.energiequant.vatsim.compatibility.legacyproxy.fetching.LegacyNetworkInformationFetcher;
+import de.energiequant.vatsim.compatibility.legacyproxy.fetching.OnlineTransceiversFileFetcher;
 
 public class Server {
     private static final Logger LOGGER = LoggerFactory.getLogger(Server.class);
@@ -46,8 +48,14 @@ public class Server {
     private static final Duration NETWORK_INFORMATION_UPDATE_INTERVAL = Duration.ofHours(6);
     private static final Duration NETWORK_INFORMATION_RETRY_INTERVAL = Duration.ofMinutes(5);
 
+    private static final Duration ONLINE_TRANSCEIVERS_DEFAULT_UPDATE_INTERVAL = Duration
+        .ofMinutes(Configuration.DEFAULT_ONLINE_TRANSCEIVERS_OVERRIDE_CACHE_MINUTES);
+    private static final Duration ONLINE_TRANSCEIVERS_RETRY_INTERVAL = Duration.ofMinutes(1);
+    private static final Duration ONLINE_TRANSCEIVERS_IDLE_TIMEOUT = Duration.ofMinutes(20);
+
     private final LegacyNetworkInformationFetcher legacyNetworkInformationFetcher;
     private final JsonNetworkInformationFetcher jsonNetworkInformationFetcher;
+    private final OnlineTransceiversFileFetcher onlineTransceiversFileFetcher;
     private final AtomicReference<HttpAsyncServer> httpServer = new AtomicReference<>();
     private final IPFilter ipFilter = new IPFilter();
 
@@ -110,7 +118,37 @@ public class Server {
             NETWORK_INFORMATION_UPDATE_INTERVAL,
             NETWORK_INFORMATION_RETRY_INTERVAL);
 
-        LOGGER.info("Starting fetcher threads");
+        onlineTransceiversFileFetcher = new OnlineTransceiversFileFetcher(
+            () -> {
+                Configuration config = Main.getConfiguration();
+                if (config.isOnlineTransceiversOverrideEnabled()) {
+                    return config.getOnlineTransceiversOverrideUrl();
+                }
+
+                List<URL> transceiversUrls = jsonNetworkInformationFetcher.getLastFetchedNetworkInformation() //
+                    .map(x -> x.getDataUrls(OnlineTransceiversFile.Format.INITIAL)) //
+                    .orElse(new ArrayList<>());
+
+                if (transceiversUrls.isEmpty()) {
+                    return null;
+                }
+
+                return pickRandomItem(transceiversUrls).toString();
+            }, //
+            () -> {
+                Configuration config = Main.getConfiguration();
+
+                if (config.isOnlineTransceiversOverrideEnabled()) {
+                    return Duration.ofMinutes(config.getOnlineTransceiversOverrideCacheMinutes());
+                }
+
+                return ONLINE_TRANSCEIVERS_DEFAULT_UPDATE_INTERVAL;
+            }, //
+            ONLINE_TRANSCEIVERS_RETRY_INTERVAL, //
+            ONLINE_TRANSCEIVERS_IDLE_TIMEOUT //
+        );
+
+        LOGGER.info("Starting NetworkInformation fetcher threads");
         legacyNetworkInformationFetcher.start();
         jsonNetworkInformationFetcher.start();
 
@@ -167,6 +205,7 @@ public class Server {
             .register(ServiceEndpoints.DATA_FILE_LEGACY,
                 new JsonToLegacyDataFileProxy(
                     new DataFileParserFactory().createDataFileParser(AppConstants.UPSTREAM_DATA_FILE_FORMAT),
+                    onlineTransceiversFileFetcher,
                     () -> {
                         Set<URL> combined = new HashSet<>();
                         combined.addAll(
@@ -243,6 +282,7 @@ public class Server {
         LOGGER.info("Stopping fetcher threads");
         legacyNetworkInformationFetcher.stop();
         jsonNetworkInformationFetcher.stop();
+        onlineTransceiversFileFetcher.stop();
 
         _stopHttpServer();
 

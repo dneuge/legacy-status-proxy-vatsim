@@ -42,7 +42,7 @@ public class Configuration {
     private static final boolean DEFAULT_UPSTREAM_BASE_URL_OVERRIDDEN = false;
     private static final String DEFAULT_UPSTREAM_BASE_URL = "http://status.vatsim.net";
     private static final String DEFAULT_LOCAL_HOST_NAME = "localhost";
-    private static final int DEFAULT_ONLINE_TRANSCEIVERS_OVERRIDE_CACHE_MINUTES = 15;
+    public static final int DEFAULT_ONLINE_TRANSCEIVERS_OVERRIDE_CACHE_MINUTES = 15;
     private static final boolean DEFAULT_ONLINE_TRANSCEIVERS_OVERRIDE_ENABLED = false;
     private static final String DEFAULT_ONLINE_TRANSCEIVERS_OVERRIDE_URL = "https://data.vatsim.net/v3/transceivers-data.json";
     private static final int DEFAULT_SERVER_PORT = 8080;

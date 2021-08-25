@@ -4,11 +4,13 @@ public class Station {
     private final String callsign;
     private final double latitude;
     private final double longitude;
+    private final Source source;
 
-    public Station(String callsign, double latitude, double longitude) {
+    public Station(String callsign, double latitude, double longitude, Source source) {
         this.callsign = callsign;
         this.latitude = latitude;
         this.longitude = longitude;
+        this.source = source;
     }
 
     public String getCallsign() {
@@ -21,5 +23,9 @@ public class Station {
 
     public double getLongitude() {
         return longitude;
+    }
+
+    public Source getSource() {
+        return source;
     }
 }

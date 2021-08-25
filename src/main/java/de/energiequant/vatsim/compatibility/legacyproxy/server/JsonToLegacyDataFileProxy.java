@@ -25,6 +25,7 @@ import org.vatplanner.dataformats.vatsimpublic.export.Writer;
 import org.vatplanner.dataformats.vatsimpublic.parser.DataFile;
 import org.vatplanner.dataformats.vatsimpublic.parser.Parser;
 import org.vatplanner.dataformats.vatsimpublic.parser.ParserLogEntry;
+import org.vatplanner.dataformats.vatsimpublic.parser.ParserLogEntryCollector;
 
 import de.energiequant.common.webdataretrieval.DefaultHttpRetrievalDecoders;
 import de.energiequant.common.webdataretrieval.HttpPromiseBuilder;
@@ -32,6 +33,7 @@ import de.energiequant.common.webdataretrieval.HttpRetrieval;
 import de.energiequant.vatsim.compatibility.legacyproxy.AppConstants;
 import de.energiequant.vatsim.compatibility.legacyproxy.Configuration;
 import de.energiequant.vatsim.compatibility.legacyproxy.Main;
+import de.energiequant.vatsim.compatibility.legacyproxy.fetching.OnlineTransceiversFileFetcher;
 import de.energiequant.vatsim.compatibility.legacyproxy.server.stationlocator.StationLocator;
 import de.energiequant.vatsim.compatibility.legacyproxy.server.stationlocator.StationLocator.Strategy;
 
@@ -41,7 +43,7 @@ public class JsonToLegacyDataFileProxy extends GetOnlyRequestHandler {
     private final Supplier<String> jsonUrlSupplier;
     private final HttpPromiseBuilder<DataFile> promiseBuilder;
 
-    private final StationLocator stationLocator = new StationLocator();
+    private final StationLocator stationLocator;
 
     private final Configuration config = Main.getConfiguration();
     private final boolean isParserLogEnabled = config.isParserLogEnabled();
@@ -50,15 +52,18 @@ public class JsonToLegacyDataFileProxy extends GetOnlyRequestHandler {
 
     private static final Charset FALLBACK_CHARACTER_SET = StandardCharsets.UTF_8;
 
-    private final String header = stationLocator.usesVatSpySource()
-        ? AppConstants.SERVER_DISCLAIMER_HEADER //
-            + (stationLocator.isVatSpySourceExternal()
-                ? AppConstants.SERVER_VAT_SPY_EXTERNAL_HEADER
-                : AppConstants.SERVER_VAT_SPY_INTERNAL_HEADER) //
-        : AppConstants.SERVER_DISCLAIMER_HEADER;
+    private final String header;
 
-    public JsonToLegacyDataFileProxy(Parser<DataFile> parser, Supplier<String> jsonUrlSupplier) {
+    public JsonToLegacyDataFileProxy(Parser<DataFile> parser, OnlineTransceiversFileFetcher onlineTransceiversFileFetcher, Supplier<String> jsonUrlSupplier) {
         this.jsonUrlSupplier = jsonUrlSupplier;
+        stationLocator = new StationLocator(onlineTransceiversFileFetcher);
+
+        header = stationLocator.usesVatSpySource()
+            ? AppConstants.SERVER_DISCLAIMER_HEADER //
+                + (stationLocator.isVatSpySourceExternal()
+                    ? AppConstants.SERVER_VAT_SPY_EXTERNAL_HEADER
+                    : AppConstants.SERVER_VAT_SPY_INTERNAL_HEADER) //
+            : AppConstants.SERVER_DISCLAIMER_HEADER;
 
         DefaultHttpRetrievalDecoders decoders = new DefaultHttpRetrievalDecoders();
         promiseBuilder = new HttpPromiseBuilder<>(
@@ -128,14 +133,16 @@ public class JsonToLegacyDataFileProxy extends GetOnlyRequestHandler {
             context);
     }
 
-    private void logParserMessages(DataFile dataFile) {
+    private void logParserMessages(ParserLogEntryCollector parserLogEntryCollector) {
+        // TODO: extract to helper class?
+
         if (!isParserLogEnabled) {
             return;
         }
 
         // exceptions/stack traces are not logged as they are only useful for
         // development and would clutter the log in the main window beyond readability
-        for (ParserLogEntry entry : dataFile.getParserLogEntries()) {
+        for (ParserLogEntry entry : parserLogEntryCollector.getParserLogEntries()) {
             LOGGER.warn(
                 "Failed to parse{}, section {}, {}: {}", //
                 entry.isLineRejected() ? " (rejected)" : "", //
