@@ -220,34 +220,38 @@ public class MainWindow extends JFrame {
     }
 
     private void appendLogOutput() {
-        HTMLDocument document = (HTMLDocument) logOutput.getDocument();
-        Element listElement = document.getElement(document.getDefaultRootElement(), StyleConstants.NameAttribute,
-            HTML.Tag.UL);
-
-        boolean updated = false;
+        StringBuilder sb = new StringBuilder();
 
         for (BufferAppender appender : BufferAppender.getInstances()) {
             List<FormattedEvent> events = appender.getFormattedEventsAndClear();
             for (FormattedEvent event : events) {
-                updated = true;
-
                 String message = event.getMessage();
-                String attrStyle = LOG_STYLES_BY_LEVEL.getOrDefault(event.getLevel(), "");
-                String messageHtml = "<li " + attrStyle + ">" + sanitizeHtml(message).replace("\n", "<br/>") + "</li>";
 
-                try {
-                    document.insertBeforeEnd(listElement, messageHtml);
-                } catch (BadLocationException | IOException ex) {
-                    ex.printStackTrace();
-                }
+                sb.append("<li ");
+                sb.append(LOG_STYLES_BY_LEVEL.getOrDefault(event.getLevel(), ""));
+                sb.append(">");
+                sb.append(sanitizeHtml(message).replace("\n", "<br/>"));
+                sb.append("</li>");
             }
         }
 
-        if (updated) {
-            logOutput.invalidate();
-            logScrollPane.invalidate();
-            EventQueue.invokeLater(this::scrollToEndOfLog);
+        if (sb.length() == 0) {
+            return;
         }
+
+        HTMLDocument document = (HTMLDocument) logOutput.getDocument();
+        Element listElement = document.getElement(document.getDefaultRootElement(), StyleConstants.NameAttribute,
+            HTML.Tag.UL);
+
+        try {
+            document.insertBeforeEnd(listElement, sb.toString());
+        } catch (BadLocationException | IOException ex) {
+            ex.printStackTrace();
+        }
+
+        logOutput.invalidate();
+        logScrollPane.invalidate();
+        EventQueue.invokeLater(this::scrollToEndOfLog);
     }
 
     private String sanitizeHtml(String message) {
