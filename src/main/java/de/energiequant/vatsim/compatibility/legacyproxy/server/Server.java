@@ -48,10 +48,15 @@ public class Server {
     private static final Duration NETWORK_INFORMATION_UPDATE_INTERVAL = Duration.ofHours(6);
     private static final Duration NETWORK_INFORMATION_RETRY_INTERVAL = Duration.ofMinutes(5);
 
-    private static final Duration ONLINE_TRANSCEIVERS_DEFAULT_UPDATE_INTERVAL = Duration
-        .ofMinutes(Configuration.DEFAULT_ONLINE_TRANSCEIVERS_OVERRIDE_CACHE_MINUTES);
+    private static final Duration ONLINE_TRANSCEIVERS_MINIMUM_ALLOWED_UPDATE_INTERVAL = Duration.ofMinutes(1);
     private static final Duration ONLINE_TRANSCEIVERS_RETRY_INTERVAL = Duration.ofMinutes(1);
     private static final Duration ONLINE_TRANSCEIVERS_IDLE_TIMEOUT = Duration.ofMinutes(20);
+
+    /**
+     * Default interval until we got at least one data file which tells us the
+     * actual data retrieval interval requested by upstream.
+     */
+    private static final Duration ASSUMED_DEFAULT_MINIMUM_DATA_UPDATE_INTERVAL = Duration.ofMinutes(5);
 
     private final LegacyNetworkInformationFetcher legacyNetworkInformationFetcher;
     private final JsonNetworkInformationFetcher jsonNetworkInformationFetcher;
@@ -62,6 +67,8 @@ public class Server {
     private static final ConnectionReuseStrategy NEVER_REUSE_CONNECTIONS = (request, response, context) -> false;
 
     private final String upstreamBaseUrl = Main.getConfiguration().getUpstreamBaseUrl();
+    private final AtomicReference<Duration> authoritativeMinimumDataUpdateInterval = new AtomicReference<>(
+        ASSUMED_DEFAULT_MINIMUM_DATA_UPDATE_INTERVAL);
 
     private final boolean shouldShutdownOnStartFailure;
     private final AtomicReference<State> state = new AtomicReference<>(State.INITIAL);
@@ -142,7 +149,7 @@ public class Server {
                     return Duration.ofMinutes(config.getOnlineTransceiversOverrideCacheMinutes());
                 }
 
-                return ONLINE_TRANSCEIVERS_DEFAULT_UPDATE_INTERVAL;
+                return max(authoritativeMinimumDataUpdateInterval.get(), ONLINE_TRANSCEIVERS_MINIMUM_ALLOWED_UPDATE_INTERVAL);
             }, //
             ONLINE_TRANSCEIVERS_RETRY_INTERVAL, //
             ONLINE_TRANSCEIVERS_IDLE_TIMEOUT //
@@ -224,7 +231,8 @@ public class Server {
                         }
 
                         return pickRandomItem(combined).toString();
-                    } //
+                    }, //
+                    this::setAuthoritativeMinimumDataUpdateInterval //
                 ) //
             )
             .register(ServiceEndpoints.NETWORK_INFORMATION_JSON, new DirectProxy(
@@ -351,6 +359,21 @@ public class Server {
 
             default:
                 throw new IllegalArgumentException("Unsupported command: " + command);
+        }
+    }
+
+    private void setAuthoritativeMinimumDataUpdateInterval(Duration interval) {
+        Duration previous = authoritativeMinimumDataUpdateInterval.getAndSet(interval);
+        if (!previous.equals(interval)) {
+            LOGGER.debug("new authoritative minimum data retrieval interval: {}", interval);
+        }
+    }
+
+    private Duration max(Duration a, Duration b) {
+        if (a.compareTo(b) > 0) {
+            return a;
+        } else {
+            return b;
         }
     }
 }

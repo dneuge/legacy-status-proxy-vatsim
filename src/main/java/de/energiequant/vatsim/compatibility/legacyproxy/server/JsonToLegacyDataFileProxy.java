@@ -6,8 +6,10 @@ import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import org.apache.hc.core5.http.ContentType;
@@ -41,6 +43,7 @@ public class JsonToLegacyDataFileProxy extends GetOnlyRequestHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(JsonToLegacyDataFileProxy.class);
 
     private final Supplier<String> jsonUrlSupplier;
+    private final Consumer<Duration> authoritativeMinimumDataUpdateIntervalConsumer;
     private final HttpPromiseBuilder<DataFile> promiseBuilder;
 
     private final StationLocator stationLocator;
@@ -54,8 +57,9 @@ public class JsonToLegacyDataFileProxy extends GetOnlyRequestHandler {
 
     private final String header;
 
-    public JsonToLegacyDataFileProxy(Parser<DataFile> parser, OnlineTransceiversFileFetcher onlineTransceiversFileFetcher, Supplier<String> jsonUrlSupplier) {
+    public JsonToLegacyDataFileProxy(Parser<DataFile> parser, OnlineTransceiversFileFetcher onlineTransceiversFileFetcher, Supplier<String> jsonUrlSupplier, Consumer<Duration> authoritativeMinimumDataUpdateIntervalConsumer) {
         this.jsonUrlSupplier = jsonUrlSupplier;
+        this.authoritativeMinimumDataUpdateIntervalConsumer = authoritativeMinimumDataUpdateIntervalConsumer;
         stationLocator = new StationLocator(onlineTransceiversFileFetcher);
 
         header = stationLocator.usesVatSpySource()
@@ -98,6 +102,11 @@ public class JsonToLegacyDataFileProxy extends GetOnlyRequestHandler {
             LOGGER.debug("Retrieving JSON data file from {}", url);
             dataFile = promiseBuilder.requestByGet(url).get();
             logParserMessages(dataFile);
+
+            Duration minimumDataFileRetrievalInterval = dataFile.getMetaData().getMinimumDataFileRetrievalInterval();
+            if (minimumDataFileRetrievalInterval != null) {
+                authoritativeMinimumDataUpdateIntervalConsumer.accept(minimumDataFileRetrievalInterval);
+            }
         } catch (InterruptedException | ExecutionException ex) {
             LOGGER.warn("Failed to retrieve JSON data file from {}", url, ex);
 
