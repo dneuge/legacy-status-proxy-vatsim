@@ -22,6 +22,18 @@ import org.vatplanner.dataformats.vatsimpublic.utils.GeoPoint2D;
 import de.energiequant.vatsim.compatibility.legacyproxy.Main;
 import de.energiequant.vatsim.compatibility.legacyproxy.fetching.OnlineTransceiversFileFetcher;
 
+/**
+ * Locates stations from online transceivers provided by
+ * {@link OnlineTransceiversFileFetcher}.
+ * 
+ * <p>
+ * A cache local to this instance is maintained in addition to the cache used by
+ * the fetcher. This extra caching is done because {@link #locate(String)} is
+ * being called per station (not for batched stations in bulk) so repeated
+ * indexing and synchronized access became necessary.
+ * {@link #LOCAL_CACHE_LIFETIME} determines how long that cache will be reused.
+ * </p>
+ */
 public class OnlineTransceiversStationLocator {
     private static final Logger LOGGER = LoggerFactory.getLogger(OnlineTransceiversStationLocator.class);
 
