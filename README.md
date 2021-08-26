@@ -36,7 +36,7 @@ By using the server you agree with all terms of the [MIT license](LICENSE.md), i
 ## Current state
 
 - legacy Whazzup data files can be generated from JSON v3 data files
-  - coordinates missing in JSON files are by default computed from [VAT-Spy data](https://github.com/vatsimnetwork/vatspy-data-project)
+  - coordinates missing in JSON files are by default computed from [VAT-Spy data](https://github.com/vatsimnetwork/vatspy-data-project) and [online transceivers](https://api.vatsim.dev/#operation/TransceiverData)
 - network information ("URL index") is combined from legacy and JSON formats
 
 ## Known limitations
@@ -45,7 +45,6 @@ By using the server you agree with all terms of the [MIT license](LICENSE.md), i
 - non-ASCII characters on served data may be wrong
 - some information may have been removed from recent formats and may be replaced by placeholders
 - some information may only be available in recent formats (e.g. pilot ratings); no compatibility is provided for such data
-- missing coordinates can not be computed from [online transceivers](https://api.vatsim.dev/#operation/TransceiverData) yet (see [#7](https://github.com/dneuge/legacy-status-proxy-vatsim/issues/7))
 - HTTP server listens on all network interfaces, even if only localhost is served (see [#6](https://github.com/dneuge/legacy-status-proxy-vatsim/issues/6))
 
 ## How to configure and run

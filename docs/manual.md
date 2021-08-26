@@ -42,9 +42,18 @@ Settings in **HTTP Server** may need to be changed if you want to open access to
 
 ### Station Locator options
 
-Any change to the Station Locator options requires a server restart to become effective.
+Most changes to the Station Locator options require a server restart to become effective.
 
-If **locate stations using VAT-Spy data** is enabled, the proxy will attempt to substitute missing station coordinates by looking up the callsign on a VAT-Spy database. Disabling the option will cause only the coordinates originally present in JSON v3 data to be used (which is currently missing all controller coordinates). Other options of the Station Locator will have no effect when disabling VAT-Spy data. It is highly recommended to leave this option enabled.
+The current data files as provided by VATSIM no longer include controller coordinates. However, those coordinates are expected and in some cases strictly required by legacy applications to work properly. In the original legacy data files, this was the manually set primary visual center coordinate of a controller client. While that information is no longer made available, there are two methods to compute replacement coordinates:
+
+- The official workaround is to fetch the locations of all Audio for VATSIM transceiver locations from a separate file and calculate a center point for each station. This method is referred to as *"Online Transceivers"* throughout the proxy application.
+- An inofficial workaround is to look up station definitions from a database by heuristically matching callsigns and then calculate center coordinates over the recorded airspace area(s). The proxy can read VAT-Spy client data and ships with a default database as maintained officially by VATSIM via the [VAT-Spy Client Data Update Project](https://github.com/vatsimnetwork/vatspy-data-project). This method works completely offline without fetching any additional information but requires a reasonably up-to-date database.
+
+Just using one of those methods may be insufficient: Coordinates calculated from online transceiver data may be less accurate and sometimes incomplete (such as for ATIS stations not served by the text-to-speech system). On the other hand, using only VAT-Spy data will miss stations which do not have any record published to the database. The best results can be achieved by combining both methods.
+
+How look-ups should be performed can be selected using a **Strategy**. The default strategy is to first **locate from static VAT-Spy data, then complete through online transceivers** only if there was no station on the database which matched the callsign. You can also decide to **locate only from static VAT-Spy data** or to **locate only through online transceivers** or disable look-ups altogether (not recommended).
+
+Note that for performance optimization all locations are being cached on multiple levels and online transceiver information is downloaded separate (asynchronously) from data files. All computed locations thus may be off by a few minutes. The additional transceivers file will only be downloaded if such information was recently required by the selected strategy.
 
 **Assume callsigns ending in OBS to be observers:** Observers can be indicated by client permission level but sometimes that information is not sufficient. Enable this option to additionally assume any station calling itself `something_OBS` or `something-OBS` to be an observer as well.
 
@@ -67,6 +76,14 @@ In case no updates for the proxy server should be available, you can [download t
 **Alias US stations to omit ICAO prefix K unless conflicted:** Multiple US stations have been observed to be online with callsigns that are not registered in the VAT-Spy database. The callsign is usually simply the FAA 3-letter code which can also be guessed by omitting the leading `K` from ICAO codes. As this is a commonly known and repeating issue, this option allows all ICAO codes starting with `K` to be aliased to a 3-letter code omitting the leading `K` which increases the chances of finding a location for such stations. Aliases will only be registered if no other station is known by the resulting shortened callsign. It is recommended to leave this option enabled.
 
 **Locate observers by assuming callsign to indicate an ATC station:** Only if this option is enabled, ATC observers will be attempted to be located.
+
+#### Online Transceivers
+
+These options take immediate effect without server restart.
+
+You can choose to **locate observers**. Only observers who are logged in to Audio for VATSIM will be found (i.e. they need to be "on the radio" because otherwise they do not have any transceivers). Leave this option disabled unless you really need to resolve as many observer locations as possible, otherwise the online transceiver file may be downloaded unnecessarily.
+
+Generally, you want to **use default URL and update interval as announced through network information and data file**. If left enabled, the URL announced on the JSON network information file as read from upstream server will be used (affected by the **Custom base URL** override if active on the **General** options) and downloads will occur at most as often as the minimum update interval indicated by data files. Disabling the checkbox enables a **Custom URL** and cache time override which usually should not be needed if you want to retrieve the original information as provided by VATSIM.
 
 # Setting up clients
 
