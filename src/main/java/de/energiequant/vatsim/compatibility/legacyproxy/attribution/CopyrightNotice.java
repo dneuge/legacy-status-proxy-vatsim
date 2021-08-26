@@ -31,9 +31,9 @@ public class CopyrightNotice {
                 + "This product includes software developed at\n"
                 + "The Apache Software Foundation (http://www.apache.org/)." //
         );
-        add("commons-codec", "commons-codec", "1.13", //
+        add("commons-codec", "commons-codec", "1.15", //
             "Apache Commons Codec\n"
-                + "Copyright 2002-2019 The Apache Software Foundation\n"
+                + "Copyright 2002-2020 The Apache Software Foundation\n"
                 + "\n"
                 + "This product includes software developed at\n"
                 + "The Apache Software Foundation (https://www.apache.org/).\n"
@@ -121,21 +121,21 @@ public class CopyrightNotice {
                 + "This product includes software developed at\n"
                 + "The Apache Software Foundation (https://www.apache.org/)." //
         );
-        add("org.apache.httpcomponents.client5", "httpclient5", "5.0.3", //
+        add("org.apache.httpcomponents.client5", "httpclient5", "5.0.4", //
             "Apache HttpClient\n"
                 + "Copyright 1999-2020 The Apache Software Foundation\n"
                 + "\n"
                 + "This product includes software developed at\n"
                 + "The Apache Software Foundation (http://www.apache.org/)." //
         );
-        add("org.apache.httpcomponents.core5", "httpcore5", "5.0.3", //
+        add("org.apache.httpcomponents.core5", "httpcore5", "5.0.4", //
             "Apache HttpComponents Core HTTP/1.1\n"
                 + "Copyright 2005-2020 The Apache Software Foundation\n"
                 + "\n"
                 + "This product includes software developed at\n"
                 + "The Apache Software Foundation (http://www.apache.org/)." //
         );
-        add("org.apache.httpcomponents.core5", "httpcore5-h2", "5.0.2", //
+        add("org.apache.httpcomponents.core5", "httpcore5-h2", "5.0.4", //
             "Apache HttpComponents Core HTTP/2\n"
                 + "Copyright 2005-2020 The Apache Software Foundation\n"
                 + "\n"
@@ -188,8 +188,8 @@ public class CopyrightNotice {
         add("org.vatplanner", "dataformats-vatsim-public", "0.1-pre210825", //
             "Copyright (c) 2016-2021 Daniel Neugebauer" //
         );
-        add("de.energiequant.common", "webdataretrieval", "0.2.3", //
-            "Copyright (c) 2016 Daniel Neugebauer" //
+        add("de.energiequant.common", "webdataretrieval", "0.2.4", //
+            "Copyright (c) 2016-2021 Daniel Neugebauer" //
         );
         add("_inofficial.com.github.vatsimnetwork", "vatspy-data-project", "c65efc824fcf083da8244119b26f721a5426470b", //
             // based on README file
