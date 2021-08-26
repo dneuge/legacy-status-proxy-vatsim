@@ -66,8 +66,11 @@ public class OnlineTransceiversFileFetcher extends PeriodicRunnable {
     protected Duration onPeriodicWakeup() {
         boolean isIdleTimeoutExceeded = Instant.now().isAfter(lastRequested.get().plus(idleTimeout));
         if (isIdleTimeoutExceeded) {
-            LOGGER.debug("idle timeout of {} reached, last request was at {} - stopping fetcher thread", idleTimeout,
-                lastRequested);
+            LOGGER.info(
+                "Stopping periodic retrieval of online transceivers as no such data has been needed for {} minutes",
+                Duration.between(lastRequested.get(), Instant.now()).toMinutes() //
+            );
+
             stop();
             return retryInterval;
         }
@@ -131,6 +134,7 @@ public class OnlineTransceiversFileFetcher extends PeriodicRunnable {
 
     @Override
     public void start() {
+        LOGGER.info("Starting periodic retrieval of online transceivers");
         lastFile.set(null);
         super.start();
     }
