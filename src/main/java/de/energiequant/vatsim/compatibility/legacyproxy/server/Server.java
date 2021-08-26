@@ -50,7 +50,7 @@ public class Server {
 
     private static final Duration ONLINE_TRANSCEIVERS_MINIMUM_ALLOWED_UPDATE_INTERVAL = Duration.ofMinutes(1);
     private static final Duration ONLINE_TRANSCEIVERS_RETRY_INTERVAL = Duration.ofMinutes(1);
-    private static final Duration ONLINE_TRANSCEIVERS_IDLE_TIMEOUT = Duration.ofMinutes(20);
+    private static final Duration ONLINE_TRANSCEIVERS_IDLE_TIMEOUT = Duration.ofMinutes(5);
 
     /**
      * Default interval until we got at least one data file which tells us the
@@ -149,7 +149,8 @@ public class Server {
                     return Duration.ofMinutes(config.getOnlineTransceiversOverrideCacheMinutes());
                 }
 
-                return max(authoritativeMinimumDataUpdateInterval.get(), ONLINE_TRANSCEIVERS_MINIMUM_ALLOWED_UPDATE_INTERVAL);
+                return max(authoritativeMinimumDataUpdateInterval.get(),
+                    ONLINE_TRANSCEIVERS_MINIMUM_ALLOWED_UPDATE_INTERVAL);
             }, //
             ONLINE_TRANSCEIVERS_RETRY_INTERVAL, //
             ONLINE_TRANSCEIVERS_IDLE_TIMEOUT //
