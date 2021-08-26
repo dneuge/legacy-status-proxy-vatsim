@@ -149,7 +149,7 @@ public class OnlineTransceiversStationLocator {
         // development and would clutter the log in the main window beyond readability
         for (ParserLogEntry entry : parserLogEntryCollector.getParserLogEntries()) {
             LOGGER.warn(
-                "Failed to parse{}, section {}, {}: {}", //
+                "Failed to parse online transceiver{}, section {}, {}: {}", //
                 entry.isLineRejected() ? " (rejected)" : "", //
                 entry.getSection(), entry.getMessage(), entry.getLineContent() //
             );
