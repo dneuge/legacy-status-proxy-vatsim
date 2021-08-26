@@ -19,11 +19,14 @@ import de.energiequant.vatsim.compatibility.legacyproxy.Main;
 public class ConfigurationWindow extends JFrame {
     private static final Logger LOGGER = LoggerFactory.getLogger(ConfigurationWindow.class);
 
+    private static final int WINDOW_MINIMUM_WIDTH = 750;
+    private static final int WINDOW_MINIMUM_HEIGHT = 720;
+
     public ConfigurationWindow() {
         super("Configuration");
 
-        setSize(new Dimension(750, 700));
-        setMinimumSize(new Dimension(750, 700));
+        setSize(new Dimension(WINDOW_MINIMUM_WIDTH, WINDOW_MINIMUM_HEIGHT));
+        setMinimumSize(new Dimension(WINDOW_MINIMUM_WIDTH, WINDOW_MINIMUM_HEIGHT));
 
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
