@@ -8,7 +8,7 @@ When running in default settings a local host name of `localhost` and a server p
 
 # Required software
 
-You will need to have Java installed in order to run the proxy server. Minimum supported Java version is 1.8, maximum tested version is Java 11. If you don't have Java installed and don't know where to get it you may want to check [AdoptOpenJDK](https://adoptopenjdk.net/) and download a their Java 11 HotSpot JVM.
+You will need to have Java installed in order to run the proxy server. Minimum supported Java version is 1.8, maximum tested version is Java 11. If you don't have Java installed and don't know where to get it you may want to check [Adoptium](https://adoptium.net/) (formerly AdoptOpenJDK) and download their *Eclipse Temurin* JVM based on *OpenJDK 11*.
 
 # Using the GUI (desktop application)
 
