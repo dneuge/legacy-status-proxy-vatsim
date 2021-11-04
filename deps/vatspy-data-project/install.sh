@@ -65,7 +65,12 @@ md5sum -c <(echo "${expected_license_md5} LICENSE") || die 'LICENSE changed'
 # add commit date
 commit_date_file='.git_commit_date'
 [[ "" == $(git ls-files | grep -F "${commit_date_file}") ]] || die "File collision: ${commit_date_file} seems to be part of the upstream repository"
-git show ${commit_hash} --format='%cI' >${commit_date_file} || die 'Failed to add commit date'
+(git show ${commit_hash} --format='%cI%n' | head -n1 >${commit_date_file}) || die 'Failed to add commit date'
+commit_date=$(cat ${commit_date_file})
+
+if [[ ! "${commit_date}" =~ ^20[0-9]{2}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9][+\-][01][0-9]:[0-5][0-9]$ ]]; then
+	die "Invalid commit date: \"${commit_date}\""
+fi
 
 # build Maven artifact
 cd "${basedir}"
