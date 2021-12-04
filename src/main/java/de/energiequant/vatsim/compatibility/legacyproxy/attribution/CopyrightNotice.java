@@ -191,7 +191,7 @@ public class CopyrightNotice {
         add("de.energiequant.common", "webdataretrieval", "0.2.4", //
             "Copyright (c) 2016-2021 Daniel Neugebauer" //
         );
-        add("_inofficial.com.github.vatsimnetwork", "vatspy-data-project", "e716fbcbe9abcbc4e8afbfffc39dc30448408f45", //
+        add("_inofficial.com.github.vatsimnetwork", "vatspy-data-project", "0ef5adbd1b8d356c913316d23417008f70657eb5", //
             // based on README file
             // also needs to be incorporated to AppConstants.SERVER_VAT_SPY_INTERNAL_HEADER
             "Copyright (c) 2019-2021 Niels Voogd, Adrian Bjerke and contributors\n"
