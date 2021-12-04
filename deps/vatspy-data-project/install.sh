@@ -72,6 +72,26 @@ if [[ ! "${commit_date}" =~ ^20[0-9]{2}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])
 	die "Invalid commit date: \"${commit_date}\""
 fi
 
+# download FIRBoundaries.dat from GitHub release if missing
+firboundaries_file='FIRBoundaries.dat'
+if [ ! -e "${firboundaries_file}" ]; then
+	echo "${firboundaries_file} is missing, attempting to download from GitHub..."
+
+	tag_name=$(git describe --abbrev=0 --tags --exact-match ${commit_hash})
+	[[ "${tag_name}" =~ ^v[0-9a-zA-Z\._\-]+$ ]] || die "Invalid tag name: '${tag_name}'"
+	echo "Commit ${commit_hash} is referred to by tag '${tag_name}'"
+
+	firboundaries_url=$(python3 ${basedir}/../get_github_asset_url.py vatsimnetwork/vatspy-data-project ${tag_name} ${firboundaries_file}) || die "Failed to retrieve URL for GitHub artifact ${firboundaries_file}"
+	echo "Downloading ${firboundaries_file} from ${firboundaries_url}..."
+	curl -L ${firboundaries_url} -o ${firboundaries_file} || die "Failed to download GitHub artifact ${firboundaries_file} from ${firboundaries_url}"
+
+	# check for plausible file size
+	minimum_expected_size=400000
+	actual_size=$(wc -c <"${firboundaries_file}")
+	[ $actual_size -ge $minimum_expected_size ] || die "Expected ${minimum_expected_size} bytes but ${firboundaries_file} file downloaded from ${firboundaries_url} has only ${actual_size} bytes."
+	echo "Size check OK: ${firboundaries_file} has ${actual_size} bytes (required at least ${minimum_expected_size} bytes)"
+fi
+
 # build Maven artifact
 cd "${basedir}"
 mvn clean compile package || die 'Building artifact failed'
