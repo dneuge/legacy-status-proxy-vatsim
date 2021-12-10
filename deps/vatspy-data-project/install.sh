@@ -53,7 +53,8 @@ if [ ! -e "${checkout_name}" ]; then
     cd "${checkout_name}"
 else
     cd "${checkout_name}"
-    git pull origin master || die 'Updating upstream project failed'
+    git pull origin master || die 'Pulling from upstream project for in-place update failed'
+    git fetch --tags origin || die 'Fetching tags from upstream project for in-place update failed'
 fi
 
 # checkout requested revision
