@@ -142,14 +142,14 @@ public class CopyrightNotice {
                 + "This product includes software developed at\n"
                 + "The Apache Software Foundation (http://www.apache.org/)." //
         );
-        add("org.apache.logging.log4j", "log4j-api", "2.15.0", //
+        add("org.apache.logging.log4j", "log4j-api", "2.16.0", //
             "Apache Log4j API\n"
                 + "Copyright 1999-2020 The Apache Software Foundation\n"
                 + "\n"
                 + "This product includes software developed at\n"
                 + "The Apache Software Foundation (http://www.apache.org/)." //
         );
-        add("org.apache.logging.log4j", "log4j-core", "2.15.0", //
+        add("org.apache.logging.log4j", "log4j-core", "2.16.0", //
             "Apache Log4j Core\n"
                 + "Copyright 1999-2012 Apache Software Foundation\n"
                 + "\n"
@@ -159,7 +159,7 @@ public class CopyrightNotice {
                 + "ResolverUtil.java\n"
                 + "Copyright 2005-2006 Tim Fennell" //
         );
-        add("org.apache.logging.log4j", "log4j-slf4j-impl", "2.15.0", //
+        add("org.apache.logging.log4j", "log4j-slf4j-impl", "2.16.0", //
             "Apache Log4j SLF4J Binding\n"
                 + "Copyright 1999-2020 The Apache Software Foundation\n"
                 + "\n"

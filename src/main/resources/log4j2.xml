@@ -2,10 +2,10 @@
 <Configuration status="INFO">
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d{ISO8601} - %-5p - %36.36c{1} - %m{nolookups}%n"/>
+            <PatternLayout pattern="%d{ISO8601} - %-5p - %36.36c{1} - %m%n"/>
         </Console>
         <Buffer name="Buffer">
-            <PatternLayout pattern="[%d{HH:mm:ss}] %m{nolookups}"/>
+            <PatternLayout pattern="[%d{HH:mm:ss}] %m"/>
         </Buffer>
     </Appenders>
     <Loggers>
