@@ -192,10 +192,10 @@ public class CopyrightNotice {
         add("de.energiequant.common", "webdataretrieval", "0.2.5", //
             "Copyright (c) 2016-2021 Daniel Neugebauer" //
         );
-        add("_inofficial.com.github.vatsimnetwork", "vatspy-data-project", "0ef5adbd1b8d356c913316d23417008f70657eb5", //
+        add("_inofficial.com.github.vatsimnetwork", "vatspy-data-project", "0fd02c828135aa3e6c679d5a681351d635930739", //
             // based on README file
             // also needs to be incorporated to AppConstants.SERVER_VAT_SPY_INTERNAL_HEADER
-            "Copyright (c) 2019-2021 Niels Voogd, Adrian Bjerke and contributors\n"
+            "Copyright (c) 2019-2022 Niels Voogd, Adrian Bjerke and contributors\n"
                 + "VAT-Spy is being developed by Ross Carlson\n"
                 + "Previous data project lead: Néstor Pérez\n"
                 + "\n"
