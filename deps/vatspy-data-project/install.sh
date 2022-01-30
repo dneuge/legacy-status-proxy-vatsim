@@ -53,6 +53,7 @@ if [ ! -e "${checkout_name}" ]; then
     cd "${checkout_name}"
 else
     cd "${checkout_name}"
+    git clean -f || die 'Failed to clean existing work dir from untracked files'
     git pull origin master || die 'Pulling from upstream project for in-place update failed'
     git fetch --tags origin || die 'Fetching tags from upstream project for in-place update failed'
 fi
