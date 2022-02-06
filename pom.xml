@@ -26,7 +26,7 @@
 
 		<slf4j.version>1.7.32</slf4j.version>
 		<log4j.version>2.17.1</log4j.version>
-		<httpcomponents.version>5.1.2</httpcomponents.version>
+		<httpcomponents.version>5.1.3</httpcomponents.version>
 		<apache.commons.lang.version>3.12.0</apache.commons.lang.version>
 		<apache.commons.cli.version>1.5.0</apache.commons.cli.version>
 

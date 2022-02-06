@@ -121,21 +121,21 @@ public class CopyrightNotice {
                 + "This product includes software developed at\n"
                 + "The Apache Software Foundation (https://www.apache.org/)." //
         );
-        add("org.apache.httpcomponents.client5", "httpclient5", "5.1.2", //
+        add("org.apache.httpcomponents.client5", "httpclient5", "5.1.3", //
             "Apache HttpClient\n"
                 + "Copyright 1999-2020 The Apache Software Foundation\n"
                 + "\n"
                 + "This product includes software developed at\n"
                 + "The Apache Software Foundation (http://www.apache.org/)." //
         );
-        add("org.apache.httpcomponents.core5", "httpcore5", "5.1.2", //
+        add("org.apache.httpcomponents.core5", "httpcore5", "5.1.3", //
             "Apache HttpComponents Core HTTP/1.1\n"
                 + "Copyright 2005-2020 The Apache Software Foundation\n"
                 + "\n"
                 + "This product includes software developed at\n"
                 + "The Apache Software Foundation (http://www.apache.org/)." //
         );
-        add("org.apache.httpcomponents.core5", "httpcore5-h2", "5.1.2", //
+        add("org.apache.httpcomponents.core5", "httpcore5-h2", "5.1.3", //
             "Apache HttpComponents Core HTTP/2\n"
                 + "Copyright 2005-2020 The Apache Software Foundation\n"
                 + "\n"
