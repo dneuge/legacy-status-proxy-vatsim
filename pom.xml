@@ -20,7 +20,7 @@
 		<finalName>legacy-status-proxy-vatsim</finalName>
 
 		<!-- runtime dependencies -->
-		<vatplanner.dataformatsVatsimPublic.version>0.1-pre211210</vatplanner.dataformatsVatsimPublic.version>
+		<vatplanner.dataformatsVatsimPublic.version>0.1-pre220206</vatplanner.dataformatsVatsimPublic.version>
 		<webDataRetrieval.version>0.2.5</webDataRetrieval.version>
 		<vatspyData.version>0fd02c828135aa3e6c679d5a681351d635930739</vatspyData.version>
 
