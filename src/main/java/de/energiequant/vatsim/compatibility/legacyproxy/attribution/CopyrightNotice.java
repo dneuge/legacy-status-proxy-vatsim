@@ -172,12 +172,12 @@ public class CopyrightNotice {
                 + "This product includes software developed at\n"
                 + "The Apache Software Foundation (http://www.apache.org/)."//
         );
-        add("com.github.cliftonlabs", "json-simple", "4.0.0", //
+        add("com.github.cliftonlabs", "json-simple", "4.0.1", //
             /*
              * This is based on the Apache License file, release date and the homepage of
              * json-simple as there is no NOTICE file or similar.
              */
-            "Copyright 2016-2021 Clifton Labs\n"
+            "Copyright 2016-2022 Clifton Labs\n"
                 + "\n"
                 + "Davin Loegering designed and developed the 2.*, 3.*, 4.* versions.\n"
                 + "Fang Yidong architected and developed the 1.* versions.\n"
