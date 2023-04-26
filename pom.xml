@@ -69,6 +69,12 @@
 			<groupId>de.energiequant.common</groupId>
 			<artifactId>webdataretrieval</artifactId>
 			<version>${webDataRetrieval.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.httpcomponents.client5</groupId>
+					<artifactId>httpclient5</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>
@@ -78,8 +84,8 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.apache.httpcomponents.core5</groupId>
-			<artifactId>httpcore5</artifactId>
+			<groupId>org.apache.httpcomponents.client5</groupId>
+			<artifactId>httpclient5</artifactId>
 			<version>${httpcomponents.version}</version>
 		</dependency>
 
