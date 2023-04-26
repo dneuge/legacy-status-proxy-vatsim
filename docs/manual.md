@@ -149,8 +149,9 @@ When experiencing issues, a solution may be easily possible by:
 Support is primarily available through:
 
 - [GitHub Discussions](https://github.com/dneuge/legacy-status-proxy-vatsim/discussions) (English preferred)
-- [thread on main VATSIM forums](https://forums.vatsim.net/topic/31116-legacy-status-proxy-providing-data-feed-compatibility-to-passive-clients-not-migrated-to-json-yet/) (English)
 - [thread on VATSIM Germany forums](https://board.vatsim-germany.org/threads/legacy-status-proxy-data-feed-kompatibilit%C3%A4t-f%C3%BCr-unmigrierte-passive-clients.66112/) (German)
+
+Support was previously also provided through a [thread on the old main VATSIM forums](https://forums.vatsim.net/topic/31116-legacy-status-proxy-providing-data-feed-compatibility-to-passive-clients-not-migrated-to-json-yet/) (English, archived).
 
 ## ATIS has no line breaks / free text is truncated or contains weird characters
 
