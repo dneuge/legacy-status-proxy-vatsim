@@ -121,38 +121,35 @@ public class CopyrightNotice {
                 + "This product includes software developed at\n"
                 + "The Apache Software Foundation (https://www.apache.org/)." //
         );
-        add("org.apache.httpcomponents.client5", "httpclient5", "5.1.3", //
+        add("org.apache.httpcomponents.client5", "httpclient5", "5.1.4", //
             "Apache HttpClient\n"
                 + "Copyright 1999-2020 The Apache Software Foundation\n"
                 + "\n"
                 + "This product includes software developed at\n"
                 + "The Apache Software Foundation (http://www.apache.org/)." //
         );
-        add("org.apache.httpcomponents.core5", "httpcore5", "5.1.3", //
+        add("org.apache.httpcomponents.core5", "httpcore5", "5.1.5", //
             "Apache HttpComponents Core HTTP/1.1\n"
                 + "Copyright 2005-2020 The Apache Software Foundation\n"
                 + "\n"
                 + "This product includes software developed at\n"
                 + "The Apache Software Foundation (http://www.apache.org/)." //
         );
-        add("org.apache.httpcomponents.core5", "httpcore5-h2", "5.1.3", //
+        add("org.apache.httpcomponents.core5", "httpcore5-h2", "5.1.5", //
             "Apache HttpComponents Core HTTP/2\n"
                 + "Copyright 2005-2020 The Apache Software Foundation\n"
                 + "\n"
                 + "This product includes software developed at\n"
                 + "The Apache Software Foundation (http://www.apache.org/)." //
         );
-        add("org.apache.logging.log4j", "log4j-api", "2.17.1", //
-            "[Copyright years are reproduced as published to Maven Central artifact in META-INF/NOTICE.\n"
-                + "Version 2.17.1 has actually been released in 2021. Discrepancy has been reported as LOG4J2-3375.]\n"
-                + "\n"
-                + "Apache Log4j API\n"
-                + "Copyright 1999-1969 The Apache Software Foundation\n"
+        add("org.apache.logging.log4j", "log4j-api", "2.20.0", //
+            "Apache Log4j API\n"
+                + "Copyright 1999-2023 The Apache Software Foundation\n"
                 + "\n"
                 + "This product includes software developed at\n"
                 + "The Apache Software Foundation (http://www.apache.org/)." //
         );
-        add("org.apache.logging.log4j", "log4j-core", "2.17.1", //
+        add("org.apache.logging.log4j", "log4j-core", "2.20.0", //
             "Apache Log4j Core\n"
                 + "Copyright 1999-2012 Apache Software Foundation\n"
                 + "\n"
@@ -162,12 +159,9 @@ public class CopyrightNotice {
                 + "ResolverUtil.java\n"
                 + "Copyright 2005-2006 Tim Fennell" //
         );
-        add("org.apache.logging.log4j", "log4j-slf4j-impl", "2.17.1", //
-            "[Copyright years are reproduced as published to Maven Central artifact in META-INF/NOTICE.\n"
-                + "Version 2.17.1 has actually been released in 2021. Discrepancy has been reported as LOG4J2-3375.]\n"
-                + "\n"
-                + "Apache Log4j SLF4J Binding\n"
-                + "Copyright 1999-1969 The Apache Software Foundation\n"
+        add("org.apache.logging.log4j", "log4j-slf4j-impl", "2.20.0", //
+            "Apache Log4j SLF4J Binding\n"
+                + "Copyright 1999-2023 The Apache Software Foundation\n"
                 + "\n"
                 + "This product includes software developed at\n"
                 + "The Apache Software Foundation (http://www.apache.org/)."//
@@ -186,10 +180,10 @@ public class CopyrightNotice {
                 + "Chris (cbojar on github) provided fixes released in the 3.0.2 version.\n"
                 + "Barry Lagerweij for the convenience put methods introduced in the 3.1.1 version." //
         );
-        add("org.slf4j", "slf4j-api", "1.7.32", //
+        add("org.slf4j", "slf4j-api", "1.7.36", //
             // grabbed from MIT license file (note there are two, on root folder and in
-            // slf4j-api but the file on root folder is more recent)
-            "Copyright (c) 2004-2017 QOS.ch\n"
+            // slf4j-api)
+            "Copyright (c) 2004-2022 QOS.ch Sarl (Switzerland)\n"
                 + "All rights reserved." //
         );
         add("org.vatplanner", "dataformats-vatsim-public", "0.1-pre220206", //

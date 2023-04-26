@@ -24,9 +24,9 @@
 		<webDataRetrieval.version>0.2.5</webDataRetrieval.version>
 		<vatspyData.version>2530c960f8e44b1394272c0e65e8d2320e307f12</vatspyData.version>
 
-		<slf4j.version>1.7.32</slf4j.version>
-		<log4j.version>2.17.1</log4j.version>
-		<httpcomponents.version>5.1.3</httpcomponents.version>
+		<slf4j.version>1.7.36</slf4j.version>
+		<log4j.version>2.20.0</log4j.version>
+		<httpcomponents.version>5.1.4</httpcomponents.version>
 		<apache.commons.lang.version>3.12.0</apache.commons.lang.version>
 		<apache.commons.cli.version>1.5.0</apache.commons.cli.version>
 
