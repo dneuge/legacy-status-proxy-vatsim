@@ -1,6 +1,5 @@
 # Legacy status proxy for VATSIM
 
-[![Build Status](https://app.travis-ci.com/dneuge/legacy-status-proxy-vatsim.svg?branch=master)](https://app.travis-ci.com/dneuge/legacy-status-proxy-vatsim)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.md)
 
 This project provides a simple HTTP proxy server translating current VATSIM status file formats to outdated legacy formats to provide compatibility to monitor applications.
