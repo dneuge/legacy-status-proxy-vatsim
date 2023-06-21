@@ -10,13 +10,11 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.swing.JButton;
 import javax.swing.JEditorPane;
@@ -227,16 +225,10 @@ public class MainWindow extends JFrame {
         for (BufferAppender appender : BufferAppender.getInstances()) {
             List<FormattedEvent> events = appender.getFormattedEventsAndClear();
             for (FormattedEvent event : events) {
-                String message = event.getMessage();
-
                 sb.append("<li ");
                 sb.append(LOG_STYLES_BY_LEVEL.getOrDefault(event.getLevel(), ""));
                 sb.append(">");
-                sb.append(
-                    Arrays.stream(sanitizeHtml(message).split("\n"))
-                          .map(line -> line.replaceFirst("^\t", "&nbsp;&nbsp;&nbsp;&nbsp;"))
-                          .collect(Collectors.joining("<br/>"))
-                );
+                appendTextAsEditorHtml(sb, event.getMessage());
                 sb.append("</li>");
             }
         }
@@ -258,6 +250,56 @@ public class MainWindow extends JFrame {
         logOutput.invalidate();
         logScrollPane.invalidate();
         EventQueue.invokeLater(this::scrollToEndOfLog);
+    }
+
+    /**
+     * Sanitizes and transforms the specified string so that it can be properly used on a {@link JEditorPane}.
+     * The output is directly appended to the given {@link StringBuilder}.
+     * <p>
+     * The following shortcomings of {@link JEditorPane} are being worked around by this method:
+     * </p>
+     * <ul>
+     * <li>tabs ({@code \t}) at the beginning of a line are expanded to 4 non-breaking spaces ({@code &nbsp;});
+     * otherwise they would just be rendered as a single white-space</li>
+     * <li>multi-line strings need to be wrapped as paragraphs ({@code <p>...</p>}); line-breaks ({@code <br/>}) only
+     * work for rendering but get lost when copying to clipboard, while paragraphs are only treated like line-breaks
+     * both during rendering and for the clipboard</li>
+     * </ul>
+     *
+     * @param sb where to append the transformed content to
+     * @param s  the input to be transformed
+     */
+    private void appendTextAsEditorHtml(StringBuilder sb, String s) {
+        s = sanitizeHtml(s);
+
+        if (s.isEmpty()) {
+            return;
+        }
+
+        String[] lines = s.split("\n");
+
+        boolean multipleLines = lines.length > 1;
+        for (int i = 0; i < lines.length; i++) {
+            if (multipleLines) {
+                if (i > 0) {
+                    sb.append("</p>");
+                }
+                sb.append("<p>");
+            }
+
+            if (lines[i].startsWith("\t")) {
+                sb.append("&nbsp;&nbsp;&nbsp;&nbsp;");
+                if (lines[i].length() > 1) {
+                    sb.append(lines[i], 1, lines[i].length() - 1);
+                }
+            } else {
+                sb.append(lines[i]);
+            }
+        }
+
+        if (multipleLines) {
+            sb.append("</p>");
+        }
     }
 
     private String sanitizeHtml(String message) {
