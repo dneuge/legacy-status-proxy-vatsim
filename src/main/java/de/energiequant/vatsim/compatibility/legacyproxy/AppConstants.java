@@ -45,7 +45,7 @@ public class AppConstants {
         + "Information from VAT-Spy Client Data Update Project is used to locate stations.\n"
         + "That part of data included in this file is:\n"
         + "\n"
-        + "  Copyright (c) 2019-2022 Niels Voogd, Adrian Bjerke and contributors\n"
+        + "  Copyright (c) 2019-2023 Niels Voogd, Adrian Bjerke and contributors\n"
         + "  VAT-Spy is being developed by Ross Carlson\n"
         + "  Previous data project lead: Néstor Pérez\n"
         + "\n"
