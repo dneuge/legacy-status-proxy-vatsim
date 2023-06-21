@@ -10,11 +10,13 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.swing.JButton;
 import javax.swing.JEditorPane;
@@ -230,7 +232,11 @@ public class MainWindow extends JFrame {
                 sb.append("<li ");
                 sb.append(LOG_STYLES_BY_LEVEL.getOrDefault(event.getLevel(), ""));
                 sb.append(">");
-                sb.append(sanitizeHtml(message).replace("\n", "<br/>"));
+                sb.append(
+                    Arrays.stream(sanitizeHtml(message).split("\n"))
+                          .map(line -> line.replaceFirst("^\t", "&nbsp;&nbsp;&nbsp;&nbsp;"))
+                          .collect(Collectors.joining("<br/>"))
+                );
                 sb.append("</li>");
             }
         }
