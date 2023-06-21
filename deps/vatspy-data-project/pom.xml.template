@@ -18,6 +18,10 @@
 		</license>
 	</licenses>
 
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
 	<build>
 		<!-- exclude git repository from JAR -->
 		<resources>
