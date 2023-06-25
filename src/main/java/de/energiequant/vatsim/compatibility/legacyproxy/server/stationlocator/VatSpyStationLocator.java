@@ -416,10 +416,11 @@ public class VatSpyStationLocator {
         // development and would clutter the log in the main window beyond readability
         for (ParserLogEntry entry : logCollector.getParserLogEntries()) {
             warn(
-                "Failed to parse from {}{}, section {}, {}: {}", //
+                "Failed to parse from {} ({}), section {}, {}: {}", //
                 fileName, //
-                entry.isLineRejected() ? " (rejected)" : "", //
-                entry.getSection(), entry.getMessage(), entry.getLineContent() //
+                entry.isLineRejected() ? "rejected" : "accepted", //
+                entry.getSection(), entry.getMessage(), //
+                entry.getLineContent() != null ? entry.getLineContent() : "(line content not logged)"
             );
         }
     }
