@@ -1,296 +1,296 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>de.energiequant.vatsim.compatibility</groupId>
-	<artifactId>legacy-status-proxy-vatsim</artifactId>
-	<name>Legacy status proxy for VATSIM</name>
-	<version>0.96-SNAPSHOT</version>
-	<packaging>jar</packaging>
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>de.energiequant.vatsim.compatibility</groupId>
+    <artifactId>legacy-status-proxy-vatsim</artifactId>
+    <name>Legacy status proxy for VATSIM</name>
+    <version>0.96-SNAPSHOT</version>
+    <packaging>jar</packaging>
 
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
 
-		<directory.generated.resources>src-gen/main/resources</directory.generated.resources>
-		<mainClass>de.energiequant.vatsim.compatibility.legacyproxy.Launcher</mainClass>
+        <directory.generated.resources>src-gen/main/resources</directory.generated.resources>
+        <mainClass>de.energiequant.vatsim.compatibility.legacyproxy.Launcher</mainClass>
 
-		<finalName>legacy-status-proxy-vatsim</finalName>
+        <finalName>legacy-status-proxy-vatsim</finalName>
 
-		<!-- runtime dependencies -->
-		<vatplanner.dataformatsVatsimPublic.version>0.1-pre230626</vatplanner.dataformatsVatsimPublic.version>
-		<webDataRetrieval.version>0.2.5</webDataRetrieval.version>
-		<vatspyData.version>b67c248da95b75b55a72fee3be80bd790df4afb9</vatspyData.version>
+        <!-- runtime dependencies -->
+        <vatplanner.dataformatsVatsimPublic.version>0.1-pre230626</vatplanner.dataformatsVatsimPublic.version>
+        <webDataRetrieval.version>0.2.5</webDataRetrieval.version>
+        <vatspyData.version>b67c248da95b75b55a72fee3be80bd790df4afb9</vatspyData.version>
 
-		<slf4j.version>1.7.36</slf4j.version>
-		<log4j.version>2.20.0</log4j.version>
-		<httpcomponents.version>5.1.4</httpcomponents.version>
-		<apache.commons.lang.version>3.12.0</apache.commons.lang.version>
-		<apache.commons.cli.version>1.5.0</apache.commons.cli.version>
+        <slf4j.version>1.7.36</slf4j.version>
+        <log4j.version>2.20.0</log4j.version>
+        <httpcomponents.version>5.1.4</httpcomponents.version>
+        <apache.commons.lang.version>3.12.0</apache.commons.lang.version>
+        <apache.commons.cli.version>1.5.0</apache.commons.cli.version>
 
-		<!-- test dependencies -->
-		<junit.version>5.7.0</junit.version>
-		<assertj.version>3.19.0</assertj.version>
-		<mockito.version>3.8.0</mockito.version>
+        <!-- test dependencies -->
+        <junit.version>5.7.0</junit.version>
+        <assertj.version>3.19.0</assertj.version>
+        <mockito.version>3.8.0</mockito.version>
 
-		<!-- build dependencies -->
-		<log4jCachefileTransformer.version>2.14.0</log4jCachefileTransformer.version>
-		<maven.compiler.version>3.8.1</maven.compiler.version>
-		<maven.shade.version>3.2.4</maven.shade.version>
-		<maven.attribution.version>0.9.8</maven.attribution.version>
-		<maven.buildHelper.version>3.2.0</maven.buildHelper.version>
-		<maven.jar.version>3.2.0</maven.jar.version>
-		<maven.surefire.version>3.0.0-M5</maven.surefire.version>
-	</properties>
+        <!-- build dependencies -->
+        <log4jCachefileTransformer.version>2.14.0</log4jCachefileTransformer.version>
+        <maven.compiler.version>3.8.1</maven.compiler.version>
+        <maven.shade.version>3.2.4</maven.shade.version>
+        <maven.attribution.version>0.9.8</maven.attribution.version>
+        <maven.buildHelper.version>3.2.0</maven.buildHelper.version>
+        <maven.jar.version>3.2.0</maven.jar.version>
+        <maven.surefire.version>3.0.0-M5</maven.surefire.version>
+    </properties>
 
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>org.junit</groupId>
-				<artifactId>junit-bom</artifactId>
-				<version>${junit.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>${junit.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
-	<dependencies>
-		<!-- runtime dependencies -->
-		<dependency>
-			<groupId>org.vatplanner</groupId>
-			<artifactId>dataformats-vatsim-public</artifactId>
-			<version>${vatplanner.dataformatsVatsimPublic.version}</version>
-		</dependency>
+    <dependencies>
+        <!-- runtime dependencies -->
+        <dependency>
+            <groupId>org.vatplanner</groupId>
+            <artifactId>dataformats-vatsim-public</artifactId>
+            <version>${vatplanner.dataformatsVatsimPublic.version}</version>
+        </dependency>
 
-		<dependency>
-			<groupId>de.energiequant.common</groupId>
-			<artifactId>webdataretrieval</artifactId>
-			<version>${webDataRetrieval.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.apache.httpcomponents.client5</groupId>
-					<artifactId>httpclient5</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+        <dependency>
+            <groupId>de.energiequant.common</groupId>
+            <artifactId>webdataretrieval</artifactId>
+            <version>${webDataRetrieval.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.httpcomponents.client5</groupId>
+                    <artifactId>httpclient5</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
-		<dependency>
-			<groupId>_inofficial.com.github.vatsimnetwork</groupId>
-			<artifactId>vatspy-data-project</artifactId>
-			<version>${vatspyData.version}</version>
-		</dependency>
+        <dependency>
+            <groupId>_inofficial.com.github.vatsimnetwork</groupId>
+            <artifactId>vatspy-data-project</artifactId>
+            <version>${vatspyData.version}</version>
+        </dependency>
 
-		<dependency>
-			<groupId>org.apache.httpcomponents.client5</groupId>
-			<artifactId>httpclient5</artifactId>
-			<version>${httpcomponents.version}</version>
-		</dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents.client5</groupId>
+            <artifactId>httpclient5</artifactId>
+            <version>${httpcomponents.version}</version>
+        </dependency>
 
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-			<version>${apache.commons.lang.version}</version>
-		</dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${apache.commons.lang.version}</version>
+        </dependency>
 
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>${slf4j.version}</version>
-		</dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
 
-		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-slf4j-impl</artifactId>
-			<version>${log4j.version}</version>
-		</dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
 
-		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-api</artifactId>
-			<version>${log4j.version}</version>
-		</dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
 
-		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-core</artifactId>
-			<version>${log4j.version}</version>
-		</dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
 
-		<dependency>
-			<groupId>commons-cli</groupId>
-			<artifactId>commons-cli</artifactId>
-			<version>${apache.commons.cli.version}</version>
-		</dependency>
+        <dependency>
+            <groupId>commons-cli</groupId>
+            <artifactId>commons-cli</artifactId>
+            <version>${apache.commons.cli.version}</version>
+        </dependency>
 
-		<!-- test dependencies -->
-		<dependency>
-			<groupId>org.junit.jupiter</groupId>
-			<artifactId>junit-jupiter</artifactId>
-			<scope>test</scope>
-		</dependency>
+        <!-- test dependencies -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
 
-		<dependency>
-			<groupId>org.junit.jupiter</groupId>
-			<artifactId>junit-jupiter-engine</artifactId>
-			<scope>test</scope>
-		</dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <scope>test</scope>
+        </dependency>
 
-		<dependency>
-			<groupId>org.assertj</groupId>
-			<artifactId>assertj-core</artifactId>
-			<version>${assertj.version}</version>
-			<scope>test</scope>
-		</dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>${assertj.version}</version>
+            <scope>test</scope>
+        </dependency>
 
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-core</artifactId>
-			<version>${mockito.version}</version>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>${mockito.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
-	<build>
-		<finalName>${finalName}</finalName>
-		<plugins>
-			<!-- <plugin> <artifactId>maven-assembly-plugin</artifactId> <configuration> 
-				<archive> <manifest> <mainClass>${mainClass}</mainClass> </manifest> </archive> 
-				<descriptorRefs> <descriptorRef>jar-with-dependencies</descriptorRef> </descriptorRefs> 
-				</configuration> <executions> <execution> <id>make-assembly</id> <phase>package</phase> 
-				<goals> <goal>single</goal> </goals> </execution> </executions> </plugin> -->
+    <build>
+        <finalName>${finalName}</finalName>
+        <plugins>
+            <!-- <plugin> <artifactId>maven-assembly-plugin</artifactId> <configuration>
+                <archive> <manifest> <mainClass>${mainClass}</mainClass> </manifest> </archive>
+                <descriptorRefs> <descriptorRef>jar-with-dependencies</descriptorRef> </descriptorRefs>
+                </configuration> <executions> <execution> <id>make-assembly</id> <phase>package</phase>
+                <goals> <goal>single</goal> </goals> </execution> </executions> </plugin> -->
 
-			<plugin>
-				<groupId>com.github.jinnovations</groupId>
-				<artifactId>attribution-maven-plugin</artifactId>
-				<version>${maven.attribution.version}</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>generate-attribution-file</goal>
-						</goals>
-						<phase>generate-resources</phase>
-					</execution>
-				</executions>
-				<configuration>
-					<outputFile>${project.basedir}/${directory.generated.resources}/de/energiequant/vatsim/compatibility/legacyproxy/attribution/attribution.xml</outputFile>
-					<forceRegeneration>true</forceRegeneration>
-				</configuration>
-			</plugin>
+            <plugin>
+                <groupId>com.github.jinnovations</groupId>
+                <artifactId>attribution-maven-plugin</artifactId>
+                <version>${maven.attribution.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate-attribution-file</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                    </execution>
+                </executions>
+                <configuration>
+                    <outputFile>
+                        ${project.basedir}/${directory.generated.resources}/de/energiequant/vatsim/compatibility/legacyproxy/attribution/attribution.xml
+                    </outputFile>
+                    <forceRegeneration>true</forceRegeneration>
+                </configuration>
+            </plugin>
 
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>build-helper-maven-plugin</artifactId>
-				<version>${maven.buildHelper.version}</version>
-				<executions>
-					<execution>
-						<id>add-resource</id>
-						<phase>generate-resources</phase>
-						<goals>
-							<goal>add-resource</goal>
-						</goals>
-						<configuration>
-							<resources>
-								<resource>
-									<directory>${directory.generated.resources}</directory>
-								</resource>
-							</resources>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>${maven.buildHelper.version}</version>
+                <executions>
+                    <execution>
+                        <id>add-resource</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>add-resource</goal>
+                        </goals>
+                        <configuration>
+                            <resources>
+                                <resource>
+                                    <directory>${directory.generated.resources}</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>${maven.jar.version}</version>
-				<configuration>
-					<archive>
-						<manifestEntries>
-							<Built-By></Built-By>
-						</manifestEntries>
-					</archive>
-				</configuration>
-			</plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>${maven.jar.version}</version>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Built-By></Built-By>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-shade-plugin</artifactId>
-				<version>${maven.shade.version}</version>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>shade</goal>
-						</goals>
-						<configuration>
-							<transformers>
-								<transformer
-									implementation="com.github.edwgiz.maven_shade_plugin.log4j2_cache_transformer.PluginsCacheFileTransformer">
-								</transformer>
-								<transformer
-									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-									<mainClass>${mainClass}</mainClass>
-								</transformer>
-							</transformers>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>${maven.shade.version}</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <transformers>
+                                <transformer implementation="com.github.edwgiz.maven_shade_plugin.log4j2_cache_transformer.PluginsCacheFileTransformer">
+                                </transformer>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>${mainClass}</mainClass>
+                                </transformer>
+                            </transformers>
 
-							<filters>
-								<filter>
-									<artifact>*:*</artifact>
-									<excludes>
-										<exclude>META-INF/MANIFEST.MF</exclude>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/MANIFEST.MF</exclude>
 
-										<!-- License information for dependencies is provided at runtime 
-											for this application. Original files from repackaged JARs collide and cannot 
-											be related to the correct projects. Furthermore not every JAR includes license 
-											information in this way so the information is incomplete, hidden and useless. 
-											Remove those files. -->
-										<exclude>META-INF/NOTICE*</exclude>
-										<exclude>META-INF/DEPENDENCIES*</exclude>
-										<exclude>META-INF/LICENSE*</exclude>
-									</excludes>
-								</filter>
-							</filters>
-						</configuration>
-					</execution>
-				</executions>
-				<dependencies>
-					<dependency>
-						<groupId>com.github.edwgiz</groupId>
-						<artifactId>maven-shade-plugin.log4j2-cachefile-transformer</artifactId>
-						<version>${log4jCachefileTransformer.version}</version>
-					</dependency>
-				</dependencies>
-			</plugin>
+                                        <!-- License information for dependencies is provided at runtime
+                                            for this application. Original files from repackaged JARs collide and cannot
+                                            be related to the correct projects. Furthermore not every JAR includes license
+                                            information in this way so the information is incomplete, hidden and useless.
+                                            Remove those files. -->
+                                        <exclude>META-INF/NOTICE*</exclude>
+                                        <exclude>META-INF/DEPENDENCIES*</exclude>
+                                        <exclude>META-INF/LICENSE*</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                        </configuration>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.github.edwgiz</groupId>
+                        <artifactId>maven-shade-plugin.log4j2-cachefile-transformer</artifactId>
+                        <version>${log4jCachefileTransformer.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>${maven.compiler.version}</version>
-				<executions>
-					<execution>
-						<id>log4j-plugin-processor</id>
-						<goals>
-							<goal>compile</goal>
-						</goals>
-						<phase>process-classes</phase>
-						<configuration>
-							<proc>only</proc>
-							<annotationProcessors>
-								<annotationProcessor>org.apache.logging.log4j.core.config.plugins.processor.PluginProcessor</annotationProcessor>
-							</annotationProcessors>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven.compiler.version}</version>
+                <executions>
+                    <execution>
+                        <id>log4j-plugin-processor</id>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                        <phase>process-classes</phase>
+                        <configuration>
+                            <proc>only</proc>
+                            <annotationProcessors>
+                                <annotationProcessor>org.apache.logging.log4j.core.config.plugins.processor.PluginProcessor</annotationProcessor>
+                            </annotationProcessors>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>${maven.surefire.version}</version>
-			</plugin>
-		</plugins>
-	</build>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven.surefire.version}</version>
+            </plugin>
+        </plugins>
+    </build>
 </project>

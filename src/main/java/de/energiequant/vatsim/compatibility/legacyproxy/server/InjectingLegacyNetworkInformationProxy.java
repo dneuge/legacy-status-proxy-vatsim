@@ -55,10 +55,12 @@ public class InjectingLegacyNetworkInformationProxy extends GetOnlyRequestHandle
 
             responseTrigger.submitResponse(
                 AsyncResponseBuilder.create(HttpStatus.SC_SERVICE_UNAVAILABLE)
-                    .setEntity(AsyncEntityProducers.create("upstream legacy network information is unavailable",
-                        ContentType.TEXT_PLAIN))
-                    .build(),
-                context);
+                                    .setEntity(AsyncEntityProducers.create("upstream legacy network information is unavailable",
+                                                                           ContentType.TEXT_PLAIN
+                                    ))
+                                    .build(),
+                context
+            );
             return;
         }
 
@@ -89,8 +91,8 @@ public class InjectingLegacyNetworkInformationProxy extends GetOnlyRequestHandle
         }
 
         out.addAsDataUrl(
-            DataFileFormat.LEGACY.getNetworkInformationDataKey(), //
-            localBaseUrl + ServiceEndpoints.DATA_FILE_LEGACY //
+            DataFileFormat.LEGACY.getNetworkInformationDataKey(),
+            localBaseUrl + ServiceEndpoints.DATA_FILE_LEGACY
         );
 
         copy(merged.getMetarUrls(), out, NetworkInformation.PARAMETER_KEY_URL_METAR);
@@ -99,9 +101,9 @@ public class InjectingLegacyNetworkInformationProxy extends GetOnlyRequestHandle
 
         // startup messages are not used from merged NetworkInformation directly but
         // instead taken from aggregated list collected while following moveTo redirects
-        startupMessagesSupplier.get() //
-            .orElse(new ArrayList<>()) //
-            .forEach(out::addStartupMessage);
+        startupMessagesSupplier.get()
+                               .orElse(new ArrayList<>())
+                               .forEach(out::addStartupMessage);
 
         LOGGER.debug("Encoding legacy network information");
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -112,9 +114,10 @@ public class InjectingLegacyNetworkInformationProxy extends GetOnlyRequestHandle
 
         responseTrigger.submitResponse(
             AsyncResponseBuilder.create(HttpStatus.SC_OK)
-                .setEntity(AsyncEntityProducers.create(bytes, ContentType.TEXT_PLAIN))
-                .build(),
-            context);
+                                .setEntity(AsyncEntityProducers.create(bytes, ContentType.TEXT_PLAIN))
+                                .build(),
+            context
+        );
     }
 
     private void copy(List<URL> urls, NetworkInformation out, String key) {

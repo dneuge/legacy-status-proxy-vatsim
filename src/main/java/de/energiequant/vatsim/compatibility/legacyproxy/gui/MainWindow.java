@@ -49,10 +49,10 @@ public class MainWindow extends JFrame {
     private final JToggleButton runStopButton;
     private final JLabel statusLabel = SwingHelper.stylePlain(new JLabel());
 
-    private static final EnumSet<Server.State> RUN_STOP_BUTTON_ENABLED_STATES = EnumSet.of( //
-        Server.State.BLOCKED_BY_DISCLAIMER, //
-        Server.State.RUNNING, //
-        Server.State.HTTP_SERVER_STOPPED //
+    private static final EnumSet<Server.State> RUN_STOP_BUTTON_ENABLED_STATES = EnumSet.of(
+        Server.State.BLOCKED_BY_DISCLAIMER,
+        Server.State.RUNNING,
+        Server.State.HTTP_SERVER_STOPPED
     );
     private static final EnumSet<Server.State> RUN_STOP_BUTTON_SELECTED_STATES = EnumSet.of(Server.State.RUNNING);
 
@@ -72,25 +72,25 @@ public class MainWindow extends JFrame {
         LOG_STYLES_BY_LEVEL.put(Level.ERROR, styleForColor("#B03A2E"));
         LOG_STYLES_BY_LEVEL.put(Level.FATAL, styleForColor("#B03A2E"));
 
-        MESSAGE_BY_SERVER_STATE.put(//
-            Server.State.INITIAL, //
-            "Server has not been started yet." //
+        MESSAGE_BY_SERVER_STATE.put(
+            Server.State.INITIAL,
+            "Server has not been started yet."
         );
-        MESSAGE_BY_SERVER_STATE.put( //
-            Server.State.BLOCKED_BY_DISCLAIMER, //
-            "Disclaimer needs to be accepted to run HTTP server." //
+        MESSAGE_BY_SERVER_STATE.put(
+            Server.State.BLOCKED_BY_DISCLAIMER,
+            "Disclaimer needs to be accepted to run HTTP server."
         );
-        MESSAGE_BY_SERVER_STATE.put( //
-            Server.State.RUNNING, //
-            "Server is running." //
+        MESSAGE_BY_SERVER_STATE.put(
+            Server.State.RUNNING,
+            "Server is running."
         );
-        MESSAGE_BY_SERVER_STATE.put( //
-            Server.State.HTTP_SERVER_STOPPED, //
-            "HTTP server has been stopped." //
+        MESSAGE_BY_SERVER_STATE.put(
+            Server.State.HTTP_SERVER_STOPPED,
+            "HTTP server has been stopped."
         );
-        MESSAGE_BY_SERVER_STATE.put( //
-            Server.State.FULLY_STOPPED, //
-            "Server has been stopped. Application restart is needed to run it again." //
+        MESSAGE_BY_SERVER_STATE.put(
+            Server.State.FULLY_STOPPED,
+            "Server has been stopped. Application restart is needed to run it again."
         );
     }
 
@@ -215,8 +215,8 @@ public class MainWindow extends JFrame {
     }
 
     private String getDefaultHtml() {
-        return ResourceUtils.getRelativeResourceContentAsString(getClass(), "LogOutput.html", StandardCharsets.UTF_8) //
-            .orElseThrow(() -> new RuntimeException("missing log output template"));
+        return ResourceUtils.getRelativeResourceContentAsString(getClass(), "LogOutput.html", StandardCharsets.UTF_8)
+                            .orElseThrow(() -> new RuntimeException("missing log output template"));
     }
 
     private void appendLogOutput() {
@@ -239,7 +239,8 @@ public class MainWindow extends JFrame {
 
         HTMLDocument document = (HTMLDocument) logOutput.getDocument();
         Element listElement = document.getElement(document.getDefaultRootElement(), StyleConstants.NameAttribute,
-            HTML.Tag.UL);
+                                                  HTML.Tag.UL
+        );
 
         try {
             document.insertBeforeEnd(listElement, sb.toString());

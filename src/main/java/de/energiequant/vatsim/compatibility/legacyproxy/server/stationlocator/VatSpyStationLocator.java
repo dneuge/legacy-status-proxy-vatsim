@@ -85,12 +85,12 @@ public class VatSpyStationLocator {
 
         VatSpyFile vatSpyFile = parse(
             findFile(baseDirectory, EXPECTED_FILE_NAME_VATSPY_DAT),
-            new VatSpyFileParser() //
+            new VatSpyFileParser()
         );
 
         FIRBoundaryFile firBoundaryFile = parse(
             findFile(baseDirectory, EXPECTED_FILE_NAME_FIR_BOUNDARIES_DAT),
-            new FIRBoundaryFileParser() //
+            new FIRBoundaryFileParser()
         );
 
         load(vatSpyFile, firBoundaryFile);
@@ -105,18 +105,18 @@ public class VatSpyStationLocator {
             ResourceUtils.getAbsoluteResourceContentAsString(
                 VatSpyStationLocator.class,
                 INCLUDED_VAT_SPY_DAT_PATH,
-                StandardCharsets.UTF_8 //
+                StandardCharsets.UTF_8
             ).orElseThrow(() -> new LoadingFailed("Resource unavailable: " + INCLUDED_VAT_SPY_DAT_PATH)),
-            new VatSpyFileParser() //
+            new VatSpyFileParser()
         );
 
         FIRBoundaryFile firBoundaryFile = parse(
             ResourceUtils.getAbsoluteResourceContentAsString(
                 VatSpyStationLocator.class,
                 INCLUDED_FIR_BOUNDARIES_DAT_PATH,
-                StandardCharsets.UTF_8 //
+                StandardCharsets.UTF_8
             ).orElseThrow(() -> new LoadingFailed("Resource unavailable: " + EXPECTED_FILE_NAME_FIR_BOUNDARIES_DAT)),
-            new FIRBoundaryFileParser() //
+            new FIRBoundaryFileParser()
         );
 
         load(vatSpyFile, firBoundaryFile);
@@ -125,7 +125,7 @@ public class VatSpyStationLocator {
     /**
      * Checks if data can be loaded from given base directory without any obvious
      * issues.
-     * 
+     *
      * @param baseDirectory directory containing VAT-Spy data to be checked
      * @return message describing possible error, empty if data seems usable
      */
@@ -143,7 +143,7 @@ public class VatSpyStationLocator {
         if (numCallsigns < CHECK_MINIMUM_CALLSIGNS) {
             return Optional.of(
                 "low number of callsigns after import (found " + numCallsigns
-                    + ", expected at least " + CHECK_MINIMUM_CALLSIGNS + ")" //
+                    + ", expected at least " + CHECK_MINIMUM_CALLSIGNS + ")"
             );
         }
 
@@ -168,9 +168,9 @@ public class VatSpyStationLocator {
         if (VatSpyMetaData.isOlderThan(AppConstants.VATSPY_AGE_WARNING_THRESHOLD)) {
             LOGGER.warn(
                 "VAT-Spy data is {} days old and may be outdated. Please check for updates.",
-                VatSpyMetaData.getAge() //
-                    .map(age -> Long.toString(age.toHours() / 24))
-                    .orElse("?") //
+                VatSpyMetaData.getAge()
+                              .map(age -> Long.toString(age.toHours() / 24))
+                              .orElse("?")
             );
         }
     }
@@ -183,7 +183,7 @@ public class VatSpyStationLocator {
         for (Airport airport : vatSpyFile.getAirports()) {
             String firId = airport.getFlightInformationRegionId();
             multipleAirportCenterPointsByFirId.computeIfAbsent(firId, x -> new HashSet<>())
-                .add(airport.getLocation());
+                                              .add(airport.getLocation());
         }
 
         Map<String, Set<GeoPoint2D>> centerPointsByFirId = new HashMap<>();
@@ -197,7 +197,7 @@ public class VatSpyStationLocator {
                     warn(
                         "Missing center point for FIR \"{}\", boundary ID \"{}\"; no airports covered by FIR",
                         fir.getId(),
-                        boundaryId //
+                        boundaryId
                     );
 
                     continue;
@@ -208,7 +208,7 @@ public class VatSpyStationLocator {
                     "Missing center point for FIR \"{}\", boundary ID \"{}\" has been substituted using covered airports: {}",
                     fir.getId(),
                     boundaryId,
-                    centerPoint //
+                    centerPoint
                 );
             }
 
@@ -243,7 +243,7 @@ public class VatSpyStationLocator {
                 if ((firCenterPoints == null) || firCenterPoints.isEmpty()) {
                     warn(
                         "Missing center points for FIR \"{}\" referenced by UIR \"{}\"",
-                        firId, uir.getId() //
+                        firId, uir.getId()
                     );
                 }
                 centerPoints.addAll(firCenterPoints);
@@ -252,7 +252,7 @@ public class VatSpyStationLocator {
             if (centerPoints.isEmpty()) {
                 warn(
                     "Missing center points for UIR \"{}\"",
-                    uir.getId() //
+                    uir.getId()
                 );
                 continue;
             }
@@ -269,8 +269,8 @@ public class VatSpyStationLocator {
                 .add(airport.getLocation());
 
             String airportAlternativeCodeCallsignPrefix = airport.getAlternativeCode()
-                .map(this::unifyCallsign)
-                .orElse(null);
+                                                                 .map(this::unifyCallsign)
+                                                                 .orElse(null);
             if ((airportAlternativeCodeCallsignPrefix != null)
                 && !airportIcaoCallsignPrefix.equals(airportAlternativeCodeCallsignPrefix)) {
 
@@ -290,7 +290,7 @@ public class VatSpyStationLocator {
                 "calculated center point for {} is {}, source: {}",
                 callsign,
                 averageCenterPoint,
-                centerPoints //
+                centerPoints
             );
 
             singleCenterPointsByCallsignPrefix.put(callsign, averageCenterPoint);
@@ -311,9 +311,9 @@ public class VatSpyStationLocator {
      * the correct station, so we alias all US stations to omit their K prefix if no
      * other call sign collides to increase our chance to provide as many locations
      * as possible from VAT-Spy data.
-     * 
+     *
      * @param centerPointsByCallsignPrefix all locations indexed by callsign prefix
-     *        so far
+     *                                     so far
      * @return stations to be aliased, collision-free
      */
     private Map<String, GeoPoint2D> aliasUSStations(Map<String, GeoPoint2D> centerPointsByCallsignPrefix) {
@@ -335,7 +335,7 @@ public class VatSpyStationLocator {
                 "Aliasing \"{}\" to \"{}\" at {}",
                 alias,
                 originalCallsignPrefix,
-                centerPoint //
+                centerPoint
             );
 
             aliasedCenterPoints.put(alias, centerPoint);
@@ -346,13 +346,13 @@ public class VatSpyStationLocator {
     private Map<String, GeoPoint2D> indexCenterPointsByBoundaryId(FIRBoundaryFile firBoundaryFile) {
         Map<String, GeoPoint2D> centerPointsByBoundaryId = new HashMap<>();
         Collection<List<FIRBoundary>> boundariesPerId = firBoundaryFile.getBoundaries()
-            .stream()
-            .collect(Collectors.groupingBy(FIRBoundary::getId))
-            .values();
+                                                                       .stream()
+                                                                       .collect(Collectors.groupingBy(FIRBoundary::getId))
+                                                                       .values();
         for (List<FIRBoundary> boundaries : boundariesPerId) {
             centerPointsByBoundaryId.put(
                 boundaries.iterator().next().getId(),
-                calculateCenterPoint(boundaries) //
+                calculateCenterPoint(boundaries)
             );
         }
         return centerPointsByBoundaryId;
@@ -365,9 +365,9 @@ public class VatSpyStationLocator {
         }
 
         List<GeoPoint2D> points = boundaries.stream()
-            .map(FIRBoundary::getCenterPoint)
-            .distinct()
-            .collect(Collectors.toList());
+                                            .map(FIRBoundary::getCenterPoint)
+                                            .distinct()
+                                            .collect(Collectors.toList());
 
         GeoPoint2D calculated = GeoMath.average(points);
 
@@ -378,8 +378,8 @@ public class VatSpyStationLocator {
                 calculated,
                 numBoundaries,
                 points.stream()
-                    .map(GeoPoint2D::toString)
-                    .collect(Collectors.joining(", ")) //
+                      .map(GeoPoint2D::toString)
+                      .collect(Collectors.joining(", "))
             );
         }
 
@@ -388,11 +388,11 @@ public class VatSpyStationLocator {
 
     private File findFile(File directory, String expectedFileName) {
         return Arrays.stream(directory.listFiles())
-            .filter(f -> f.isFile() && expectedFileName.equalsIgnoreCase(f.getName()))
-            .findFirst()
-            .orElseThrow(() -> new IllegalArgumentException(
-                expectedFileName + " could not be found in " + directory.getAbsolutePath() //
-            ));
+                     .filter(f -> f.isFile() && expectedFileName.equalsIgnoreCase(f.getName()))
+                     .findFirst()
+                     .orElseThrow(() -> new IllegalArgumentException(
+                         expectedFileName + " could not be found in " + directory.getAbsolutePath()
+                     ));
     }
 
     private <T> T parse(File file, Parser<T> parser) throws LoadingFailed {
@@ -416,10 +416,10 @@ public class VatSpyStationLocator {
         // development and would clutter the log in the main window beyond readability
         for (ParserLogEntry entry : logCollector.getParserLogEntries()) {
             warn(
-                "Failed to parse from {} ({}), section {}, {}: {}", //
-                fileName, //
-                entry.isLineRejected() ? "rejected" : "accepted", //
-                entry.getSection(), entry.getMessage(), //
+                "Failed to parse from {} ({}), section {}, {}: {}",
+                fileName,
+                entry.isLineRejected() ? "rejected" : "accepted",
+                entry.getSection(), entry.getMessage(),
                 entry.getLineContent() != null ? entry.getLineContent() : "(line content not logged)"
             );
         }
@@ -434,7 +434,6 @@ public class VatSpyStationLocator {
             if (station != null) {
                 return Optional.of(station);
             }
-
         }
 
         return Optional.empty();
@@ -464,9 +463,9 @@ public class VatSpyStationLocator {
     /**
      * Returns true if locations are provided from an external data source, false if
      * included data source is used.
-     * 
+     *
      * @return true if locations are provided from an external data source, false if
-     *         included data source is used
+     *     included data source is used
      */
     public boolean usesExternalDataSource() {
         return usesExternalDataSource;

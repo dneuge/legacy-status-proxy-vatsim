@@ -7,19 +7,19 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 public class CallsignHelperTest {
     @CsvSource({
-        "KATL, true", //
-        "katl, true", //
-        "KATL_, true", //
-        "KATL_TWR, true", //
-        "KATL_1_TWR, true", //
-        "KATL_, true", //
-        "K012, true", //
-        "K0123, false", //
-        "KAT, false", //
-        "ATL, false", //
-        "KATL1, false", //
-        "EATL, false", //
-        "EKAT, false", //
+        "KATL, true",
+        "katl, true",
+        "KATL_, true",
+        "KATL_TWR, true",
+        "KATL_1_TWR, true",
+        "KATL_, true",
+        "K012, true",
+        "K0123, false",
+        "KAT, false",
+        "ATL, false",
+        "KATL1, false",
+        "EATL, false",
+        "EKAT, false",
     })
     @ParameterizedTest
     public void testIsUsIcaoCallsign_always_returnsExpectedResult(String callsign, boolean expectedResult) {

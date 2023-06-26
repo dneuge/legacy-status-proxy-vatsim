@@ -42,25 +42,25 @@ public class StationLocator {
             "disabled",
             "do not locate stations",
             false,
-            false //
+            false
         ),
         ONLY_VATSPY(
             "vatspy",
             "locate only from static VAT-Spy data",
             true,
-            false //
+            false
         ),
         FIRST_VATSPY_THEN_TRANSCEIVERS(
             "vatspyAndTransceivers",
             "locate from static VAT-Spy data, then complete through online transceivers",
             true,
-            true //
+            true
         ),
         ONLY_TRANSCEIVERS(
             "transceivers",
             "locate only through online transceivers",
             false,
-            true //
+            true
         );
 
         private final String configValue;
@@ -123,7 +123,7 @@ public class StationLocator {
                 } catch (Exception ex) {
                     LOGGER.warn(
                         "Failed to load external VAT-Spy data from {}, switching to included data",
-                        vatSpyBaseDir.getAbsolutePath(), ex //
+                        vatSpyBaseDir.getAbsolutePath(), ex
                     );
                 }
             }
@@ -181,9 +181,7 @@ public class StationLocator {
             boolean isATC = (clientType == ClientType.ATC_CONNECTED) || (clientType == ClientType.ATIS);
             boolean isObserver = (client.getControllerRating() == ControllerRating.OBS);
             boolean hasLocation = !(Double.isNaN(client.getLatitude()) || Double.isNaN(client.getLongitude()));
-            boolean hasActiveFrequency = (client
-                .getServedFrequencyKilohertz() < Client.FREQUENCY_KILOHERTZ_PLACEHOLDER_MINIMUM //
-            );
+            boolean hasActiveFrequency = (client.getServedFrequencyKilohertz() < Client.FREQUENCY_KILOHERTZ_PLACEHOLDER_MINIMUM);
 
             if (shouldIdentifyObserverByCallsign && !isObserver) {
                 String callsignUpperCase = client.getCallsign().toUpperCase();
@@ -214,7 +212,8 @@ public class StationLocator {
                 double longitude = station.getLongitude();
 
                 LOGGER.debug("injecting location for {} ({}: {} / {})", callsign, station.getSource(), latitude,
-                    longitude);
+                             longitude
+                );
                 client.setLatitude(latitude);
                 client.setLongitude(longitude);
             }
@@ -223,7 +222,7 @@ public class StationLocator {
 
     /**
      * Returns true if VAT-Spy data source is used to locate stations, false if not.
-     * 
+     *
      * @return true if VAT-Spy data source is used to locate stations, false if not
      */
     public boolean usesVatSpySource() {
@@ -234,10 +233,10 @@ public class StationLocator {
      * Returns true if VAT-Spy data source is used to locate stations and data has
      * been loaded from an external source, false if either unavailable or internal
      * data is used.
-     * 
+     *
      * @return true if VAT-Spy data source is used to locate stations and data has
-     *         been loaded from an external source, false if either unavailable or
-     *         internal data is used
+     *     been loaded from an external source, false if either unavailable or
+     *     internal data is used
      * @see VatSpyStationLocator#usesExternalDataSource()
      * @see #usesVatSpySource()
      */

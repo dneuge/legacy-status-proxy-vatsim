@@ -61,18 +61,18 @@ public class StationLocatorPanel extends JPanel {
     private final JComboBox<Strategy> strategyComboBox = new JComboBox<>(Strategy.values());
 
     private final JCheckBox obsCallsignIsObserverCheckBox = new JCheckBox(
-        "assume callsigns ending in OBS to be observers" //
+        "assume callsigns ending in OBS to be observers"
     );
     private final JCheckBox ignorePlaceholderFrequencyCheckBox = new JCheckBox(
         "ignore clients on placeholder frequencies ("
             + (Client.FREQUENCY_KILOHERTZ_PLACEHOLDER_MINIMUM / 1000)
-            + "MHz or above)" //
+            + "MHz or above)"
     );
     private final JCheckBox warnAboutUnlocatableATCCheckBox = new JCheckBox(
-        "warn about unlocatable ATC stations in log" //
+        "warn about unlocatable ATC stations in log"
     );
     private final JCheckBox warnAboutUnlocatableObserverCheckBox = new JCheckBox(
-        "warn about unlocatable observers in log" //
+        "warn about unlocatable observers in log"
     );
 
     private static final String TOOLTIP_LOG_UNLOCATABLE_STATIONS = "Warnings will only be issued for stations that were attempted to be located depending on other options such as "
@@ -100,12 +100,9 @@ public class StationLocatorPanel extends JPanel {
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = BOTTOM_INSETS;
-        add(
-            stylePlain(new JLabel(
-                "<html>All changes regarding Station Locator require a restart of the HTTP server to become effective (Run/Stop).</html>" //
-            )), //
-            gbc //
-        );
+        add(stylePlain(new JLabel(
+            "<html>All changes regarding Station Locator require a restart of the HTTP server to become effective (Run/Stop).</html>"
+        )), gbc);
 
         gbc.gridx = 0;
         gbc.gridy++;
@@ -121,8 +118,9 @@ public class StationLocatorPanel extends JPanel {
         strategyComboBox.setRenderer(new DefaultListCellRenderer() {
             @Override
             public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                Component component = super.getListCellRendererComponent(list, value, index, isSelected,
-                    cellHasFocus);
+                Component component = super.getListCellRendererComponent(
+                    list, value, index, isSelected, cellHasFocus
+                );
                 if (value == null) {
                     return component;
                 }
@@ -145,12 +143,9 @@ public class StationLocatorPanel extends JPanel {
 
         gbc.gridy++;
         gbc.insets = CHECKBOX_WIDTH_INSETS;
-        add(
-            stylePlain(new JLabel(
-                "If disabled, only the client's indicated permission level will be taken into account." //
-            )),
-            gbc //
-        );
+        add(stylePlain(new JLabel(
+            "If disabled, only the client's indicated permission level will be taken into account."
+        )), gbc);
 
         gbc.gridy++;
         gbc.insets = NO_INSETS;
@@ -274,24 +269,24 @@ public class StationLocatorPanel extends JPanel {
         private final JCheckBox warnOnOldDataCheckBox = new JCheckBox(
             "warn if integrated database older than "
                 + AppConstants.VATSPY_AGE_WARNING_THRESHOLD.toDays()
-                + " days is used" //
+                + " days is used"
         );
         private final JCheckBox useExternalDataCheckBox = new JCheckBox(
-            "Use external database:"//
+            "Use external database:"
         );
 
         private final JTextField externalDataField = new JTextField();
         private final JButton externalDataButton = new JButton("Browse");
         private final JLabel externalDataFallbackLabel = new JLabel(
-            "Integrated data will still be used if the external database is unavailable." //
+            "Integrated data will still be used if the external database is unavailable."
         );
         private final JLabel externalDataCheckLabel = new JLabel(EXTERNAL_CHECK_RESULT_INIT);
 
         private final JCheckBox aliasUSStationsCheckBox = new JCheckBox(
-            "alias US stations to omit ICAO prefix K unless conflicted" //
+            "alias US stations to omit ICAO prefix K unless conflicted"
         );
         private final JCheckBox observerCallsignAsStationCheckBox = new JCheckBox(
-            "locate observers by assuming callsign to indicate an ATC station" //
+            "locate observers by assuming callsign to indicate an ATC station"
         );
 
         VatSpyPanel() {
@@ -315,27 +310,20 @@ public class StationLocatorPanel extends JPanel {
             gbc.weightx = 1.0;
             gbc.fill = GridBagConstraints.HORIZONTAL;
             gbc.insets = BOTTOM_INSETS;
-            add(
-                stylePlain(new JLabel(
-                    "Integrated database is from "
-                        + includedDate
-                            .map(UTC_HUMAN_READABLE_DATE_FORMATTER::format)
-                            .orElse("unknown date") //
-                )),
-                gbc //
-            );
+            add(stylePlain(new JLabel(
+                "Integrated database is from "
+                    + includedDate.map(UTC_HUMAN_READABLE_DATE_FORMATTER::format)
+                                  .orElse("unknown date")
+            )), gbc);
 
             gbc.gridy++;
-            add(
-                stylePlain(new JLabel(
-                    "<html>Updated data may be available from https://github.com/vatsimnetwork/vatspy-data-project "
-                        + "even if no update for this program is available. "
-                        + "VAT-Spy databases installed by other programs can be used as well. Updates to an external "
-                        + "database require a restart of the HTTP server (Run/Stop) to become effective."
-                        + "</html>" //
-                )),
-                gbc //
-            );
+            add(stylePlain(new JLabel(
+                "<html>Updated data may be available from https://github.com/vatsimnetwork/vatspy-data-project "
+                    + "even if no update for this program is available. "
+                    + "VAT-Spy databases installed by other programs can be used as well. Updates to an external "
+                    + "database require a restart of the HTTP server (Run/Stop) to become effective."
+                    + "</html>"
+            )), gbc);
 
             gbc.gridy++;
             add(warnOnOldDataCheckBox, gbc);
@@ -364,9 +352,8 @@ public class StationLocatorPanel extends JPanel {
             gbc.weightx = 1.0;
             gbc.fill = GridBagConstraints.HORIZONTAL;
             gbc.insets = CHECKBOX_WIDTH_INSETS;
-            add(
-                stylePlain(externalDataFallbackLabel),
-                gbc //
+            add(stylePlain(externalDataFallbackLabel),
+                gbc
             );
 
             gbc.gridy++;
@@ -382,12 +369,9 @@ public class StationLocatorPanel extends JPanel {
 
             gbc.gridy++;
             gbc.insets = CHECKBOX_WIDTH_INSETS;
-            add(
-                stylePlain(new JLabel(
-                    "If disabled, observers can only be located via transceivers." //
-                )),
-                gbc //
-            );
+            add(stylePlain(new JLabel(
+                "If disabled, observers can only be located via transceivers."
+            )), gbc);
 
             updateAllOptions();
         }
@@ -473,7 +457,7 @@ public class StationLocatorPanel extends JPanel {
             if (!newDirectory.equals(previousDirectory)) {
                 LOGGER.debug(
                     "external VAT-Spy directory selection changed from {} to {}",
-                    previousDirectory, newDirectory //
+                    previousDirectory, newDirectory
                 );
 
                 config.setVatSpyBaseDirectory(newDirectory);
@@ -535,7 +519,6 @@ public class StationLocatorPanel extends JPanel {
 
             externalDataCheckLabel.setText(checkExternalData());
         }
-
     }
 
     private class TransceiversPanel extends JPanel {
@@ -548,12 +531,12 @@ public class StationLocatorPanel extends JPanel {
         private final JCheckBox locateObserversCheckBox = new JCheckBox("locate observers");
 
         private final JCheckBox defaultCheckBox = new JCheckBox(
-            "use default URL and update interval as announced through network information and data file" //
+            "use default URL and update interval as announced through network information and data file"
         );
 
         private final JLabel cacheLabel = new JLabel("Cache for:");
         private final JSpinner cacheSpinner = new JSpinner(
-            new SpinnerNumberModel(15, CACHE_MINIMUM, CACHE_MAXIMUM, CACHE_INTERVAL) //
+            new SpinnerNumberModel(15, CACHE_MINIMUM, CACHE_MAXIMUM, CACHE_INTERVAL)
         );
         private final JLabel cacheUnitLabel = new JLabel("minutes");
 
@@ -582,13 +565,10 @@ public class StationLocatorPanel extends JPanel {
 
             gbc.gridy++;
             gbc.insets = CHECKBOX_WIDTH_INSETS;
-            add(
-                stylePlain(new JLabel(
-                    "<html>Observer positions are usually irrelevant and can be left blank. "
-                        + "Activate only if needed as this will cause otherwise unnecessary data polls.<html>" //
-                )),
-                gbc //
-            );
+            add(stylePlain(new JLabel(
+                "<html>Observer positions are usually irrelevant and can be left blank. "
+                    + "Activate only if needed as this will cause otherwise unnecessary data polls.<html>"
+            )), gbc);
 
             gbc.gridy++;
             gbc.insets = NO_INSETS;
@@ -728,5 +708,4 @@ public class StationLocatorPanel extends JPanel {
             cacheUnitLabel.setEnabled(shouldUseOverride);
         }
     }
-
 }

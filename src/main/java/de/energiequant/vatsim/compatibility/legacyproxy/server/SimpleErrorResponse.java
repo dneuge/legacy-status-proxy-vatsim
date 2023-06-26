@@ -33,8 +33,9 @@ public class SimpleErrorResponse implements AsyncServerRequestHandler<Message<Ht
     public void handle(final Message<HttpRequest, Void> message, final ResponseTrigger responseTrigger, final HttpContext context) throws HttpException, IOException {
         responseTrigger.submitResponse(
             AsyncResponseBuilder.create(statusCode)
-                .setEntity(AsyncEntityProducers.create(responseText, ContentType.TEXT_PLAIN))
-                .build(),
-            context);
+                                .setEntity(AsyncEntityProducers.create(responseText, ContentType.TEXT_PLAIN))
+                                .build(),
+            context
+        );
     }
 }

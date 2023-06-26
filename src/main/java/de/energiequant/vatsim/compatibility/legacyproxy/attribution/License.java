@@ -18,16 +18,16 @@ public enum License {
         "apache2.html",
         asList(
             "Apache License, Version 2.0",
-            "The Apache Software License, Version 2.0" //
-        ) //
+            "The Apache Software License, Version 2.0"
+        )
     ),
 
     CC_BY_SA_4_0(
         "Creative Commons Attribution Share Alike 4.0 International",
         "cc-by-sa-4_0.html",
         asList(
-            "CC-BY-SA-4.0" //
-        ) //
+            "CC-BY-SA-4.0"
+        )
     ),
 
     MIT(
@@ -35,8 +35,8 @@ public enum License {
         "mit.html",
         asList(
             "MIT",
-            "MIT License" //
-        ) //
+            "MIT License"
+        )
     );
 
     private static class LicenseViolation extends RuntimeException {
@@ -89,10 +89,9 @@ public enum License {
     }
 
     private String loadLicenseText(String filePath) {
-        return ResourceUtils.getRelativeResourceContentAsString(getClass(), filePath, StandardCharsets.UTF_8) //
-            .orElseThrow(() -> new LicenseViolation(
-                "missing license text for " + this + ": resource " + filePath + " not found" //
-            ));
+        return ResourceUtils.getRelativeResourceContentAsString(getClass(), filePath, StandardCharsets.UTF_8)
+                            .orElseThrow(() -> new LicenseViolation(
+                                "missing license text for " + this + ": resource " + filePath + " not found"
+                            ));
     }
-
 }

@@ -23,7 +23,7 @@ public class AppConstants {
     public static final String SAVING_DISABLED_TOOLTIP = "Saving has been disabled due to an unsafe file location.";
 
     // TODO: incorporate constants for name and URL currently present in Main
-    public static final String SERVER_DISCLAIMER_HEADER = "YOU ARE ACCESSING THE COMPATIBILITY ADAPTER PROXY FOR VATSIM DATA FILES\n" //
+    public static final String SERVER_DISCLAIMER_HEADER = "YOU ARE ACCESSING THE COMPATIBILITY ADAPTER PROXY FOR VATSIM DATA FILES\n"
         + "\n"
         + "This proxy server is supposed to be used only in order to establish compatibility\n"
         + "between legacy applications and later revisions of status/data files.\n"
@@ -37,7 +37,7 @@ public class AppConstants {
         + "If, even if you do not have connected an active client through this proxy, you\n"
         + "experience any issues accessing data or connecting to VATSIM please disable the\n"
         + "proxy server and try again.\n"
-        + "\n" //
+        + "\n"
         + "VATSIM data served by this server remains under copyright of VATSIM.\n"
         + "Usage of that data remains subject to conditions defined by VATSIM.\n";
 

@@ -188,5 +188,4 @@ public class AttributionParser {
 
         return handler.projects;
     }
-
 }

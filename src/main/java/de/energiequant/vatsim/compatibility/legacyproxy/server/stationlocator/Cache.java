@@ -24,7 +24,7 @@ public class Cache<K, C, M> {
     private final Map<K, Entry<K, C, M>> entriesIndexedByKey = new HashMap<>();
 
     private final SortedSet<Entry<K, C, M>> entriesSortedByExpiration = new TreeSet<>(
-        Comparator.comparing(Entry::getExpiration) //
+        Comparator.comparing(Entry::getExpiration)
     );
 
     public static class Entry<K, C, M> {
@@ -97,7 +97,7 @@ public class Cache<K, C, M> {
 
             LOGGER.trace(
                 "maintenance: removing entry \"{}\", timed out at {}",
-                entry.getIndexKey(), entry.getExpiration() //
+                entry.getIndexKey(), entry.getExpiration()
             );
             entriesIndexedByKey.remove(entry.getIndexKey(), entry);
             removed.add(entry);
@@ -107,7 +107,7 @@ public class Cache<K, C, M> {
 
         LOGGER.trace(
             "maintenance: index size {}, expiration queue size {}",
-            entriesIndexedByKey.size(), entriesSortedByExpiration.size() //
+            entriesIndexedByKey.size(), entriesSortedByExpiration.size()
         );
 
         this.nextMaintenance = Instant.now().plus(maintenanceInterval);
@@ -120,7 +120,7 @@ public class Cache<K, C, M> {
         if (previousEntry != null) {
             LOGGER.trace(
                 "adding new entry for key \"{}\" causes removal of old entry from expiration queue, was due at {}",
-                key, entry.getExpiration() //
+                key, entry.getExpiration()
             );
             entriesSortedByExpiration.remove(previousEntry);
         }

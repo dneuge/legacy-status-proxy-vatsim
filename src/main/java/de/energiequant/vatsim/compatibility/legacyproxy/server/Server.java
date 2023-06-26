@@ -118,12 +118,14 @@ public class Server {
         legacyNetworkInformationFetcher = new LegacyNetworkInformationFetcher(
             upstreamBaseUrl + ServiceEndpoints.NETWORK_INFORMATION_LEGACY,
             NETWORK_INFORMATION_UPDATE_INTERVAL,
-            NETWORK_INFORMATION_RETRY_INTERVAL);
+            NETWORK_INFORMATION_RETRY_INTERVAL
+        );
 
         jsonNetworkInformationFetcher = new JsonNetworkInformationFetcher(
             upstreamBaseUrl + ServiceEndpoints.NETWORK_INFORMATION_JSON,
             NETWORK_INFORMATION_UPDATE_INTERVAL,
-            NETWORK_INFORMATION_RETRY_INTERVAL);
+            NETWORK_INFORMATION_RETRY_INTERVAL
+        );
 
         onlineTransceiversFileFetcher = new OnlineTransceiversFileFetcher(
             () -> {
@@ -132,16 +134,16 @@ public class Server {
                     return config.getOnlineTransceiversOverrideUrl();
                 }
 
-                List<URL> transceiversUrls = jsonNetworkInformationFetcher.getLastFetchedNetworkInformation() //
-                    .map(x -> x.getDataUrls(OnlineTransceiversFile.Format.INITIAL)) //
-                    .orElse(new ArrayList<>());
+                List<URL> transceiversUrls = jsonNetworkInformationFetcher.getLastFetchedNetworkInformation()
+                                                                          .map(x -> x.getDataUrls(OnlineTransceiversFile.Format.INITIAL))
+                                                                          .orElse(new ArrayList<>());
 
                 if (transceiversUrls.isEmpty()) {
                     return null;
                 }
 
                 return pickRandomItem(transceiversUrls).toString();
-            }, //
+            },
             () -> {
                 Configuration config = Main.getConfiguration();
 
@@ -150,10 +152,11 @@ public class Server {
                 }
 
                 return max(authoritativeMinimumDataUpdateInterval.get(),
-                    ONLINE_TRANSCEIVERS_MINIMUM_ALLOWED_UPDATE_INTERVAL);
-            }, //
-            ONLINE_TRANSCEIVERS_RETRY_INTERVAL, //
-            ONLINE_TRANSCEIVERS_IDLE_TIMEOUT //
+                           ONLINE_TRANSCEIVERS_MINIMUM_ALLOWED_UPDATE_INTERVAL
+                );
+            },
+            ONLINE_TRANSCEIVERS_RETRY_INTERVAL,
+            ONLINE_TRANSCEIVERS_IDLE_TIMEOUT
         );
 
         LOGGER.info("Starting NetworkInformation fetcher threads");
@@ -200,46 +203,48 @@ public class Server {
             new LegacyNetworkInformationWriter(AppConstants.SERVER_DISCLAIMER_HEADER),
             legacyNetworkInformationFetcher::getLastFetchedNetworkInformation,
             jsonNetworkInformationFetcher::getLastFetchedNetworkInformation,
-            legacyNetworkInformationFetcher::getLastAggregatedStartupMessages);
+            legacyNetworkInformationFetcher::getLastAggregatedStartupMessages
+        );
 
-        HttpAsyncServer myHttpServer = AsyncServerBootstrap.bootstrap()
+        HttpAsyncServer myHttpServer = AsyncServerBootstrap
+            .bootstrap()
             .setIOReactorConfig(IOReactorConfig.custom()
-                .setSoReuseAddress(true)
-                .build() //
+                                               .setSoReuseAddress(true)
+                                               .build()
             )
             .addFilterFirst("ipFilter", ipFilter)
             .setCanonicalHostName(localHostname)
             .setConnectionReuseStrategy(NEVER_REUSE_CONNECTIONS)
             .register(ServiceEndpoints.DATA_FILE_LEGACY,
-                new JsonToLegacyDataFileProxy(
-                    new DataFileParserFactory().createDataFileParser(AppConstants.UPSTREAM_DATA_FILE_FORMAT),
-                    onlineTransceiversFileFetcher,
-                    () -> {
-                        Set<URL> combined = new HashSet<>();
-                        combined.addAll(
-                            jsonNetworkInformationFetcher.getLastFetchedNetworkInformation() //
-                                .map(x -> x.getDataUrls(AppConstants.UPSTREAM_DATA_FILE_FORMAT)) //
-                                .orElse(new ArrayList<>()) //
-                        );
-                        combined.addAll(
-                            legacyNetworkInformationFetcher.getLastFetchedNetworkInformation() //
-                                .map(x -> x.getDataUrls(AppConstants.UPSTREAM_DATA_FILE_FORMAT)) //
-                                .orElse(new ArrayList<>()) //
-                        );
+                      new JsonToLegacyDataFileProxy(
+                          new DataFileParserFactory().createDataFileParser(AppConstants.UPSTREAM_DATA_FILE_FORMAT),
+                          onlineTransceiversFileFetcher,
+                          () -> {
+                              Set<URL> combined = new HashSet<>();
+                              combined.addAll(
+                                  jsonNetworkInformationFetcher.getLastFetchedNetworkInformation()
+                                                               .map(x -> x.getDataUrls(AppConstants.UPSTREAM_DATA_FILE_FORMAT))
+                                                               .orElse(new ArrayList<>())
+                              );
+                              combined.addAll(
+                                  legacyNetworkInformationFetcher.getLastFetchedNetworkInformation()
+                                                                 .map(x -> x.getDataUrls(AppConstants.UPSTREAM_DATA_FILE_FORMAT))
+                                                                 .orElse(new ArrayList<>())
+                              );
 
-                        if (combined.isEmpty()) {
-                            return null;
-                        }
+                              if (combined.isEmpty()) {
+                                  return null;
+                              }
 
-                        return pickRandomItem(combined).toString();
-                    }, //
-                    this::setAuthoritativeMinimumDataUpdateInterval //
-                ) //
+                              return pickRandomItem(combined).toString();
+                          },
+                          this::setAuthoritativeMinimumDataUpdateInterval
+                      )
             )
             .register(ServiceEndpoints.NETWORK_INFORMATION_JSON, new DirectProxy(
-                upstreamBaseUrl + ServiceEndpoints.NETWORK_INFORMATION_JSON, //
-                StandardCharsets.UTF_8, //
-                ContentType.APPLICATION_JSON //
+                upstreamBaseUrl + ServiceEndpoints.NETWORK_INFORMATION_JSON,
+                StandardCharsets.UTF_8,
+                ContentType.APPLICATION_JSON
             ))
             .register(ServiceEndpoints.NETWORK_INFORMATION_LEGACY, legacyNetworkInformationRequestHandler)
             .register("/", legacyNetworkInformationRequestHandler)

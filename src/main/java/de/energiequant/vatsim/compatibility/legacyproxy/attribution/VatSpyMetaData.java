@@ -21,14 +21,14 @@ public class VatSpyMetaData {
         Instant timestamp = null;
         try {
             timestamp = ResourceUtils.getAbsoluteResourceContentAsString(
-                VatSpyMetaData.class,
-                INTERNAL_DATE_RESOURCE,
-                StandardCharsets.UTF_8 //
-            )
-                .map(String::trim)
-                .map(ZonedDateTime::parse)
-                .map(ZonedDateTime::toInstant)
-                .orElse(null);
+                                         VatSpyMetaData.class,
+                                         INTERNAL_DATE_RESOURCE,
+                                         StandardCharsets.UTF_8
+                                     )
+                                     .map(String::trim)
+                                     .map(ZonedDateTime::parse)
+                                     .map(ZonedDateTime::toInstant)
+                                     .orElse(null);
         } catch (Exception ex) {
             LOGGER.warn("Failed to load date information for included VAT-Spy data.", ex);
             return null;

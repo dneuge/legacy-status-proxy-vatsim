@@ -53,12 +53,12 @@ public class OnlineTransceiversFileFetcher extends PeriodicRunnable {
 
         DefaultHttpRetrievalDecoders decoders = new DefaultHttpRetrievalDecoders();
         httpPromiseBuilder = new HttpPromiseBuilder<>(
-            decoders.bodyAsStringWithHeaderCharacterSet(FALLBACK_CHARACTER_SET) //
-                .andThen(processor::deserialize) //
+            decoders.bodyAsStringWithHeaderCharacterSet(FALLBACK_CHARACTER_SET)
+                    .andThen(processor::deserialize)
         ).withConfiguration(
             new HttpRetrieval()
                 .setUserAgent(AppConstants.USER_AGENT)
-                .setTimeout(AppConstants.EXTERNAL_REQUEST_TIMEOUT) //
+                .setTimeout(AppConstants.EXTERNAL_REQUEST_TIMEOUT)
         );
     }
 
@@ -68,7 +68,7 @@ public class OnlineTransceiversFileFetcher extends PeriodicRunnable {
         if (isIdleTimeoutExceeded) {
             LOGGER.info(
                 "Stopping periodic retrieval of online transceivers as no such data has been needed for {} minutes",
-                Duration.between(lastRequested.get(), Instant.now()).toMinutes() //
+                Duration.between(lastRequested.get(), Instant.now()).toMinutes()
             );
 
             stop();
@@ -102,10 +102,9 @@ public class OnlineTransceiversFileFetcher extends PeriodicRunnable {
 
     /**
      * Waits blocking for data to become available or the timeout has been reached.
-     * 
+     *
      * @param timeout how long to wait before giving up
-     * @return {@link OnlineTransceiversFile} as last retrieved, empty if
-     *         unavailable after timeout
+     * @return {@link OnlineTransceiversFile} as last retrieved, empty if unavailable after timeout
      */
     public Optional<OnlineTransceiversFile> waitForOnlineTransceiversFile(Duration timeout) {
         lastRequested.set(Instant.now());

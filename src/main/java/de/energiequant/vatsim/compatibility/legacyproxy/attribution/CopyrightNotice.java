@@ -12,26 +12,26 @@ public class CopyrightNotice {
     private static class MissingNotice extends RuntimeException {
         public MissingNotice(String groupId, String artifactId, String version) {
             super("Missing copyright notice for group ID " + groupId + ", artifact ID " + artifactId + ", version "
-                + version);
+                      + version);
         }
     }
 
     private static class DuplicateKey extends RuntimeException {
         public DuplicateKey(String groupId, String artifactId, String version) {
             super("Duplicate key for group ID \"" + groupId + "\", artifact ID \"" + artifactId + "\", version \""
-                + version + "\"");
+                      + version + "\"");
         }
     }
 
     static {
-        add("commons-cli", "commons-cli", "1.5.0", //
+        add("commons-cli", "commons-cli", "1.5.0",
             "Apache Commons CLI\n"
                 + "Copyright 2002-2021 The Apache Software Foundation\n"
                 + "\n"
                 + "This product includes software developed at\n"
-                + "The Apache Software Foundation (https://www.apache.org/)." //
+                + "The Apache Software Foundation (https://www.apache.org/)."
         );
-        add("commons-codec", "commons-codec", "1.15", //
+        add("commons-codec", "commons-codec", "1.15",
             "Apache Commons Codec\n"
                 + "Copyright 2002-2020 The Apache Software Foundation\n"
                 + "\n"
@@ -48,9 +48,9 @@ public class CopyrightNotice {
                 + "from the original php source code available at http://stevemorse.org/phoneticinfo.htm\n"
                 + "with permission from the original authors.\n"
                 + "Original source copyright:\n"
-                + "Copyright (c) 2008 Alexander Beider & Stephen P. Morse." //
+                + "Copyright (c) 2008 Alexander Beider & Stephen P. Morse."
         );
-        add("org.apache.commons", "commons-compress", "1.21", //
+        add("org.apache.commons", "commons-compress", "1.21",
             "Apache Commons Compress\n"
                 + "Copyright 2002-2021 The Apache Software Foundation\n"
                 + "\n"
@@ -105,51 +105,51 @@ public class CopyrightNotice {
                 + "NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS\n"
                 + "SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.\n"
                 + "\n"
-                + "Julian Seward, jseward@acm.org" //
+                + "Julian Seward, jseward@acm.org"
         );
-        add("commons-io", "commons-io", "2.11.0", //
+        add("commons-io", "commons-io", "2.11.0",
             "Apache Commons IO\n"
                 + "Copyright 2002-2021 The Apache Software Foundation\n"
                 + "\n"
                 + "This product includes software developed at\n"
-                + "The Apache Software Foundation (https://www.apache.org/)." //
+                + "The Apache Software Foundation (https://www.apache.org/)."
         );
-        add("org.apache.commons", "commons-lang3", "3.12.0", //
+        add("org.apache.commons", "commons-lang3", "3.12.0",
             "Apache Commons Lang\n"
                 + "Copyright 2001-2021 The Apache Software Foundation\n"
                 + "\n"
                 + "This product includes software developed at\n"
-                + "The Apache Software Foundation (https://www.apache.org/)." //
+                + "The Apache Software Foundation (https://www.apache.org/)."
         );
-        add("org.apache.httpcomponents.client5", "httpclient5", "5.1.4", //
+        add("org.apache.httpcomponents.client5", "httpclient5", "5.1.4",
             "Apache HttpClient\n"
                 + "Copyright 1999-2020 The Apache Software Foundation\n"
                 + "\n"
                 + "This product includes software developed at\n"
-                + "The Apache Software Foundation (http://www.apache.org/)." //
+                + "The Apache Software Foundation (http://www.apache.org/)."
         );
-        add("org.apache.httpcomponents.core5", "httpcore5", "5.1.5", //
+        add("org.apache.httpcomponents.core5", "httpcore5", "5.1.5",
             "Apache HttpComponents Core HTTP/1.1\n"
                 + "Copyright 2005-2020 The Apache Software Foundation\n"
                 + "\n"
                 + "This product includes software developed at\n"
-                + "The Apache Software Foundation (http://www.apache.org/)." //
+                + "The Apache Software Foundation (http://www.apache.org/)."
         );
-        add("org.apache.httpcomponents.core5", "httpcore5-h2", "5.1.5", //
+        add("org.apache.httpcomponents.core5", "httpcore5-h2", "5.1.5",
             "Apache HttpComponents Core HTTP/2\n"
                 + "Copyright 2005-2020 The Apache Software Foundation\n"
                 + "\n"
                 + "This product includes software developed at\n"
-                + "The Apache Software Foundation (http://www.apache.org/)." //
+                + "The Apache Software Foundation (http://www.apache.org/)."
         );
-        add("org.apache.logging.log4j", "log4j-api", "2.20.0", //
+        add("org.apache.logging.log4j", "log4j-api", "2.20.0",
             "Apache Log4j API\n"
                 + "Copyright 1999-2023 The Apache Software Foundation\n"
                 + "\n"
                 + "This product includes software developed at\n"
-                + "The Apache Software Foundation (http://www.apache.org/)." //
+                + "The Apache Software Foundation (http://www.apache.org/)."
         );
-        add("org.apache.logging.log4j", "log4j-core", "2.20.0", //
+        add("org.apache.logging.log4j", "log4j-core", "2.20.0",
             "Apache Log4j Core\n"
                 + "Copyright 1999-2012 Apache Software Foundation\n"
                 + "\n"
@@ -157,16 +157,16 @@ public class CopyrightNotice {
                 + "The Apache Software Foundation (http://www.apache.org/).\n"
                 + "\n"
                 + "ResolverUtil.java\n"
-                + "Copyright 2005-2006 Tim Fennell" //
+                + "Copyright 2005-2006 Tim Fennell"
         );
-        add("org.apache.logging.log4j", "log4j-slf4j-impl", "2.20.0", //
+        add("org.apache.logging.log4j", "log4j-slf4j-impl", "2.20.0",
             "Apache Log4j SLF4J Binding\n"
                 + "Copyright 1999-2023 The Apache Software Foundation\n"
                 + "\n"
                 + "This product includes software developed at\n"
-                + "The Apache Software Foundation (http://www.apache.org/)."//
+                + "The Apache Software Foundation (http://www.apache.org/)."
         );
-        add("com.github.cliftonlabs", "json-simple", "4.0.1", //
+        add("com.github.cliftonlabs", "json-simple", "4.0.1",
             /*
              * This is based on the Apache License file, release date and the homepage of
              * json-simple as there is no NOTICE file or similar.
@@ -178,28 +178,28 @@ public class CopyrightNotice {
                 + "Chris Nokleberg contributed to the 1.* versions.\n"
                 + "Dave Hughes contributed to the 1.* versions.\n"
                 + "Chris (cbojar on github) provided fixes released in the 3.0.2 version.\n"
-                + "Barry Lagerweij for the convenience put methods introduced in the 3.1.1 version." //
+                + "Barry Lagerweij for the convenience put methods introduced in the 3.1.1 version."
         );
-        add("org.slf4j", "slf4j-api", "1.7.36", //
+        add("org.slf4j", "slf4j-api", "1.7.36",
             // grabbed from MIT license file (note there are two, on root folder and in
             // slf4j-api)
             "Copyright (c) 2004-2022 QOS.ch Sarl (Switzerland)\n"
-                + "All rights reserved." //
+                + "All rights reserved."
         );
-        add("org.vatplanner", "dataformats-vatsim-public", "0.1-pre230626", //
-            "Copyright (c) 2016-2023 Daniel Neugebauer" //
+        add("org.vatplanner", "dataformats-vatsim-public", "0.1-pre230626",
+            "Copyright (c) 2016-2023 Daniel Neugebauer"
         );
-        add("de.energiequant.common", "webdataretrieval", "0.2.5", //
-            "Copyright (c) 2016-2021 Daniel Neugebauer" //
+        add("de.energiequant.common", "webdataretrieval", "0.2.5",
+            "Copyright (c) 2016-2021 Daniel Neugebauer"
         );
-        add("_inofficial.com.github.vatsimnetwork", "vatspy-data-project", "b67c248da95b75b55a72fee3be80bd790df4afb9", //
+        add("_inofficial.com.github.vatsimnetwork", "vatspy-data-project", "b67c248da95b75b55a72fee3be80bd790df4afb9",
             // based on README file
             // also needs to be incorporated to AppConstants.SERVER_VAT_SPY_INTERNAL_HEADER
             "Copyright (c) 2019-2023 Niels Voogd, Adrian Bjerke and contributors\n"
                 + "VAT-Spy is being developed by Ross Carlson\n"
                 + "Previous data project lead: Néstor Pérez\n"
                 + "\n"
-                + "Please visit the linked website to view the full list of contributors." //
+                + "Please visit the linked website to view the full list of contributors."
         );
     }
 

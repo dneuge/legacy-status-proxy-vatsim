@@ -30,8 +30,8 @@ public class ResourceUtils {
             + relativeFilePath;
 
         try (
-            InputStream is = rootClass.getClassLoader().getResourceAsStream(resourcePath); //
-            InputStreamReader isr = new InputStreamReader(is, characterSet) //
+            InputStream is = rootClass.getClassLoader().getResourceAsStream(resourcePath);
+            InputStreamReader isr = new InputStreamReader(is, characterSet)
         ) {
             char[] buffer = new char[4096];
             while (isr.ready()) {
@@ -41,9 +41,9 @@ public class ResourceUtils {
                 }
             }
         } catch (IOException ex) {
-            LOGGER.warn( //
-                "failed to load resource content for class {}, relative file path {}, charset {}", //
-                rootClass, relativeFilePath, characterSet, ex //
+            LOGGER.warn(
+                "failed to load resource content for class {}, relative file path {}, charset {}",
+                rootClass, relativeFilePath, characterSet, ex
             );
             return Optional.empty();
         }
@@ -55,8 +55,8 @@ public class ResourceUtils {
         StringBuilder sb = new StringBuilder();
 
         try (
-            InputStream is = rootClass.getClassLoader().getResourceAsStream(resourcePath); //
-            InputStreamReader isr = new InputStreamReader(is, characterSet) //
+            InputStream is = rootClass.getClassLoader().getResourceAsStream(resourcePath);
+            InputStreamReader isr = new InputStreamReader(is, characterSet)
         ) {
             char[] buffer = new char[4096];
             while (isr.ready()) {
@@ -66,14 +66,13 @@ public class ResourceUtils {
                 }
             }
         } catch (IOException ex) {
-            LOGGER.warn( //
-                "failed to load resource content for class {}, absolute resource path {}, charset {}", //
-                rootClass, resourcePath, characterSet, ex //
+            LOGGER.warn(
+                "failed to load resource content for class {}, absolute resource path {}, charset {}",
+                rootClass, resourcePath, characterSet, ex
             );
             return Optional.empty();
         }
 
         return Optional.of(sb.toString());
     }
-
 }

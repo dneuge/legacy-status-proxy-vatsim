@@ -50,12 +50,12 @@ public class LegacyNetworkInformationFetcher extends PeriodicRunnable {
 
         DefaultHttpRetrievalDecoders decoders = new DefaultHttpRetrievalDecoders();
         httpPromiseBuilder = new HttpPromiseBuilder<>(
-            decoders.bodyAsStringWithHeaderCharacterSet(FALLBACK_CHARACTER_SET) //
-                .andThen(NetworkInformationParser::parse) //
+            decoders.bodyAsStringWithHeaderCharacterSet(FALLBACK_CHARACTER_SET)
+                    .andThen(NetworkInformationParser::parse)
         ).withConfiguration(
             new HttpRetrieval()
                 .setUserAgent(AppConstants.USER_AGENT)
-                .setTimeout(AppConstants.EXTERNAL_REQUEST_TIMEOUT) //
+                .setTimeout(AppConstants.EXTERNAL_REQUEST_TIMEOUT)
         );
     }
 
@@ -90,7 +90,8 @@ public class LegacyNetworkInformationFetcher extends PeriodicRunnable {
 
             LOGGER.info(
                 "Legacy network information retrieved from {} redirects using \"moved to\" to {} (iteration {})", url,
-                movedToUrls, i);
+                movedToUrls, i
+            );
             Collections.shuffle(movedToUrls);
             url = movedToUrls.iterator().next().toString();
         }
@@ -114,7 +115,7 @@ public class LegacyNetworkInformationFetcher extends PeriodicRunnable {
 
     /**
      * Returns the legacy {@link NetworkInformation} as last retrieved.
-     * 
+     *
      * @return legacy {@link NetworkInformation} as last retrieved
      */
     public Optional<NetworkInformation> getLastFetchedNetworkInformation() {
@@ -128,12 +129,10 @@ public class LegacyNetworkInformationFetcher extends PeriodicRunnable {
      * also contains all messages encountered in previous the complete chain of
      * {@link NetworkInformation} while following
      * {@link NetworkInformation#getMovedToUrls()}.
-     * 
-     * @return all startup messages collected while following
-     *         {@link NetworkInformation#getMovedToUrls()}
+     *
+     * @return all startup messages collected while following {@link NetworkInformation#getMovedToUrls()}
      */
     public Optional<List<String>> getLastAggregatedStartupMessages() {
         return Optional.ofNullable(lastStartupMessages.get());
     }
-
 }

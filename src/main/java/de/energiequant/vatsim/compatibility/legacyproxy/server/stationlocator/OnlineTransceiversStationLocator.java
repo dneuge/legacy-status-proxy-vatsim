@@ -25,7 +25,7 @@ import de.energiequant.vatsim.compatibility.legacyproxy.fetching.OnlineTransceiv
 /**
  * Locates stations from online transceivers provided by
  * {@link OnlineTransceiversFileFetcher}.
- * 
+ *
  * <p>
  * A cache local to this instance is maintained in addition to the cache used by
  * the fetcher. This extra caching is done because {@link #locate(String)} is
@@ -65,16 +65,16 @@ public class OnlineTransceiversStationLocator {
         LOGGER.debug("updating local cache");
 
         OnlineTransceiversFile file = onlineTransceiversFileFetcher.waitForOnlineTransceiversFile(FETCH_TIMEOUT)
-            .orElse(null);
+                                                                   .orElse(null);
 
         if (file == null) {
             LOGGER.warn("Online transceivers are currently unavailable.");
         } else {
             logParserMessages(file);
 
-            transceiverStationsByCallsign = file.getStations() //
-                .stream() //
-                .collect(Collectors.groupingBy(OnlineTransceiverStation::getCallsign));
+            transceiverStationsByCallsign = file.getStations()
+                                                .stream()
+                                                .collect(Collectors.groupingBy(OnlineTransceiverStation::getCallsign));
         }
 
         cacheExpiration = Instant.now().plus(LOCAL_CACHE_LIFETIME);
@@ -96,9 +96,9 @@ public class OnlineTransceiversStationLocator {
 
         for (OnlineTransceiverStation transceiverStation : transceiverStations) {
             Set<GeoPoint2D> transceiverPoints = transceiverStation.getTransceivers()
-                .stream()
-                .map(transceiver -> new GeoPoint2D(transceiver.getLatitude(), transceiver.getLongitude()))
-                .collect(Collectors.toSet());
+                                                                  .stream()
+                                                                  .map(transceiver -> new GeoPoint2D(transceiver.getLatitude(), transceiver.getLongitude()))
+                                                                  .collect(Collectors.toSet());
 
             if (!transceiverPoints.isEmpty()) {
                 GeoPoint2D transceiverGroupCenterPoint = GeoMath.average(transceiverPoints);
@@ -108,7 +108,7 @@ public class OnlineTransceiversStationLocator {
                     "calculated center point for {} is {}, source: {}",
                     callsign,
                     transceiverGroupCenterPoint,
-                    transceiverPoints //
+                    transceiverPoints
                 );
             }
         }
@@ -125,7 +125,7 @@ public class OnlineTransceiversStationLocator {
                 "\"{}\" had multiple center points, averaged to {}, input: {}",
                 callsign,
                 stationCenterPoint,
-                transceiverCenterPoints //
+                transceiverCenterPoints
             );
         }
 
@@ -133,8 +133,8 @@ public class OnlineTransceiversStationLocator {
             new Station(
                 callsign,
                 stationCenterPoint.getLatitude(), stationCenterPoint.getLongitude(),
-                Source.TRANSCEIVERS //
-            ) //
+                Source.TRANSCEIVERS
+            )
         );
     }
 
@@ -149,9 +149,9 @@ public class OnlineTransceiversStationLocator {
         // development and would clutter the log in the main window beyond readability
         for (ParserLogEntry entry : parserLogEntryCollector.getParserLogEntries()) {
             LOGGER.warn(
-                "Failed to parse online transceiver{}, section {}, {}: {}", //
-                entry.isLineRejected() ? " (rejected)" : "", //
-                entry.getSection(), entry.getMessage(), entry.getLineContent() //
+                "Failed to parse online transceiver{}, section {}, {}: {}",
+                entry.isLineRejected() ? " (rejected)" : "",
+                entry.getSection(), entry.getMessage(), entry.getLineContent()
             );
         }
     }

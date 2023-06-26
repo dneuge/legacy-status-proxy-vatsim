@@ -95,8 +95,8 @@ public class GeneralConfigurationPanel extends JPanel {
             gbc.fill = GridBagConstraints.HORIZONTAL;
             gbc.anchor = GridBagConstraints.WEST;
             add(stylePlain(new JLabel(
-                "<html>Usually no changes to upstream connection should be required. The base URL is appended with further paths and cannot end with a slash. Changes to the upstream connection require a full restart of the proxy application (run/stop is insufficient).</html>")),
-                gbc);
+                "<html>Usually no changes to upstream connection should be required. The base URL is appended with further paths and cannot end with a slash. Changes to the upstream connection require a full restart of the proxy application (run/stop is insufficient).</html>"
+            )), gbc);
 
             gbc.gridy++;
             gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -163,7 +163,7 @@ public class GeneralConfigurationPanel extends JPanel {
     private class HttpServerPanel extends JPanel {
         final JTextField localHostNameField = new JTextField();
         final JSpinner serverPortField = unformattedNumericSpinner(new JSpinner(
-            new SpinnerNumberModel(1, Configuration.SERVER_PORT_MINIMUM, Configuration.SERVER_PORT_MAXIMUM, 1) //
+            new SpinnerNumberModel(1, Configuration.SERVER_PORT_MINIMUM, Configuration.SERVER_PORT_MAXIMUM, 1)
         ));
         final JCheckBox quirkUtf8CheckBox = new JCheckBox("encode data file in UTF-8 instead of ISO-8859-1");
         final JCheckBox enableParserLogCheckBox = new JCheckBox("log parser errors (upstream data)");
@@ -190,8 +190,8 @@ public class GeneralConfigurationPanel extends JPanel {
             gbc.fill = GridBagConstraints.HORIZONTAL;
             gbc.anchor = GridBagConstraints.WEST;
             add(stylePlain(new JLabel(
-                "<html>The host name must be reachable by all clients, an IPv4 address is also possible. Changes to the HTTP server configuration require a restart (use the run/stop button on main window).</html>")),
-                gbc);
+                "<html>The host name must be reachable by all clients, an IPv4 address is also possible. Changes to the HTTP server configuration require a restart (use the run/stop button on main window).</html>"
+            )), gbc);
 
             gbc.gridy++;
             gbc.gridwidth = 1;
@@ -331,8 +331,8 @@ public class GeneralConfigurationPanel extends JPanel {
             gbc.fill = GridBagConstraints.HORIZONTAL;
             gbc.anchor = GridBagConstraints.WEST;
             add(stylePlain(new JLabel(
-                "<html>Only the listed IP addresses are served data by the proxy server. Addresses need to be entered exactly as shown in the log. Changes are applied immediately.</html>")),
-                gbc);
+                "<html>Only the listed IP addresses are served data by the proxy server. Addresses need to be entered exactly as shown in the log. Changes are applied immediately.</html>"
+            )), gbc);
 
             gbc.gridy++;
             gbc.gridwidth = 1;
@@ -383,10 +383,10 @@ public class GeneralConfigurationPanel extends JPanel {
         private void updateAddressList() {
             addressListModel.clear();
 
-            Main.getConfiguration() //
-                .getAllowedIps() //
-                .stream() //
-                .sorted() //
+            Main.getConfiguration()
+                .getAllowedIps()
+                .stream()
+                .sorted()
                 .forEachOrdered(addressListModel::addElement);
         }
 
@@ -420,9 +420,12 @@ public class GeneralConfigurationPanel extends JPanel {
         }
 
         private void onResetClicked(ActionEvent event) {
-            int result = JOptionPane.showConfirmDialog(this,
+            int result = JOptionPane.showConfirmDialog(
+                this,
                 "You are about to reset the list of allowed IP addresses to the default of localhost IPv4 (127.0.0.1) and IPv6 addresses (::1). Are you sure? All other addresses will be removed.",
-                "Confirm reset", JOptionPane.OK_CANCEL_OPTION);
+                "Confirm reset",
+                JOptionPane.OK_CANCEL_OPTION
+            );
             if (result != JOptionPane.OK_OPTION) {
                 LOGGER.debug("request to reset allowed IPs was canceled");
                 return;
@@ -435,5 +438,4 @@ public class GeneralConfigurationPanel extends JPanel {
             });
         }
     }
-
 }

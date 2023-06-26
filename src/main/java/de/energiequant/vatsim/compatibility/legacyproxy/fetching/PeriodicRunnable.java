@@ -31,9 +31,8 @@ public abstract class PeriodicRunnable implements Runnable {
      * called after the {@link Duration} returned be previous execution has passed.
      * Will also be called {@link #DEFAULT_SLEEP_DURATION} after last call if any
      * {@link Exception} occurred.
-     * 
-     * @return {@link Duration} to sleep until next call; must be at least
-     *         {@link #MINIMUM_SLEEP_DURATION}
+     *
+     * @return {@link Duration} to sleep until next call; must be at least {@link #MINIMUM_SLEEP_DURATION}
      */
     protected abstract Duration onPeriodicWakeup();
 
@@ -54,7 +53,8 @@ public abstract class PeriodicRunnable implements Runnable {
 
                 if (MINIMUM_SLEEP_DURATION.compareTo(nextSleepDuration) > 0) {
                     LOGGER.warn("Requested sleep duration is too small ({}), limiting to minimum of {}",
-                        nextSleepDuration, MINIMUM_SLEEP_DURATION);
+                                nextSleepDuration, MINIMUM_SLEEP_DURATION
+                    );
                     nextSleepDuration = MINIMUM_SLEEP_DURATION;
                 } else {
                     LOGGER.debug("Sleeping for {}", nextSleepDuration);
@@ -115,9 +115,9 @@ public abstract class PeriodicRunnable implements Runnable {
 
     /**
      * Checks if the runner is running and not instructed to shut down.
-     * 
+     *
      * @return <code>true</code> if running and not shutting down,
-     *         <code>false</code> if already stopped or shutdown is in progress
+     *     <code>false</code> if already stopped or shutdown is in progress
      */
     public boolean isAlive() {
         Thread currentThread = thread.get();

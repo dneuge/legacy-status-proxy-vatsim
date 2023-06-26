@@ -40,12 +40,12 @@ public class DirectProxy extends GetOnlyRequestHandler {
         DefaultHttpRetrievalDecoders decoders = new DefaultHttpRetrievalDecoders();
         promiseBuilder = new HttpPromiseBuilder<>(
             decoders.withMetaData(
-                decoders.bodyAsStringWithHeaderCharacterSet(FALLBACK_CHARACTER_SET) //
-            ) //
+                decoders.bodyAsStringWithHeaderCharacterSet(FALLBACK_CHARACTER_SET)
+            )
         ).withConfiguration(
             new HttpRetrieval()
                 .setUserAgent(AppConstants.USER_AGENT)
-                .setTimeout(AppConstants.EXTERNAL_REQUEST_TIMEOUT) //
+                .setTimeout(AppConstants.EXTERNAL_REQUEST_TIMEOUT)
         );
     }
 
@@ -63,18 +63,20 @@ public class DirectProxy extends GetOnlyRequestHandler {
         if (retrievedData == null) {
             responseTrigger.submitResponse(
                 AsyncResponseBuilder.create(HttpStatus.SC_BAD_GATEWAY)
-                    .setEntity(AsyncEntityProducers.create("Request to upstream server failed", ContentType.TEXT_PLAIN))
-                    .build(),
-                context);
+                                    .setEntity(AsyncEntityProducers.create("Request to upstream server failed", ContentType.TEXT_PLAIN))
+                                    .build(),
+                context
+            );
             return;
         }
 
         responseTrigger.submitResponse(
             AsyncResponseBuilder.create(HttpStatus.SC_OK)
-                .setEntity(AsyncEntityProducers.create(retrievedData.getData().getBytes(outputCharacterSet),
-                    outputContentType))
-                .build(),
-            context);
+                                .setEntity(AsyncEntityProducers.create(retrievedData.getData().getBytes(outputCharacterSet),
+                                                                       outputContentType
+                                ))
+                                .build(),
+            context
+        );
     }
-
 }

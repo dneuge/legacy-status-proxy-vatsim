@@ -34,5 +34,4 @@ public class ArgumentChecks {
             throw new IllegalArgumentException(what + " must be at least " + requiredMinimum);
         }
     }
-
 }

@@ -178,9 +178,9 @@ public class Main {
         System.out.println(APPLICATION_NAME);
         System.out.println("version " + APPLICATION_VERSION);
         System.out.println("includes VAT-Spy data from "
-            + VatSpyMetaData.getIncludedDataTimestamp()
-                .map(UTC_HUMAN_READABLE_DATE_FORMATTER::format)
-                .orElse("unknown date") //
+                               + VatSpyMetaData.getIncludedDataTimestamp()
+                                               .map(UTC_HUMAN_READABLE_DATE_FORMATTER::format)
+                                               .orElse("unknown date")
         );
         System.out.println(APPLICATION_URL);
         License license = getEffectiveLicense();
@@ -204,10 +204,10 @@ public class Main {
 
         StringBuilder sb = new StringBuilder();
         sb.append(AppConstants.PROJECT_DEPENDENCY_LICENSE_INTRO);
-        List<License> licenses = project.getLicenses() //
-            .stream() //
-            .sorted(Comparator.comparing(License::getCanonicalName)) //
-            .collect(Collectors.toList());
+        List<License> licenses = project.getLicenses()
+                                        .stream()
+                                        .sorted(Comparator.comparing(License::getCanonicalName))
+                                        .collect(Collectors.toList());
         boolean isFirst = true;
         for (License license : licenses) {
             if (!isFirst) {
@@ -238,68 +238,59 @@ public class Main {
     }
 
     private static Stream<String> sortedLicenseKeys() {
-        return Arrays.stream(License.values()) //
-            .map(License::name) //
-            .sorted();
+        return Arrays.stream(License.values())
+                     .map(License::name)
+                     .sorted();
     }
 
     private static void addOptions(Options options) {
-        options.addOption(Option
-            .builder()
-            .longOpt(OPTION_NAME_HELP)
-            .desc("prints the help text")
-            .build());
+        options.addOption(Option.builder()
+                                .longOpt(OPTION_NAME_HELP)
+                                .desc("prints the help text")
+                                .build());
 
-        options.addOption(Option
-            .builder()
-            .longOpt(OPTION_NAME_VERSION)
-            .desc("prints all version, dependency and license information")
-            .build());
+        options.addOption(Option.builder()
+                                .longOpt(OPTION_NAME_VERSION)
+                                .desc("prints all version, dependency and license information")
+                                .build());
 
-        options.addOption(Option
-            .builder()
-            .longOpt(OPTION_NAME_SHOW_DISCLAIMER)
-            .desc("prints the disclaimer")
-            .build());
+        options.addOption(Option.builder()
+                                .longOpt(OPTION_NAME_SHOW_DISCLAIMER)
+                                .desc("prints the disclaimer")
+                                .build());
 
-        options.addOption(Option
-            .builder()
-            .longOpt(OPTION_NAME_SHOW_LICENSE)
-            .hasArg()
-            .desc("prints the specified license, available: "
-                + sortedLicenseKeys().collect(Collectors.joining(", ")))
-            .build());
+        options.addOption(Option.builder()
+                                .longOpt(OPTION_NAME_SHOW_LICENSE)
+                                .hasArg()
+                                .desc("prints the specified license, available: "
+                                          + sortedLicenseKeys().collect(Collectors.joining(", ")))
+                                .build());
 
-        options.addOption(Option
-            .builder()
-            .longOpt(OPTION_NAME_NO_GUI)
-            .desc("disables GUI to force running headless on CLI")
-            .build());
+        options.addOption(Option.builder()
+                                .longOpt(OPTION_NAME_NO_GUI)
+                                .desc("disables GUI to force running headless on CLI")
+                                .build());
 
-        options.addOption(Option
-            .builder()
-            .longOpt(OPTION_NAME_NO_CLASSPATH_CHECK)
-            .desc("disables check for possibly broken Java class path at application startup")
-            .build());
+        options.addOption(Option.builder()
+                                .longOpt(OPTION_NAME_NO_CLASSPATH_CHECK)
+                                .desc("disables check for possibly broken Java class path at application startup")
+                                .build());
 
-        options.addOption(Option
-            .builder()
-            .longOpt(OPTION_NAME_ACCEPT_DISCLAIMER)
-            .desc("accept disclaimer and licenses (required before proxy server can be used)")
-            .build());
+        options.addOption(Option.builder()
+                                .longOpt(OPTION_NAME_ACCEPT_DISCLAIMER)
+                                .desc("accept disclaimer and licenses (required before proxy server can be used)")
+                                .build());
 
-        options.addOption(Option
-            .builder()
-            .longOpt(OPTION_NAME_CONFIG_PATH)
-            .hasArg()
-            .desc("path to configuration file to be used")
-            .build());
+        options.addOption(Option.builder()
+                                .longOpt(OPTION_NAME_CONFIG_PATH)
+                                .hasArg()
+                                .desc("path to configuration file to be used")
+                                .build());
 
-        options.addOption(Option
-            .builder()
-            .longOpt(OPTION_NAME_SAVE_CONFIG)
-            .desc("saves the configuration after processing CLI options (creates the file if it does not exist yet)")
-            .build());
+        options.addOption(Option.builder()
+                                .longOpt(OPTION_NAME_SAVE_CONFIG)
+                                .desc("saves the configuration after processing CLI options (creates the file if it does not exist yet)")
+                                .build());
     }
 
     public static Configuration getConfiguration() {

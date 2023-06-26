@@ -34,10 +34,10 @@ public class Launcher {
      * Paths can be broken by directories ending in an exclamation mark because Java
      * is unable to differentiate between exclamation marks in file paths and the
      * JAR access separator.
-     * 
+     *
      * @see https://bugs.java.com/bugdatabase/view_bug.do?bug_id=4523159
      */
-    private static final String[] BROKEN_PATHS = new String[] { "!/", "!\\" };
+    private static final String[] BROKEN_PATHS = new String[]{"!/", "!\\"};
 
     public static void main(String[] args) throws Exception {
         if (shouldCheckClassPath(args)) {
@@ -84,7 +84,7 @@ public class Launcher {
                 null,
                 BROKEN_CLASSPATH_MESSAGE,
                 APPLICATION_NAME,
-                JOptionPane.WARNING_MESSAGE //
+                JOptionPane.WARNING_MESSAGE
             );
         }
     }
@@ -92,9 +92,9 @@ public class Launcher {
     /**
      * Checks the class path as available from system properties for any issue with
      * {@link #BROKEN_PATHS}.
-     * 
+     *
      * @return true if a possible issue is found, false if no issues could be
-     *         detected
+     *     detected
      */
     private static boolean checkClassPathMayBeBroken() {
         String[] classPathParts = ((String) System.getProperties().getOrDefault("java.class.path", ""))
@@ -116,9 +116,9 @@ public class Launcher {
     /**
      * Checks the actual URLs used by the active class loader for any issue with
      * {@link #BROKEN_PATHS}.
-     * 
+     *
      * @return true if a possible issue is found, false if no issues could be
-     *         detected
+     *     detected
      */
     private static boolean checkClassLoaderPathMayBeBroken() {
         ClassLoader classLoader = Launcher.class.getClassLoader();
@@ -138,10 +138,10 @@ public class Launcher {
 
     /**
      * Checks if the given file path may fail to load due to {@link #BROKEN_PATHS}.
-     * 
+     *
      * @param filePath path to check; as read from class path or class loader
      * @return true if a possible issue is found, false if no issues could be
-     *         detected
+     *     detected
      */
     private static boolean checkPathForPossibleClassLoaderIssue(String filePath) {
         if (filePath == null) {

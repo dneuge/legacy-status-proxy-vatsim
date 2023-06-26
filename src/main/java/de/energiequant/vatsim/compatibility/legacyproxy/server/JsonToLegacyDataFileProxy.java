@@ -63,20 +63,22 @@ public class JsonToLegacyDataFileProxy extends GetOnlyRequestHandler {
         stationLocator = new StationLocator(onlineTransceiversFileFetcher);
 
         header = stationLocator.usesVatSpySource()
-            ? AppConstants.SERVER_DISCLAIMER_HEADER //
-                + (stationLocator.isVatSpySourceExternal()
+            ? AppConstants.SERVER_DISCLAIMER_HEADER +
+            (
+                stationLocator.isVatSpySourceExternal()
                     ? AppConstants.SERVER_VAT_SPY_EXTERNAL_HEADER
-                    : AppConstants.SERVER_VAT_SPY_INTERNAL_HEADER) //
+                    : AppConstants.SERVER_VAT_SPY_INTERNAL_HEADER
+            )
             : AppConstants.SERVER_DISCLAIMER_HEADER;
 
         DefaultHttpRetrievalDecoders decoders = new DefaultHttpRetrievalDecoders();
         promiseBuilder = new HttpPromiseBuilder<>(
-            decoders.bodyAsStringWithHeaderCharacterSet(FALLBACK_CHARACTER_SET) //
-                .andThen(parser::deserialize) //
+            decoders.bodyAsStringWithHeaderCharacterSet(FALLBACK_CHARACTER_SET)
+                    .andThen(parser::deserialize)
         ).withConfiguration(
             new HttpRetrieval()
                 .setUserAgent(AppConstants.USER_AGENT)
-                .setTimeout(AppConstants.EXTERNAL_REQUEST_TIMEOUT) //
+                .setTimeout(AppConstants.EXTERNAL_REQUEST_TIMEOUT)
         );
     }
 
@@ -91,10 +93,12 @@ public class JsonToLegacyDataFileProxy extends GetOnlyRequestHandler {
 
             responseTrigger.submitResponse(
                 AsyncResponseBuilder.create(HttpStatus.SC_SERVICE_UNAVAILABLE)
-                    .setEntity(AsyncEntityProducers.create("No matching upstream JSON URLs known",
-                        ContentType.TEXT_PLAIN))
-                    .build(),
-                context);
+                                    .setEntity(AsyncEntityProducers.create("No matching upstream JSON URLs known",
+                                                                           ContentType.TEXT_PLAIN
+                                    ))
+                                    .build(),
+                context
+            );
             return;
         }
 
@@ -112,10 +116,12 @@ public class JsonToLegacyDataFileProxy extends GetOnlyRequestHandler {
 
             responseTrigger.submitResponse(
                 AsyncResponseBuilder.create(HttpStatus.SC_SERVICE_UNAVAILABLE)
-                    .setEntity(AsyncEntityProducers.create("Failed to retrieve JSON data file",
-                        ContentType.TEXT_PLAIN))
-                    .build(),
-                context);
+                                    .setEntity(AsyncEntityProducers.create("Failed to retrieve JSON data file",
+                                                                           ContentType.TEXT_PLAIN
+                                    ))
+                                    .build(),
+                context
+            );
             return;
         }
 
@@ -137,9 +143,10 @@ public class JsonToLegacyDataFileProxy extends GetOnlyRequestHandler {
 
         responseTrigger.submitResponse(
             AsyncResponseBuilder.create(HttpStatus.SC_OK)
-                .setEntity(AsyncEntityProducers.create(bytes, ContentType.TEXT_PLAIN))
-                .build(),
-            context);
+                                .setEntity(AsyncEntityProducers.create(bytes, ContentType.TEXT_PLAIN))
+                                .build(),
+            context
+        );
     }
 
     private void logParserMessages(ParserLogEntryCollector parserLogEntryCollector) {
@@ -153,9 +160,9 @@ public class JsonToLegacyDataFileProxy extends GetOnlyRequestHandler {
         // development and would clutter the log in the main window beyond readability
         for (ParserLogEntry entry : parserLogEntryCollector.getParserLogEntries()) {
             LOGGER.warn(
-                "Failed to parse{}, section {}, {}: {}", //
-                entry.isLineRejected() ? " (rejected)" : "", //
-                entry.getSection(), entry.getMessage(), entry.getLineContent() //
+                "Failed to parse{}, section {}, {}: {}",
+                entry.isLineRejected() ? " (rejected)" : "",
+                entry.getSection(), entry.getMessage(), entry.getLineContent()
             );
         }
     }

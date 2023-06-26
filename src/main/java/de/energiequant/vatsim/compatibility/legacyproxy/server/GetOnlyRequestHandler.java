@@ -35,9 +35,10 @@ public abstract class GetOnlyRequestHandler implements AsyncServerRequestHandler
 
             responseTrigger.submitResponse(
                 AsyncResponseBuilder.create(HttpStatus.SC_METHOD_NOT_ALLOWED)
-                    .setEntity(AsyncEntityProducers.create("Method not allowed", ContentType.TEXT_PLAIN))
-                    .build(),
-                context);
+                                    .setEntity(AsyncEntityProducers.create("Method not allowed", ContentType.TEXT_PLAIN))
+                                    .build(),
+                context
+            );
             return;
         }
 
@@ -45,5 +46,4 @@ public abstract class GetOnlyRequestHandler implements AsyncServerRequestHandler
     }
 
     protected abstract void handleGet(final Message<HttpRequest, Void> message, final ResponseTrigger responseTrigger, final HttpContext context) throws HttpException, IOException;
-
 }

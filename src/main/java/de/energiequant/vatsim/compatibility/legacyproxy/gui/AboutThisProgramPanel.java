@@ -72,9 +72,9 @@ public class AboutThisProgramPanel extends JPanel {
         JLabel programLicenseLabel = new JLabel("released under " + programLicense.getCanonicalName());
         linkLicense(programLicenseLabel, programLicense);
 
-        List<Project> sortedDependencies = dependencies.stream() //
-            .sorted(Comparator.comparing(Project::getName)) //
-            .collect(Collectors.toList()); //
+        List<Project> sortedDependencies = dependencies.stream()
+                                                       .sorted(Comparator.comparing(Project::getName))
+                                                       .collect(Collectors.toList());
         DependenciesList dependenciesList = new DependenciesList(sortedDependencies);
 
         setLayout(new GridBagLayout());
@@ -93,8 +93,8 @@ public class AboutThisProgramPanel extends JPanel {
         add(new JLabel(
             "Includes VAT-Spy data from "
                 + VatSpyMetaData.getIncludedDataTimestamp()
-                    .map(UTC_HUMAN_READABLE_DATE_FORMATTER::format)
-                    .orElse("unknown date") //
+                                .map(UTC_HUMAN_READABLE_DATE_FORMATTER::format)
+                                .orElse("unknown date")
         ), gbc);
 
         gbc.gridy++;
@@ -204,7 +204,7 @@ public class AboutThisProgramPanel extends JPanel {
 
         private String getHtmlCopyrightNotice(Project project) {
             return StringEscapeUtils.escapeHtml4(CopyrightNotice.getNotice(project))
-                .replaceAll("\n", "<br/>");
+                                    .replaceAll("\n", "<br/>");
         }
     }
 
@@ -217,10 +217,9 @@ public class AboutThisProgramPanel extends JPanel {
 
             setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
 
-            List<License> sortedLicenses = licenses //
-                .stream() //
-                .sorted(Comparator.comparing(License::getCanonicalName)) //
-                .collect(Collectors.toList());
+            List<License> sortedLicenses = licenses.stream()
+                                                   .sorted(Comparator.comparing(License::getCanonicalName))
+                                                   .collect(Collectors.toList());
 
             boolean isFirst = true;
 
@@ -291,5 +290,4 @@ public class AboutThisProgramPanel extends JPanel {
         Font underlinedFont = font.deriveFont(attributes);
         label.setFont(underlinedFont);
     }
-
 }

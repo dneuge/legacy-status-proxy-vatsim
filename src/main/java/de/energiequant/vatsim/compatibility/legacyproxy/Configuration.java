@@ -56,14 +56,14 @@ public class Configuration {
     private static final boolean DEFAULT_STATION_LOCATOR_WARN_UNLOCATABLE_OBS = false;
     private static final boolean DEFAULT_VATSPY_BASE_DIRECTORY_ENABLED = false;
     private static final boolean DEFAULT_VATSPY_WARN_OLD_INTEGRATED_DB = true;
-    public static final Collection<String> DEFAULT_ALLOWED_IPS = Collections.unmodifiableCollection(Arrays.asList( //
-        IPFilter.LOCALHOST_IPV4, //
-        IPFilter.LOCALHOST_IPV6 //
+    public static final Collection<String> DEFAULT_ALLOWED_IPS = Collections.unmodifiableCollection(Arrays.asList(
+        IPFilter.LOCALHOST_IPV4,
+        IPFilter.LOCALHOST_IPV6
     ));
 
     private final AtomicBoolean isDisclaimerAccepted = new AtomicBoolean(DEFAULT_DISCLAIMER_ACCEPTED);
     private final AtomicBoolean isQuirkLegacyDataFileUtf8Enabled = new AtomicBoolean(
-        DEFAULT_QUIRK_LEGACY_DATAFILE_UTF8 //
+        DEFAULT_QUIRK_LEGACY_DATAFILE_UTF8
     );
     private final AtomicBoolean isParserLogEnabled = new AtomicBoolean();
     private final AtomicReference<File> vatSpyBaseDirectory = new AtomicReference<>(null);
@@ -78,41 +78,41 @@ public class Configuration {
     private final Set<Runnable> ipFilterListeners = Collections.synchronizedSet(new HashSet<>());
 
     private final AtomicInteger onlineTransceiversOverrideCacheMinutes = new AtomicInteger(
-        DEFAULT_ONLINE_TRANSCEIVERS_OVERRIDE_CACHE_MINUTES //
+        DEFAULT_ONLINE_TRANSCEIVERS_OVERRIDE_CACHE_MINUTES
     );
     private final AtomicBoolean isOnlineTransceiversOverrideEnabled = new AtomicBoolean(
-        DEFAULT_ONLINE_TRANSCEIVERS_OVERRIDE_ENABLED //
+        DEFAULT_ONLINE_TRANSCEIVERS_OVERRIDE_ENABLED
     );
     private final AtomicReference<String> onlineTransceiversOverrideUrl = new AtomicReference<>(
-        DEFAULT_ONLINE_TRANSCEIVERS_OVERRIDE_URL //
+        DEFAULT_ONLINE_TRANSCEIVERS_OVERRIDE_URL
     );
 
     private final AtomicReference<Strategy> stationLocatorStrategy = new AtomicReference<>(
-        DEFAULT_STATION_LOCATOR_STRATEGY //
+        DEFAULT_STATION_LOCATOR_STRATEGY
     );
     private final AtomicBoolean shouldIgnorePlaceholderFrequency = new AtomicBoolean(
-        DEFAULT_STATION_LOCATOR_IGNORE_PLACEHOLDER_FREQUENCY //
+        DEFAULT_STATION_LOCATOR_IGNORE_PLACEHOLDER_FREQUENCY
     );
     private final AtomicBoolean shouldIdentifyObserverByCallsign = new AtomicBoolean(
-        DEFAULT_STATION_LOCATOR_OBSERVER_BY_CALLSIGN //
+        DEFAULT_STATION_LOCATOR_OBSERVER_BY_CALLSIGN
     );
     private final AtomicBoolean shouldWarnAboutOldIntegratedVatSpyDatabase = new AtomicBoolean(
-        DEFAULT_VATSPY_WARN_OLD_INTEGRATED_DB //
+        DEFAULT_VATSPY_WARN_OLD_INTEGRATED_DB
     );
     private final AtomicBoolean shouldLocateObserverByTransceivers = new AtomicBoolean(
-        DEFAULT_STATION_LOCATOR_LOCATE_OBS_BY_TRANSCEIVERS //
+        DEFAULT_STATION_LOCATOR_LOCATE_OBS_BY_TRANSCEIVERS
     );
     private final AtomicBoolean shouldLocateObserverByVatSpy = new AtomicBoolean(
-        DEFAULT_STATION_LOCATOR_LOCATE_OBS_BY_VATSPY //
+        DEFAULT_STATION_LOCATOR_LOCATE_OBS_BY_VATSPY
     );
     private final AtomicBoolean shouldVatSpyAliasUSStations = new AtomicBoolean(
-        DEFAULT_STATION_LOCATOR_VATSPY_ALIAS_US //
+        DEFAULT_STATION_LOCATOR_VATSPY_ALIAS_US
     );
     private final AtomicBoolean shouldWarnAboutUnlocatableATC = new AtomicBoolean(
-        DEFAULT_STATION_LOCATOR_WARN_UNLOCATABLE_ATC //
+        DEFAULT_STATION_LOCATOR_WARN_UNLOCATABLE_ATC
     );
     private final AtomicBoolean shouldWarnAboutUnlocatableObserver = new AtomicBoolean(
-        DEFAULT_STATION_LOCATOR_WARN_UNLOCATABLE_OBS //
+        DEFAULT_STATION_LOCATOR_WARN_UNLOCATABLE_OBS
     );
 
     private static final String KEY_DISCLAIMER_ACCEPTED = "disclaimerAccepted";
@@ -155,10 +155,10 @@ public class Configuration {
 
         if (!isSaneLocation) {
             LOGGER.warn(
-                "The configuration file appears to be located at an unsafe location such as a system directory. " //
-                    + "Saving configurations to such locations is not supported and has been disabled. " //
-                    + "This can happen if you run the proxy from \"recent files\" or similar on Windows. " //
-                    + "Please make sure to run the proxy from a regular working directory or a shortcut." //
+                "The configuration file appears to be located at an unsafe location such as a system directory. "
+                    + "Saving configurations to such locations is not supported and has been disabled. "
+                    + "This can happen if you run the proxy from \"recent files\" or similar on Windows. "
+                    + "Please make sure to run the proxy from a regular working directory or a shortcut."
             );
         }
 
@@ -169,7 +169,8 @@ public class Configuration {
     public void load() throws LoadingFailed {
         if (!(configFile.exists() && configFile.canRead())) {
             LOGGER.error("Configuration cannot be loaded from {} because the file is missing or not readable",
-                configFile.getAbsolutePath());
+                         configFile.getAbsolutePath()
+            );
             return;
         }
 
@@ -183,10 +184,10 @@ public class Configuration {
 
         setDisclaimerAccepted(CURRENT_DISCLAIMER_HASH.equals(readString(properties, KEY_DISCLAIMER_ACCEPTED, "")));
         setQuirkLegacyDataFileUtf8Enabled(
-            readBoolean(properties, KEY_QUIRK_LEGACY_DATAFILE_UTF8, DEFAULT_QUIRK_LEGACY_DATAFILE_UTF8) //
+            readBoolean(properties, KEY_QUIRK_LEGACY_DATAFILE_UTF8, DEFAULT_QUIRK_LEGACY_DATAFILE_UTF8)
         );
         setParserLogEnabled(
-            readBoolean(properties, KEY_PARSER_LOG, DEFAULT_PARSER_LOG) //
+            readBoolean(properties, KEY_PARSER_LOG, DEFAULT_PARSER_LOG)
         );
         setUpstreamBaseUrl(readString(properties, KEY_UPSTREAM_BASE_URL_OVERRIDE, DEFAULT_UPSTREAM_BASE_URL));
         setLocalHostName(readString(properties, KEY_LOCAL_HOST_NAME, DEFAULT_LOCAL_HOST_NAME));
@@ -195,80 +196,80 @@ public class Configuration {
 
         setVatSpyBaseDirectory(readFile(properties, KEY_VATSPY_BASE_DIRECTORY, ""));
         setVatSpyBaseDirectoryEnabled(
-            readBoolean(properties, KEY_VATSPY_BASE_DIRECTORY_ENABLED, DEFAULT_VATSPY_BASE_DIRECTORY_ENABLED) //
+            readBoolean(properties, KEY_VATSPY_BASE_DIRECTORY_ENABLED, DEFAULT_VATSPY_BASE_DIRECTORY_ENABLED)
         );
         setShouldWarnAboutOldIntegratedVatSpyDatabase(readBoolean(
             properties,
             KEY_VATSPY_WARN_OLD_INTEGRATED_DB,
-            DEFAULT_VATSPY_WARN_OLD_INTEGRATED_DB //
+            DEFAULT_VATSPY_WARN_OLD_INTEGRATED_DB
         ));
 
         setOnlineTransceiversOverrideEnabled(readBoolean(
             properties,
             KEY_ONLINE_TRANSCEIVERS_OVERRIDE_ENABLED,
-            DEFAULT_ONLINE_TRANSCEIVERS_OVERRIDE_ENABLED //
+            DEFAULT_ONLINE_TRANSCEIVERS_OVERRIDE_ENABLED
         ));
-        setOnlineTransceiversOverrideCacheMinutes(readInteger( //
+        setOnlineTransceiversOverrideCacheMinutes(readInteger(
             properties,
             KEY_ONLINE_TRANSCEIVERS_OVERRIDE_CACHE_MINUTES,
-            DEFAULT_ONLINE_TRANSCEIVERS_OVERRIDE_CACHE_MINUTES //
+            DEFAULT_ONLINE_TRANSCEIVERS_OVERRIDE_CACHE_MINUTES
         ));
-        setOnlineTransceiversOverrideUrl(readString( //
+        setOnlineTransceiversOverrideUrl(readString(
             properties,
             KEY_ONLINE_TRANSCEIVERS_OVERRIDE_URL,
-            DEFAULT_ONLINE_TRANSCEIVERS_OVERRIDE_URL //
+            DEFAULT_ONLINE_TRANSCEIVERS_OVERRIDE_URL
         ));
 
         setStationLocatorStrategy(
             Strategy.byConfigValue(readString(
                 properties,
                 KEY_STATION_LOCATOR_STRATEGY,
-                DEFAULT_STATION_LOCATOR_STRATEGY.getConfigValue() //
+                DEFAULT_STATION_LOCATOR_STRATEGY.getConfigValue()
             )).orElseThrow(() -> new IllegalArgumentException(
-                "invalid station locator strategy: \""
-                    + readString(
+                "invalid station locator strategy: \"" +
+                    readString(
                         properties,
                         KEY_STATION_LOCATOR_STRATEGY,
-                        "" //
-                    )
-                    + "\"" //
-            )) //
+                        ""
+                    ) +
+                    "\""
+            ))
         );
 
         setShouldIgnorePlaceholderFrequency(readBoolean(
             properties,
             KEY_STATION_LOCATOR_IGNORE_PLACEHOLDER_FREQUENCY,
-            DEFAULT_STATION_LOCATOR_IGNORE_PLACEHOLDER_FREQUENCY //
+            DEFAULT_STATION_LOCATOR_IGNORE_PLACEHOLDER_FREQUENCY
         ));
         setShouldIdentifyObserverByCallsign(readBoolean(
             properties,
             KEY_STATION_LOCATOR_OBSERVER_BY_CALLSIGN,
-            DEFAULT_STATION_LOCATOR_OBSERVER_BY_CALLSIGN //
+            DEFAULT_STATION_LOCATOR_OBSERVER_BY_CALLSIGN
         ));
         setShouldLocateObserverByTransceivers(readBoolean(
             properties,
             KEY_STATION_LOCATOR_LOCATE_OBS_BY_TRANSCEIVERS,
-            DEFAULT_STATION_LOCATOR_LOCATE_OBS_BY_TRANSCEIVERS //
+            DEFAULT_STATION_LOCATOR_LOCATE_OBS_BY_TRANSCEIVERS
         ));
         setShouldLocateObserverByVatSpy(readBoolean(
             properties,
             KEY_STATION_LOCATOR_LOCATE_OBS_BY_VATSPY,
-            DEFAULT_STATION_LOCATOR_LOCATE_OBS_BY_VATSPY //
+            DEFAULT_STATION_LOCATOR_LOCATE_OBS_BY_VATSPY
         ));
         setShouldVatSpyAliasUSStations(readBoolean(
             properties,
             KEY_STATION_LOCATOR_VATSPY_ALIAS_US,
-            DEFAULT_STATION_LOCATOR_VATSPY_ALIAS_US //
+            DEFAULT_STATION_LOCATOR_VATSPY_ALIAS_US
         ));
         setShouldWarnAboutUnlocatableATC(readBoolean(
             properties,
             KEY_STATION_LOCATOR_WARN_UNLOCATABLE_ATC,
-            DEFAULT_STATION_LOCATOR_WARN_UNLOCATABLE_ATC //
+            DEFAULT_STATION_LOCATOR_WARN_UNLOCATABLE_ATC
         ));
         setShouldWarnAboutUnlocatableObserver(readBoolean(
             properties,
             KEY_STATION_LOCATOR_WARN_UNLOCATABLE_OBS,
-            DEFAULT_STATION_LOCATOR_WARN_UNLOCATABLE_OBS //
+            DEFAULT_STATION_LOCATOR_WARN_UNLOCATABLE_OBS
         ));
 
         // migration: keep custom URL if previously set, guard override if default URL
@@ -276,7 +277,7 @@ public class Configuration {
         setUpstreamBaseUrlOverridden(readBoolean(
             properties,
             KEY_UPSTREAM_BASE_URL_OVERRIDDEN,
-            !DEFAULT_UPSTREAM_BASE_URL.equals(getUpstreamBaseUrlOverride()) //
+            !DEFAULT_UPSTREAM_BASE_URL.equals(getUpstreamBaseUrlOverride())
         ));
 
         logConfig();
@@ -340,7 +341,7 @@ public class Configuration {
         LOGGER.debug(
             "Configured upstream base URL:   {} ({})",
             upstreamBaseUrlOverride.get(),
-            isUpstreamBaseUrlOverridden.get() ? "active" : "not used" //
+            isUpstreamBaseUrlOverridden.get() ? "active" : "not used"
         );
         LOGGER.debug("Configured local host name:     {}", localHostName.get());
         LOGGER.debug("Configured server port:         {}", serverPort.get());
@@ -348,11 +349,11 @@ public class Configuration {
         LOGGER.debug(
             "Configured VAT-Spy ext basedir: {} ({})",
             vatSpyBaseDirectory.get(),
-            isVatSpyBaseDirectoryEnabled.get() ? "enabled" : "not used" //
+            isVatSpyBaseDirectoryEnabled.get() ? "enabled" : "not used"
         );
         LOGGER.debug(
             "Configured VAT-Spy int log old: {}",
-            shouldWarnAboutOldIntegratedVatSpyDatabase.get() //
+            shouldWarnAboutOldIntegratedVatSpyDatabase.get()
         );
         LOGGER.debug("Configured parser log:          {}", isParserLogEnabled.get());
         LOGGER.debug("Configured allowed IPs:         {}", allowedIps);
@@ -360,52 +361,53 @@ public class Configuration {
         LOGGER.debug(
             "Configured xcvr URL:            {} ({})",
             onlineTransceiversOverrideUrl.get(),
-            isOnlineTransceiversOverrideEnabled.get() ? "active" : "not used" //
+            isOnlineTransceiversOverrideEnabled.get() ? "active" : "not used"
         );
         LOGGER.debug(
             "Configured xcvr cache lifetime: {} minutes ({})",
             onlineTransceiversOverrideCacheMinutes.get(),
-            isOnlineTransceiversOverrideEnabled.get() ? "active" : "not used" //
+            isOnlineTransceiversOverrideEnabled.get() ? "active" : "not used"
         );
 
         LOGGER.debug(
             "Configured SL strategy:         {}",
-            stationLocatorStrategy.get().getDescription() //
+            stationLocatorStrategy.get().getDescription()
         );
         LOGGER.debug(
             "Configured SL ignore dummyfreq: {}",
-            shouldIgnorePlaceholderFrequency.get() //
+            shouldIgnorePlaceholderFrequency.get()
         );
         LOGGER.debug(
             "Configured SL alias US/VAT-Spy: {}",
-            shouldVatSpyAliasUSStations.get() //
+            shouldVatSpyAliasUSStations.get()
         );
         LOGGER.debug(
             "Configured SL OBS by callsign:  {}",
-            shouldIdentifyObserverByCallsign.get() //
+            shouldIdentifyObserverByCallsign.get()
         );
         LOGGER.debug(
             "Configured SL loc OBS/VAT-Spy:  {}",
-            shouldLocateObserverByVatSpy.get() //
+            shouldLocateObserverByVatSpy.get()
         );
         LOGGER.debug(
             "Configured SL loc OBS/xcvr:     {}",
-            shouldLocateObserverByTransceivers.get() //
+            shouldLocateObserverByTransceivers.get()
         );
         LOGGER.debug(
             "Configured SL warn unloc ATC:   {}",
-            shouldWarnAboutUnlocatableATC.get() //
+            shouldWarnAboutUnlocatableATC.get()
         );
         LOGGER.debug(
             "Configured SL warn unloc OBS:   {}",
-            shouldWarnAboutUnlocatableObserver.get() //
+            shouldWarnAboutUnlocatableObserver.get()
         );
     }
 
     public void save() {
         if (!isSaneLocation) {
             LOGGER.warn("Configuration file is at an unsafe location and thus will not be saved: {}",
-                configFile.getAbsolutePath());
+                        configFile.getAbsolutePath()
+            );
             return;
         }
 
@@ -414,7 +416,7 @@ public class Configuration {
         properties.setProperty(KEY_LOCAL_HOST_NAME, localHostName.get());
         properties.setProperty(KEY_PARSER_LOG, Boolean.toString(isParserLogEnabled.get()));
         properties.setProperty(KEY_QUIRK_LEGACY_DATAFILE_UTF8,
-            Boolean.toString(isQuirkLegacyDataFileUtf8Enabled.get()) //
+                               Boolean.toString(isQuirkLegacyDataFileUtf8Enabled.get())
         );
         properties.setProperty(KEY_SERVER_PORT, Integer.toString(serverPort.get()));
         properties.setProperty(KEY_UPSTREAM_BASE_URL_OVERRIDE, upstreamBaseUrlOverride.get());
@@ -424,12 +426,12 @@ public class Configuration {
             KEY_VATSPY_BASE_DIRECTORY,
             getVatSpyBaseDirectory()
                 .map(File::getAbsolutePath)
-                .orElse("") //
+                .orElse("")
         );
         properties.setProperty(KEY_VATSPY_BASE_DIRECTORY_ENABLED, Boolean.toString(isVatSpyBaseDirectoryEnabled.get()));
         properties.setProperty(
             KEY_VATSPY_WARN_OLD_INTEGRATED_DB,
-            Boolean.toString(shouldWarnAboutOldIntegratedVatSpyDatabase.get()) //
+            Boolean.toString(shouldWarnAboutOldIntegratedVatSpyDatabase.get())
         );
 
         int i = 0;
@@ -439,48 +441,48 @@ public class Configuration {
 
         properties.setProperty(
             KEY_ONLINE_TRANSCEIVERS_OVERRIDE_ENABLED,
-            Boolean.toString(isOnlineTransceiversOverrideEnabled.get()) //
+            Boolean.toString(isOnlineTransceiversOverrideEnabled.get())
         );
         properties.setProperty(
             KEY_ONLINE_TRANSCEIVERS_OVERRIDE_CACHE_MINUTES,
-            Integer.toString(onlineTransceiversOverrideCacheMinutes.get()) //
+            Integer.toString(onlineTransceiversOverrideCacheMinutes.get())
         );
         properties.setProperty(
             KEY_ONLINE_TRANSCEIVERS_OVERRIDE_URL,
-            onlineTransceiversOverrideUrl.get() //
+            onlineTransceiversOverrideUrl.get()
         );
 
         properties.setProperty(
             KEY_STATION_LOCATOR_STRATEGY,
-            stationLocatorStrategy.get().getConfigValue() //
+            stationLocatorStrategy.get().getConfigValue()
         );
         properties.setProperty(
             KEY_STATION_LOCATOR_IGNORE_PLACEHOLDER_FREQUENCY,
-            Boolean.toString(shouldIgnorePlaceholderFrequency.get()) //
+            Boolean.toString(shouldIgnorePlaceholderFrequency.get())
         );
         properties.setProperty(
             KEY_STATION_LOCATOR_OBSERVER_BY_CALLSIGN,
-            Boolean.toString(shouldIdentifyObserverByCallsign.get()) //
+            Boolean.toString(shouldIdentifyObserverByCallsign.get())
         );
         properties.setProperty(
             KEY_STATION_LOCATOR_LOCATE_OBS_BY_TRANSCEIVERS,
-            Boolean.toString(shouldLocateObserverByTransceivers.get()) //
+            Boolean.toString(shouldLocateObserverByTransceivers.get())
         );
         properties.setProperty(
             KEY_STATION_LOCATOR_LOCATE_OBS_BY_VATSPY,
-            Boolean.toString(shouldLocateObserverByVatSpy.get()) //
+            Boolean.toString(shouldLocateObserverByVatSpy.get())
         );
         properties.setProperty(
             KEY_STATION_LOCATOR_VATSPY_ALIAS_US,
-            Boolean.toString(shouldVatSpyAliasUSStations.get()) //
+            Boolean.toString(shouldVatSpyAliasUSStations.get())
         );
         properties.setProperty(
             KEY_STATION_LOCATOR_WARN_UNLOCATABLE_ATC,
-            Boolean.toString(shouldWarnAboutUnlocatableATC.get()) //
+            Boolean.toString(shouldWarnAboutUnlocatableATC.get())
         );
         properties.setProperty(
             KEY_STATION_LOCATOR_WARN_UNLOCATABLE_OBS,
-            Boolean.toString(shouldWarnAboutUnlocatableObserver.get()) //
+            Boolean.toString(shouldWarnAboutUnlocatableObserver.get())
         );
 
         if (configFile.exists() && !configFile.canWrite()) {

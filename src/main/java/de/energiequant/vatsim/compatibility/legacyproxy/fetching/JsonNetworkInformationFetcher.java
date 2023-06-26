@@ -48,12 +48,12 @@ public class JsonNetworkInformationFetcher extends PeriodicRunnable {
 
         DefaultHttpRetrievalDecoders decoders = new DefaultHttpRetrievalDecoders();
         httpPromiseBuilder = new HttpPromiseBuilder<>(
-            decoders.bodyAsStringWithHeaderCharacterSet(FALLBACK_CHARACTER_SET) //
-                .andThen(processor::deserialize) //
+            decoders.bodyAsStringWithHeaderCharacterSet(FALLBACK_CHARACTER_SET)
+                    .andThen(processor::deserialize)
         ).withConfiguration(
             new HttpRetrieval()
                 .setUserAgent(AppConstants.USER_AGENT)
-                .setTimeout(AppConstants.EXTERNAL_REQUEST_TIMEOUT) //
+                .setTimeout(AppConstants.EXTERNAL_REQUEST_TIMEOUT)
         );
     }
 
@@ -75,11 +75,10 @@ public class JsonNetworkInformationFetcher extends PeriodicRunnable {
 
     /**
      * Returns the JSON {@link NetworkInformation} as last retrieved.
-     * 
+     *
      * @return JSON {@link NetworkInformation} as last retrieved
      */
     public Optional<NetworkInformation> getLastFetchedNetworkInformation() {
         return Optional.ofNullable(lastNetworkInformation.get());
     }
-
 }
