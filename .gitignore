@@ -9,3 +9,5 @@ legacy-status-proxy-vatsim.properties
 *~
 \#*#
 .#*
+
+*.iml
