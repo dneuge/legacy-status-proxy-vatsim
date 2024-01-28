@@ -10,7 +10,7 @@ public class AppConstants {
     public static final String APPLICATION_NAME = Launcher.APPLICATION_NAME;
     public static final String APPLICATION_VERSION = "0.97dev";
     public static final String APPLICATION_URL = "https://github.com/dneuge/legacy-status-proxy-vatsim";
-    public static final String APPLICATION_COPYRIGHT = "Copyright (c) 2021-2023 Daniel Neugebauer";
+    public static final String APPLICATION_COPYRIGHT = "Copyright (c) 2021-2024 Daniel Neugebauer";
 
     // TODO: Main#getApplicationVersion only returns the constant from this class
     public static final String USER_AGENT = "LegacyStatusProxy/" + Main.getApplicationVersion();
