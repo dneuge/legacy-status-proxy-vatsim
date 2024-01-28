@@ -6,7 +6,7 @@
     <groupId>de.energiequant.vatsim.compatibility</groupId>
     <artifactId>legacy-status-proxy-vatsim</artifactId>
     <name>Legacy status proxy for VATSIM</name>
-    <version>0.97-SNAPSHOT</version>
+    <version>0.96.1</version>
     <packaging>jar</packaging>
 
     <properties>
