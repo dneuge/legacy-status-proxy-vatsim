@@ -245,8 +245,9 @@ public class VatSpyStationLocator {
                         "Missing center points for FIR \"{}\" referenced by UIR \"{}\"",
                         firId, uir.getId()
                     );
+                } else {
+                    centerPoints.addAll(firCenterPoints);
                 }
-                centerPoints.addAll(firCenterPoints);
             }
 
             if (centerPoints.isEmpty()) {
