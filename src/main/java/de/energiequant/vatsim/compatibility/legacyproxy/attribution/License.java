@@ -17,6 +17,7 @@ public enum License {
         "Apache License, Version 2.0",
         "apache2.html",
         asList(
+            "Apache-2.0",
             "Apache License, Version 2.0",
             "The Apache Software License, Version 2.0"
         )

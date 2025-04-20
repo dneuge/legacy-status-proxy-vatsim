@@ -32,9 +32,8 @@ public class IPFilter implements AsyncFilterHandler {
     private final Collection<String> allowedAddresses = Collections.synchronizedCollection(new HashSet<String>());
 
     @Override
-    public AsyncDataConsumer handle(HttpRequest request, EntityDetails entityDetails, HttpContext context, org.apache.hc.core5.http.nio.AsyncFilterChain.ResponseTrigger responseTrigger, AsyncFilterChain chain) throws HttpException, IOException {
-        EndpointDetails details = (EndpointDetails) context
-            .getAttribute(HttpCoreContext.CONNECTION_ENDPOINT);
+    public AsyncDataConsumer handle(HttpRequest request, EntityDetails entityDetails, HttpContext context, AsyncFilterChain.ResponseTrigger responseTrigger, AsyncFilterChain chain) throws HttpException, IOException {
+        EndpointDetails details = ((HttpCoreContext) context).getEndpointDetails();
         InetSocketAddress addr = (InetSocketAddress) details.getRemoteAddress();
         String ip = addr.getAddress().getHostAddress();
 

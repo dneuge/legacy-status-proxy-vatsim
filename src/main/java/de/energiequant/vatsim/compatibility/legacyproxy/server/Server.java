@@ -22,6 +22,7 @@ import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpRequest;
 import org.apache.hc.core5.http.HttpStatus;
 import org.apache.hc.core5.http.Message;
+import org.apache.hc.core5.http.URIScheme;
 import org.apache.hc.core5.http.impl.bootstrap.AsyncServerBootstrap;
 import org.apache.hc.core5.http.impl.bootstrap.HttpAsyncServer;
 import org.apache.hc.core5.http.nio.AsyncServerRequestHandler;
@@ -254,7 +255,7 @@ public class Server {
         httpServer.set(myHttpServer);
 
         myHttpServer.start();
-        Future<ListenerEndpoint> future = myHttpServer.listen(new InetSocketAddress(localPort));
+        Future<ListenerEndpoint> future = myHttpServer.listen(new InetSocketAddress(localPort), URIScheme.HTTP);
         setState(State.RUNNING);
         ListenerEndpoint listenerEndpoint;
         try {
