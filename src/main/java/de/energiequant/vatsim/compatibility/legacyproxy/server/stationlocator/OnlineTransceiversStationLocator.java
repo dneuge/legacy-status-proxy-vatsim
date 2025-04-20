@@ -12,12 +12,12 @@ import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.vatplanner.commons.geo.GeoMath;
+import org.vatplanner.commons.geo.GeoPoint2D;
 import org.vatplanner.dataformats.vatsimpublic.parser.OnlineTransceiverStation;
 import org.vatplanner.dataformats.vatsimpublic.parser.OnlineTransceiversFile;
 import org.vatplanner.dataformats.vatsimpublic.parser.ParserLogEntry;
 import org.vatplanner.dataformats.vatsimpublic.parser.ParserLogEntryCollector;
-import org.vatplanner.dataformats.vatsimpublic.utils.GeoMath;
-import org.vatplanner.dataformats.vatsimpublic.utils.GeoPoint2D;
 
 import de.energiequant.vatsim.compatibility.legacyproxy.Main;
 import de.energiequant.vatsim.compatibility.legacyproxy.fetching.OnlineTransceiversFileFetcher;

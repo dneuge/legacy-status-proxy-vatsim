@@ -20,7 +20,8 @@
         <finalName>legacy-status-proxy-vatsim</finalName>
 
         <!-- runtime dependencies -->
-        <vatplanner.dataformatsVatsimPublic.version>0.1-pre230626</vatplanner.dataformatsVatsimPublic.version>
+        <vatplanner.commons.version>1.0</vatplanner.commons.version>
+        <vatplanner.dataformatsVatsimPublic.version>0.1</vatplanner.dataformatsVatsimPublic.version>
         <webDataRetrieval.version>0.2.5</webDataRetrieval.version>
         <vatspyData.version>a88517cece1e81cd1d18552e7c630e47ddd7739e</vatspyData.version>
 
@@ -63,6 +64,12 @@
             <groupId>org.vatplanner</groupId>
             <artifactId>dataformats-vatsim-public</artifactId>
             <version>${vatplanner.dataformatsVatsimPublic.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.vatplanner.commons</groupId>
+            <artifactId>vatplanner-commons-base</artifactId>
+            <version>${vatplanner.commons.version}</version>
         </dependency>
 
         <dependency>
