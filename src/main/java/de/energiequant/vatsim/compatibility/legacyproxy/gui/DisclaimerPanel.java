@@ -16,33 +16,40 @@ import javax.swing.JScrollPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.energiequant.vatsim.compatibility.legacyproxy.Configuration;
-import de.energiequant.vatsim.compatibility.legacyproxy.Main;
+import de.energiequant.vatsim.compatibility.legacyproxy.DisclaimerState;
 
 public class DisclaimerPanel extends JPanel {
     private static final Logger LOGGER = LoggerFactory.getLogger(DisclaimerPanel.class);
 
+    private final DisclaimerState state;
     private final JCheckBox checkBox;
 
-    public DisclaimerPanel(String disclaimerText) {
+    private final Runnable onSaveCallback;
+
+    public DisclaimerPanel(DisclaimerState state) {
+        this(state, null);
+    }
+
+    public DisclaimerPanel(DisclaimerState state, Runnable onSaveCallback) {
         super();
 
-        Configuration config = Main.getConfiguration();
+        this.state = state;
+        this.onSaveCallback = onSaveCallback;
 
         JEditorPane editorPane = new JEditorPane();
         editorPane.setContentType("text/plain");
-        editorPane.setText(disclaimerText);
+        editorPane.setText(state.getDisclaimer());
         editorPane.setEditable(false);
         editorPane.setFont(Font.decode(Font.MONOSPACED));
         JScrollPane scrollPane = new JScrollPane(editorPane);
 
-        checkBox = new JCheckBox("I understand and accept the disclaimer and licenses (required to start the server)");
-        config.addDisclaimerListener(this::updateCheckBoxState);
+        checkBox = new JCheckBox(state.getDisclaimerAcceptanceText());
+        state.addListener(this::updateCheckBoxState);
         updateCheckBoxState();
         onChange(checkBox, this::onCheckBoxStateChanged);
 
         JButton saveButton = new JButton("Save configuration");
-        if (!config.isSaneLocation()) {
+        if (this.onSaveCallback == null) {
             saveButton.setEnabled(false);
 
             // if the button is visible but disabled it's misleading as it looks like the
@@ -75,23 +82,24 @@ public class DisclaimerPanel extends JPanel {
     }
 
     private void updateCheckBoxState() {
-        checkBox.setSelected(Main.getConfiguration().isDisclaimerAccepted());
+        checkBox.setSelected(state.isAccepted());
     }
 
     private void onCheckBoxStateChanged() {
         boolean newValue = checkBox.isSelected();
 
-        Configuration config = Main.getConfiguration();
-        boolean oldValue = config.isDisclaimerAccepted();
+        boolean oldValue = state.isAccepted();
         if (oldValue == newValue) {
             return;
         }
 
         LOGGER.debug("Disclaimer acceptance changed to {}", newValue);
-        config.setDisclaimerAccepted(newValue);
+        state.setAccepted(newValue);
     }
 
     private void onSaveConfigurationClicked(ActionEvent event) {
-        Main.getConfiguration().save();
+        if (onSaveCallback != null) {
+            onSaveCallback.run();
+        }
     }
 }

@@ -20,7 +20,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,10 +32,8 @@ public class Configuration {
     private static final Logger LOGGER = LoggerFactory.getLogger(Configuration.class);
 
     private final File configFile;
+    private final DisclaimerState disclaimerState;
 
-    private static final String CURRENT_DISCLAIMER_HASH = DigestUtils.md5Hex(Main.getApplicationInfo().getDisclaimer().orElseThrow(() -> new IllegalArgumentException("Disclaimer missing")));
-
-    private static final boolean DEFAULT_DISCLAIMER_ACCEPTED = false;
     private static final boolean DEFAULT_PARSER_LOG = false;
     private static final boolean DEFAULT_QUIRK_LEGACY_DATAFILE_UTF8 = false;
     private static final boolean DEFAULT_UPSTREAM_BASE_URL_OVERRIDDEN = false;
@@ -61,7 +58,6 @@ public class Configuration {
         IPFilter.LOCALHOST_IPV6
     ));
 
-    private final AtomicBoolean isDisclaimerAccepted = new AtomicBoolean(DEFAULT_DISCLAIMER_ACCEPTED);
     private final AtomicBoolean isQuirkLegacyDataFileUtf8Enabled = new AtomicBoolean(
         DEFAULT_QUIRK_LEGACY_DATAFILE_UTF8
     );
@@ -74,7 +70,6 @@ public class Configuration {
     private final AtomicInteger serverPort = new AtomicInteger(DEFAULT_SERVER_PORT);
     private final Set<String> allowedIps = Collections.synchronizedSet(new HashSet<>(DEFAULT_ALLOWED_IPS));
 
-    private final Set<Runnable> disclaimerListeners = Collections.synchronizedSet(new HashSet<>());
     private final Set<Runnable> ipFilterListeners = Collections.synchronizedSet(new HashSet<>());
 
     private final AtomicInteger onlineTransceiversOverrideCacheMinutes = new AtomicInteger(
@@ -149,8 +144,9 @@ public class Configuration {
         }
     }
 
-    public Configuration(File configFile) throws LoadingFailed {
+    public Configuration(File configFile, DisclaimerState disclaimerState) throws LoadingFailed {
         this.configFile = configFile;
+        this.disclaimerState = disclaimerState;
         this.isSaneLocation = !isSystemPath(configFile);
 
         if (!isSaneLocation) {
@@ -162,7 +158,7 @@ public class Configuration {
             );
         }
 
-        LOGGER.debug("Current disclaimer hash is: {}", CURRENT_DISCLAIMER_HASH);
+        LOGGER.debug("Current disclaimer hash is: {}", disclaimerState.getDisclaimerHash());
         load();
     }
 
@@ -182,7 +178,7 @@ public class Configuration {
             throw new LoadingFailed(configFile, ex);
         }
 
-        setDisclaimerAccepted(CURRENT_DISCLAIMER_HASH.equals(readString(properties, KEY_DISCLAIMER_ACCEPTED, "")));
+        disclaimerState.setAccepted(disclaimerState.getDisclaimerHash().equals(readString(properties, KEY_DISCLAIMER_ACCEPTED, "")));
         setQuirkLegacyDataFileUtf8Enabled(
             readBoolean(properties, KEY_QUIRK_LEGACY_DATAFILE_UTF8, DEFAULT_QUIRK_LEGACY_DATAFILE_UTF8)
         );
@@ -337,7 +333,7 @@ public class Configuration {
 
     private void logConfig() {
         LOGGER.debug("Configuration file path:        {}", configFile.getAbsolutePath());
-        LOGGER.debug("Configured disclaimer accepted: {}", isDisclaimerAccepted.get());
+        LOGGER.debug("Configured disclaimer accepted: {}", disclaimerState.isAccepted());
         LOGGER.debug(
             "Configured upstream base URL:   {} ({})",
             upstreamBaseUrlOverride.get(),
@@ -412,7 +408,7 @@ public class Configuration {
         }
 
         Properties properties = new Properties();
-        properties.setProperty(KEY_DISCLAIMER_ACCEPTED, isDisclaimerAccepted.get() ? CURRENT_DISCLAIMER_HASH : "");
+        properties.setProperty(KEY_DISCLAIMER_ACCEPTED, disclaimerState.isAccepted() ? disclaimerState.getDisclaimerHash() : "");
         properties.setProperty(KEY_LOCAL_HOST_NAME, localHostName.get());
         properties.setProperty(KEY_PARSER_LOG, Boolean.toString(isParserLogEnabled.get()));
         properties.setProperty(KEY_QUIRK_LEGACY_DATAFILE_UTF8,
@@ -503,13 +499,6 @@ public class Configuration {
         this.allowedIps.addAll(allowedIps);
 
         notifyListeners(ipFilterListeners);
-    }
-
-    public void setDisclaimerAccepted(boolean isDisclaimerAccepted) {
-        boolean previous = this.isDisclaimerAccepted.getAndSet(isDisclaimerAccepted);
-        if (previous != isDisclaimerAccepted) {
-            notifyListeners(disclaimerListeners);
-        }
     }
 
     public void setOnlineTransceiversOverrideCacheMinutes(int minutes) {
@@ -611,10 +600,6 @@ public class Configuration {
         return new HashSet<>(allowedIps);
     }
 
-    public boolean isDisclaimerAccepted() {
-        return isDisclaimerAccepted.get();
-    }
-
     public boolean isOnlineTransceiversOverrideEnabled() {
         return isOnlineTransceiversOverrideEnabled.get();
     }
@@ -701,10 +686,6 @@ public class Configuration {
 
     private String removeTrailingSlashes(String s) {
         return (s != null) ? s.replaceAll("/*$", "") : null;
-    }
-
-    public void addDisclaimerListener(Runnable listener) {
-        disclaimerListeners.add(listener);
     }
 
     public void addIPFilterListener(Runnable listener) {

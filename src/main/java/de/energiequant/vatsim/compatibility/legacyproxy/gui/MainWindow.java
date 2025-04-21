@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 
 import de.energiequant.apputils.misc.ResourceUtils;
 import de.energiequant.apputils.misc.gui.SwingHelper;
+import de.energiequant.vatsim.compatibility.legacyproxy.Configuration;
 import de.energiequant.vatsim.compatibility.legacyproxy.Main;
 import de.energiequant.vatsim.compatibility.legacyproxy.logging.BufferAppender;
 import de.energiequant.vatsim.compatibility.legacyproxy.logging.BufferAppender.FormattedEvent;
@@ -59,7 +60,7 @@ public class MainWindow extends JFrame {
 
     private static final EnumMap<Server.State, String> MESSAGE_BY_SERVER_STATE = new EnumMap<>(Server.State.class);
 
-    private final AboutWindow aboutWindow = new AboutWindow(Main.getApplicationInfo());
+    private final AboutWindow aboutWindow;
     private final ConfigurationWindow configurationWindow = new ConfigurationWindow();
 
     private static final Map<Level, String> LOG_STYLES_BY_LEVEL = new HashMap<Level, String>();
@@ -101,6 +102,13 @@ public class MainWindow extends JFrame {
 
     public MainWindow(Runnable onCloseCallback) {
         super("Legacy Status Proxy for VATSIM");
+
+        Configuration config = Main.getConfiguration();
+        if (!config.isSaneLocation()) {
+            aboutWindow = new AboutWindow(Main.getApplicationInfo(), Main.getDisclaimerState());
+        } else {
+            aboutWindow = new AboutWindow(Main.getApplicationInfo(), Main.getDisclaimerState(), config::save);
+        }
 
         setSize(800, 600);
         setMinimumSize(new Dimension(600, 400));
@@ -186,7 +194,7 @@ public class MainWindow extends JFrame {
         Main.getServer().addStateChangeListener(this::onServerStateChanged);
         onServerStateChanged();
 
-        if (!Main.getConfiguration().isDisclaimerAccepted()) {
+        if (!Main.getDisclaimerState().isAccepted()) {
             aboutWindow.showDisclaimer();
         }
     }

@@ -187,7 +187,7 @@ public class Server {
             return;
         }
 
-        if (!Main.getConfiguration().isDisclaimerAccepted()) {
+        if (!Main.getDisclaimerState().isAccepted()) {
             LOGGER.warn("Server can only be started after accepting the disclaimer");
             setState(State.BLOCKED_BY_DISCLAIMER);
             return;

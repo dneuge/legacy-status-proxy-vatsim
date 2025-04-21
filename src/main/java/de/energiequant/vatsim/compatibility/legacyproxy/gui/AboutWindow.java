@@ -1,22 +1,31 @@
 package de.energiequant.vatsim.compatibility.legacyproxy.gui;
 
 import java.awt.Dimension;
-import java.util.Optional;
 
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
 
 import de.energiequant.apputils.misc.ApplicationInfo;
 import de.energiequant.apputils.misc.attribution.License;
+import de.energiequant.vatsim.compatibility.legacyproxy.DisclaimerState;
 
 public class AboutWindow extends JFrame {
     private final JTabbedPane tabbedPane;
+    private final DisclaimerPanel disclaimerPanel;
     private final LicensesPanel licensesPanel;
 
     private static final int DISCLAIMER_TAB_INDEX = 1;
     private static final int LICENSES_TAB_INDEX = 2;
 
     public AboutWindow(ApplicationInfo appInfo) {
+        this(appInfo, null);
+    }
+
+    public AboutWindow(ApplicationInfo appInfo, DisclaimerState disclaimerState) {
+        this(appInfo, disclaimerState, null);
+    }
+
+    public AboutWindow(ApplicationInfo appInfo, DisclaimerState disclaimerState, Runnable onDisclaimerSave) {
         super("About...");
 
         tabbedPane = new JTabbedPane();
@@ -24,9 +33,15 @@ public class AboutWindow extends JFrame {
 
         tabbedPane.addTab("About this program", new AboutThisProgramPanel(appInfo, this::showLicense));
 
-        Optional<String> disclaimer = appInfo.getDisclaimer();
-        if (disclaimer.isPresent()) {
-            tabbedPane.addTab("Disclaimer", new DisclaimerPanel(disclaimer.get()));
+        if (disclaimerState == null) {
+            disclaimerPanel = null;
+        } else {
+            if (onDisclaimerSave != null) {
+                disclaimerPanel = new DisclaimerPanel(disclaimerState, onDisclaimerSave);
+            } else {
+                disclaimerPanel = new DisclaimerPanel(disclaimerState);
+            }
+            tabbedPane.addTab("Disclaimer", disclaimerPanel);
         }
 
         tabbedPane.addTab("Licenses", licensesPanel);

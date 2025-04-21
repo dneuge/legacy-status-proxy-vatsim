@@ -55,6 +55,8 @@ public class Main {
         .getRelativeResourceContentAsString(Main.class, "disclaimer.txt", StandardCharsets.UTF_8)
         .orElseThrow(DisclaimerNotFound::new);
 
+    private static final String DISCLAIMER_ACCEPTANCE_TEXT = "I understand and accept the disclaimer and licenses (required to start the server)";
+
     private static Configuration configuration;
     private static Server server;
 
@@ -122,7 +124,14 @@ public class Main {
         public Optional<String> getDisclaimer() {
             return Optional.of(DISCLAIMER);
         }
+
+        @Override
+        public Optional<String> getDisclaimerAcceptanceText() {
+            return Optional.of(DISCLAIMER_ACCEPTANCE_TEXT);
+        }
     };
+
+    private static final DisclaimerState disclaimerState = new DisclaimerState(APP_INFO);
 
     public static void main(String[] args) throws Exception {
         Options options = new Options();
@@ -163,14 +172,14 @@ public class Main {
         boolean shouldRunHeadless = GraphicsEnvironment.isHeadless() || parameters.hasOption(OPTION_NAME_NO_GUI);
 
         String configFilePath = parameters.getOptionValue(OPTION_NAME_CONFIG_PATH, DEFAULT_CONFIG_PATH);
-        configuration = new Configuration(new File(configFilePath));
+        configuration = new Configuration(new File(configFilePath), disclaimerState);
 
         if (parameters.hasOption(OPTION_NAME_ACCEPT_DISCLAIMER)) {
-            configuration.setDisclaimerAccepted(true);
+            disclaimerState.setAccepted(true);
         }
 
         if (parameters.hasOption(OPTION_NAME_SHOW_DISCLAIMER)
-            || (!configuration.isDisclaimerAccepted() && shouldRunHeadless)) {
+            || (!disclaimerState.isAccepted() && shouldRunHeadless)) {
             printDisclaimer();
             System.exit(1);
         }
@@ -191,11 +200,11 @@ public class Main {
 
         server.startHttpServer();
 
-        configuration.addDisclaimerListener(() -> {
-            if (!configuration.isDisclaimerAccepted() && (server.getState() == State.RUNNING)) {
+        disclaimerState.addListener(() -> {
+            if (!disclaimerState.isAccepted() && (server.getState() == State.RUNNING)) {
                 LOGGER.warn("Stopping HTTP server because disclaimer has not been accepted");
                 server.stopHttpServer();
-            } else if (configuration.isDisclaimerAccepted() && (server.getState() == State.BLOCKED_BY_DISCLAIMER)) {
+            } else if (disclaimerState.isAccepted() && (server.getState() == State.BLOCKED_BY_DISCLAIMER)) {
                 LOGGER.info("Disclaimer has been accepted, starting HTTP server");
                 server.startHttpServer();
             }
@@ -342,6 +351,10 @@ public class Main {
 
     public static ApplicationInfo getApplicationInfo() {
         return APP_INFO;
+    }
+
+    public static DisclaimerState getDisclaimerState() {
+        return disclaimerState;
     }
 
     public static Configuration getConfiguration() {
