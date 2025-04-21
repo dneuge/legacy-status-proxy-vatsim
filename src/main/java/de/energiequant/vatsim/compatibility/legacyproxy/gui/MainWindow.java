@@ -59,7 +59,7 @@ public class MainWindow extends JFrame {
 
     private static final EnumMap<Server.State, String> MESSAGE_BY_SERVER_STATE = new EnumMap<>(Server.State.class);
 
-    private final AboutWindow aboutWindow = new AboutWindow();
+    private final AboutWindow aboutWindow = new AboutWindow(Main.getApplicationInfo());
     private final ConfigurationWindow configurationWindow = new ConfigurationWindow();
 
     private static final Map<Level, String> LOG_STYLES_BY_LEVEL = new HashMap<Level, String>();

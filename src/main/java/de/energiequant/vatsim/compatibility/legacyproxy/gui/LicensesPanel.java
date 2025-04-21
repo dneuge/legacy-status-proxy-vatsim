@@ -6,6 +6,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Rectangle;
 import java.awt.event.ItemEvent;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.swing.DefaultListCellRenderer;
@@ -16,8 +18,9 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import de.energiequant.apputils.misc.ApplicationInfo;
 import de.energiequant.apputils.misc.attribution.License;
-import de.energiequant.vatsim.compatibility.legacyproxy.Main;
+import de.energiequant.apputils.misc.attribution.Project;
 
 public class LicensesPanel extends JPanel {
     // TODO: insets
@@ -28,8 +31,15 @@ public class LicensesPanel extends JPanel {
 
     private static final Rectangle TOP_LEFT = new Rectangle(0, 0, 1, 1);
 
-    public LicensesPanel(Set<License> licenses) {
+    public LicensesPanel(ApplicationInfo appInfo) {
         super();
+
+        Collection<Project> dependencies = appInfo.getDependencies();
+        Set<License> licenses = new HashSet<License>();
+        licenses.add(appInfo.getEffectiveLicense());
+        for (Project dependency : dependencies) {
+            licenses.addAll(dependency.getLicenses());
+        }
 
         setLayout(new GridBagLayout());
 
@@ -57,7 +67,7 @@ public class LicensesPanel extends JPanel {
 
         licenseTextScrollPane = new JScrollPane(licenseText);
 
-        License programLicense = Main.getEffectiveLicense();
+        License programLicense = appInfo.getEffectiveLicense();
         comboBox.setSelectedItem(programLicense);
         showLicenseText(programLicense);
 

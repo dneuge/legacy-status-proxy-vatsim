@@ -24,14 +24,14 @@ public class DisclaimerPanel extends JPanel {
 
     private final JCheckBox checkBox;
 
-    public DisclaimerPanel() {
+    public DisclaimerPanel(String disclaimerText) {
         super();
 
         Configuration config = Main.getConfiguration();
 
         JEditorPane editorPane = new JEditorPane();
         editorPane.setContentType("text/plain");
-        editorPane.setText(Main.getDisclaimer());
+        editorPane.setText(disclaimerText);
         editorPane.setEditable(false);
         editorPane.setFont(Font.decode(Font.MONOSPACED));
         JScrollPane scrollPane = new JScrollPane(editorPane);

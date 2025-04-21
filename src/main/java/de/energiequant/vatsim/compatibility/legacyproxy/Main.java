@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -31,6 +32,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.energiequant.apputils.misc.ApplicationInfo;
 import de.energiequant.apputils.misc.ResourceUtils;
 import de.energiequant.apputils.misc.attribution.AttributionParser;
 import de.energiequant.apputils.misc.attribution.CopyrightNoticeProvider;
@@ -79,6 +81,48 @@ public class Main {
             super("Disclaimer could not be found");
         }
     }
+
+    private static final ApplicationInfo APP_INFO = new ApplicationInfo() {
+        @Override
+        public Collection<Project> getDependencies() {
+            return DEPENDENCIES;
+        }
+
+        @Override
+        public CopyrightNoticeProvider getCopyrightNoticeProvider() {
+            return COPYRIGHT_NOTICE_PROVIDER;
+        }
+
+        @Override
+        public String getApplicationName() {
+            return APPLICATION_NAME;
+        }
+
+        @Override
+        public String getApplicationUrl() {
+            return APPLICATION_URL;
+        }
+
+        @Override
+        public String getApplicationVersion() {
+            return APPLICATION_VERSION;
+        }
+
+        @Override
+        public String getApplicationCopyright() {
+            return APPLICATION_COPYRIGHT;
+        }
+
+        @Override
+        public License getEffectiveLicense() {
+            return EFFECTIVE_LICENSE;
+        }
+
+        @Override
+        public Optional<String> getDisclaimer() {
+            return Optional.of(DISCLAIMER);
+        }
+    };
 
     public static void main(String[] args) throws Exception {
         Options options = new Options();
@@ -186,12 +230,12 @@ public class Main {
                                                .orElse("unknown date")
         );
         System.out.println(APPLICATION_URL);
-        License license = getEffectiveLicense();
+        License license = APP_INFO.getEffectiveLicense();
         System.out.println("released under " + license.getCanonicalName() + " [" + license.name() + "]");
         System.out.println(APPLICATION_COPYRIGHT);
         System.out.println();
         System.out.println(AppConstants.DEPENDENCIES_CAPTION);
-        getDependencies().stream().sorted(Comparator.comparing(Project::getName)).forEachOrdered(Main::printDependency);
+        APP_INFO.getDependencies().stream().sorted(Comparator.comparing(Project::getName)).forEachOrdered(Main::printDependency);
         System.out.println();
         System.out.println("Generic copies of all involved software licenses are included with this program.");
         System.out.println(
@@ -296,36 +340,12 @@ public class Main {
                                 .build());
     }
 
+    public static ApplicationInfo getApplicationInfo() {
+        return APP_INFO;
+    }
+
     public static Configuration getConfiguration() {
         return configuration;
-    }
-
-    public static Collection<Project> getDependencies() {
-        return DEPENDENCIES;
-    }
-
-    public static String getApplicationName() {
-        return APPLICATION_NAME;
-    }
-
-    public static String getApplicationUrl() {
-        return APPLICATION_URL;
-    }
-
-    public static String getApplicationVersion() {
-        return APPLICATION_VERSION;
-    }
-
-    public static String getApplicationCopyright() {
-        return APPLICATION_COPYRIGHT;
-    }
-
-    public static License getEffectiveLicense() {
-        return EFFECTIVE_LICENSE;
-    }
-
-    public static String getDisclaimer() {
-        return DISCLAIMER;
     }
 
     public static Server getServer() {

@@ -21,7 +21,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -40,17 +39,17 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.energiequant.apputils.misc.ApplicationInfo;
 import de.energiequant.apputils.misc.attribution.CopyrightNoticeProvider;
 import de.energiequant.apputils.misc.attribution.License;
 import de.energiequant.apputils.misc.attribution.Project;
 import de.energiequant.vatsim.compatibility.legacyproxy.AppConstants;
-import de.energiequant.vatsim.compatibility.legacyproxy.Main;
-import de.energiequant.vatsim.compatibility.legacyproxy.attribution.CopyrightNotice;
 import de.energiequant.vatsim.compatibility.legacyproxy.attribution.VatSpyMetaData;
 
 public class AboutThisProgramPanel extends JPanel {
     private static final Logger LOGGER = LoggerFactory.getLogger(AboutThisProgramPanel.class);
 
+    private final CopyrightNoticeProvider copyrightNoticeProvider;
     private final Consumer<License> licenseClickedCallback;
 
     private static final boolean CAN_BROWSE = Desktop.isDesktopSupported()
@@ -60,23 +59,24 @@ public class AboutThisProgramPanel extends JPanel {
         .ofPattern("d MMMM YYYY", Locale.US)
         .withZone(ZoneId.of("UTC"));
 
-    public AboutThisProgramPanel(Collection<Project> dependencies, Consumer<License> licenseClickedCallback) {
+    public AboutThisProgramPanel(ApplicationInfo appInfo, Consumer<License> licenseClickedCallback) {
         super();
 
-        this.copyrightNoticeProvider = new CopyrightNotice();
+        this.copyrightNoticeProvider = appInfo.getCopyrightNoticeProvider();
         this.licenseClickedCallback = licenseClickedCallback;
 
-        String applicationUrl = Main.getApplicationUrl();
+        String applicationUrl = appInfo.getApplicationUrl();
         JLabel applicationUrlLabel = new JLabel(applicationUrl);
         linkExternal(applicationUrlLabel, applicationUrl);
 
-        License programLicense = Main.getEffectiveLicense();
+        License programLicense = appInfo.getEffectiveLicense();
         JLabel programLicenseLabel = new JLabel("released under " + programLicense.getCanonicalName());
         linkLicense(programLicenseLabel, programLicense);
 
-        List<Project> sortedDependencies = dependencies.stream()
-                                                       .sorted(Comparator.comparing(Project::getName))
-                                                       .collect(Collectors.toList());
+        List<Project> sortedDependencies = appInfo.getDependencies()
+                                                  .stream()
+                                                  .sorted(Comparator.comparing(Project::getName))
+                                                  .collect(Collectors.toList());
         DependenciesList dependenciesList = new DependenciesList(sortedDependencies);
 
         setLayout(new GridBagLayout());
@@ -86,10 +86,10 @@ public class AboutThisProgramPanel extends JPanel {
         gbc.gridy = 0;
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        add(new JLabel(Main.getApplicationName()), gbc);
+        add(new JLabel(appInfo.getApplicationName()), gbc);
 
         gbc.gridy++;
-        add(new JLabel("Version " + Main.getApplicationVersion()), gbc);
+        add(new JLabel("Version " + appInfo.getApplicationVersion()), gbc);
 
         gbc.gridy++;
         add(
@@ -109,7 +109,7 @@ public class AboutThisProgramPanel extends JPanel {
         add(programLicenseLabel, gbc);
 
         gbc.gridy++;
-        add(new JLabel(Main.getApplicationCopyright()), gbc);
+        add(new JLabel(appInfo.getApplicationCopyright()), gbc);
 
         gbc.gridy++;
         JPanel spacer = new JPanel();

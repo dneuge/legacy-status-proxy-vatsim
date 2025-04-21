@@ -34,7 +34,7 @@ public class Configuration {
 
     private final File configFile;
 
-    private static final String CURRENT_DISCLAIMER_HASH = DigestUtils.md5Hex(Main.getDisclaimer());
+    private static final String CURRENT_DISCLAIMER_HASH = DigestUtils.md5Hex(Main.getApplicationInfo().getDisclaimer().orElseThrow(() -> new IllegalArgumentException("Disclaimer missing")));
 
     private static final boolean DEFAULT_DISCLAIMER_ACCEPTED = false;
     private static final boolean DEFAULT_PARSER_LOG = false;
