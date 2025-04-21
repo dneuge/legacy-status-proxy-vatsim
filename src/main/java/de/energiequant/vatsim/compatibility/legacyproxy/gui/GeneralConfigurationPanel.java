@@ -94,9 +94,12 @@ public class GeneralConfigurationPanel extends JPanel {
             gbc.weightx = 1.0;
             gbc.fill = GridBagConstraints.HORIZONTAL;
             gbc.anchor = GridBagConstraints.WEST;
-            add(stylePlain(new JLabel(
-                "<html>Usually no changes to upstream connection should be required. The base URL is appended with further paths and cannot end with a slash. Changes to the upstream connection require a full restart of the proxy application (run/stop is insufficient).</html>"
-            )), gbc);
+            add(
+                stylePlain(new JLabel(
+                    "<html>Usually no changes to upstream connection should be required. The base URL is appended with further paths and cannot end with a slash. Changes to the upstream connection require a full restart of the proxy application (run/stop is insufficient).</html>"
+                )),
+                gbc
+            );
 
             gbc.gridy++;
             gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -189,9 +192,12 @@ public class GeneralConfigurationPanel extends JPanel {
             gbc.weightx = 1.0;
             gbc.fill = GridBagConstraints.HORIZONTAL;
             gbc.anchor = GridBagConstraints.WEST;
-            add(stylePlain(new JLabel(
-                "<html>The host name must be reachable by all clients, an IPv4 address is also possible. Changes to the HTTP server configuration require a restart (use the run/stop button on main window).</html>"
-            )), gbc);
+            add(
+                stylePlain(new JLabel(
+                    "<html>The host name must be reachable by all clients, an IPv4 address is also possible. Changes to the HTTP server configuration require a restart (use the run/stop button on main window).</html>"
+                )),
+                gbc
+            );
 
             gbc.gridy++;
             gbc.gridwidth = 1;
@@ -330,9 +336,12 @@ public class GeneralConfigurationPanel extends JPanel {
             gbc.weightx = 1.0;
             gbc.fill = GridBagConstraints.HORIZONTAL;
             gbc.anchor = GridBagConstraints.WEST;
-            add(stylePlain(new JLabel(
-                "<html>Only the listed IP addresses are served data by the proxy server. Addresses need to be entered exactly as shown in the log. Changes are applied immediately.</html>"
-            )), gbc);
+            add(
+                stylePlain(new JLabel(
+                    "<html>Only the listed IP addresses are served data by the proxy server. Addresses need to be entered exactly as shown in the log. Changes are applied immediately.</html>"
+                )),
+                gbc
+            );
 
             gbc.gridy++;
             gbc.gridwidth = 1;

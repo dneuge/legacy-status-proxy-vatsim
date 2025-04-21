@@ -40,11 +40,11 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.energiequant.vatsim.compatibility.legacyproxy.AppConstants;
-import de.energiequant.vatsim.compatibility.legacyproxy.Main;
 import de.energiequant.apputils.misc.attribution.CopyrightNotice;
 import de.energiequant.apputils.misc.attribution.License;
 import de.energiequant.apputils.misc.attribution.Project;
+import de.energiequant.vatsim.compatibility.legacyproxy.AppConstants;
+import de.energiequant.vatsim.compatibility.legacyproxy.Main;
 import de.energiequant.vatsim.compatibility.legacyproxy.attribution.VatSpyMetaData;
 
 public class AboutThisProgramPanel extends JPanel {
@@ -90,12 +90,15 @@ public class AboutThisProgramPanel extends JPanel {
         add(new JLabel("Version " + Main.getApplicationVersion()), gbc);
 
         gbc.gridy++;
-        add(new JLabel(
-            "Includes VAT-Spy data from "
-                + VatSpyMetaData.getIncludedDataTimestamp()
-                                .map(UTC_HUMAN_READABLE_DATE_FORMATTER::format)
-                                .orElse("unknown date")
-        ), gbc);
+        add(
+            new JLabel(
+                "Includes VAT-Spy data from "
+                    + VatSpyMetaData.getIncludedDataTimestamp()
+                                    .map(UTC_HUMAN_READABLE_DATE_FORMATTER::format)
+                                    .orElse("unknown date")
+            ),
+            gbc
+        );
 
         gbc.gridy++;
         add(applicationUrlLabel, gbc);
@@ -254,21 +257,27 @@ public class AboutThisProgramPanel extends JPanel {
 
         styleAsLink(label);
 
-        addClickListener(label, () -> {
-            try {
-                Desktop.getDesktop().browse(uri);
-            } catch (IOException ex) {
-                LOGGER.warn("Failed to open {}", uri, ex);
+        addClickListener(
+            label,
+            () -> {
+                try {
+                    Desktop.getDesktop().browse(uri);
+                } catch (IOException ex) {
+                    LOGGER.warn("Failed to open {}", uri, ex);
+                }
             }
-        });
+        );
     }
 
     private void linkLicense(JLabel label, License license) {
         styleAsLink(label);
 
-        addClickListener(label, () -> {
-            licenseClickedCallback.accept(license);
-        });
+        addClickListener(
+            label,
+            () -> {
+                licenseClickedCallback.accept(license);
+            }
+        );
     }
 
     private void addClickListener(JLabel label, Runnable runnable) {

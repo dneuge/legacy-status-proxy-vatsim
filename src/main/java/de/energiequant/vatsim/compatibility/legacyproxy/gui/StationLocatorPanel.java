@@ -100,9 +100,12 @@ public class StationLocatorPanel extends JPanel {
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = BOTTOM_INSETS;
-        add(stylePlain(new JLabel(
-            "<html>All changes regarding Station Locator require a restart of the HTTP server to become effective (Run/Stop).</html>"
-        )), gbc);
+        add(
+            stylePlain(new JLabel(
+                "<html>All changes regarding Station Locator require a restart of the HTTP server to become effective (Run/Stop).</html>"
+            )),
+            gbc
+        );
 
         gbc.gridx = 0;
         gbc.gridy++;
@@ -143,9 +146,12 @@ public class StationLocatorPanel extends JPanel {
 
         gbc.gridy++;
         gbc.insets = CHECKBOX_WIDTH_INSETS;
-        add(stylePlain(new JLabel(
-            "If disabled, only the client's indicated permission level will be taken into account."
-        )), gbc);
+        add(
+            stylePlain(new JLabel(
+                "If disabled, only the client's indicated permission level will be taken into account."
+            )),
+            gbc
+        );
 
         gbc.gridy++;
         gbc.insets = NO_INSETS;
@@ -310,20 +316,26 @@ public class StationLocatorPanel extends JPanel {
             gbc.weightx = 1.0;
             gbc.fill = GridBagConstraints.HORIZONTAL;
             gbc.insets = BOTTOM_INSETS;
-            add(stylePlain(new JLabel(
-                "Integrated database is from "
-                    + includedDate.map(UTC_HUMAN_READABLE_DATE_FORMATTER::format)
-                                  .orElse("unknown date")
-            )), gbc);
+            add(
+                stylePlain(new JLabel(
+                    "Integrated database is from "
+                        + includedDate.map(UTC_HUMAN_READABLE_DATE_FORMATTER::format)
+                                      .orElse("unknown date")
+                )),
+                gbc
+            );
 
             gbc.gridy++;
-            add(stylePlain(new JLabel(
-                "<html>Updated data may be available from https://github.com/vatsimnetwork/vatspy-data-project "
-                    + "even if no update for this program is available. "
-                    + "VAT-Spy databases installed by other programs can be used as well. Updates to an external "
-                    + "database require a restart of the HTTP server (Run/Stop) to become effective."
-                    + "</html>"
-            )), gbc);
+            add(
+                stylePlain(new JLabel(
+                    "<html>Updated data may be available from https://github.com/vatsimnetwork/vatspy-data-project "
+                        + "even if no update for this program is available. "
+                        + "VAT-Spy databases installed by other programs can be used as well. Updates to an external "
+                        + "database require a restart of the HTTP server (Run/Stop) to become effective."
+                        + "</html>"
+                )),
+                gbc
+            );
 
             gbc.gridy++;
             add(warnOnOldDataCheckBox, gbc);
@@ -369,9 +381,12 @@ public class StationLocatorPanel extends JPanel {
 
             gbc.gridy++;
             gbc.insets = CHECKBOX_WIDTH_INSETS;
-            add(stylePlain(new JLabel(
-                "If disabled, observers can only be located via transceivers."
-            )), gbc);
+            add(
+                stylePlain(new JLabel(
+                    "If disabled, observers can only be located via transceivers."
+                )),
+                gbc
+            );
 
             updateAllOptions();
         }
@@ -565,10 +580,13 @@ public class StationLocatorPanel extends JPanel {
 
             gbc.gridy++;
             gbc.insets = CHECKBOX_WIDTH_INSETS;
-            add(stylePlain(new JLabel(
-                "<html>Observer positions are usually irrelevant and can be left blank. "
-                    + "Activate only if needed as this will cause otherwise unnecessary data polls.<html>"
-            )), gbc);
+            add(
+                stylePlain(new JLabel(
+                    "<html>Observer positions are usually irrelevant and can be left blank. "
+                        + "Activate only if needed as this will cause otherwise unnecessary data polls.<html>"
+                )),
+                gbc
+            );
 
             gbc.gridy++;
             gbc.insets = NO_INSETS;

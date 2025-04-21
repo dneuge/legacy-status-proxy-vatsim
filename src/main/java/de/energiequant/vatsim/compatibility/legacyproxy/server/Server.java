@@ -216,37 +216,41 @@ public class Server {
             .addFilterFirst("ipFilter", ipFilter)
             .setCanonicalHostName(localHostname)
             .setConnectionReuseStrategy(NEVER_REUSE_CONNECTIONS)
-            .register(ServiceEndpoints.DATA_FILE_LEGACY,
-                      new JsonToLegacyDataFileProxy(
-                          new DataFileParserFactory().createDataFileParser(AppConstants.UPSTREAM_DATA_FILE_FORMAT),
-                          onlineTransceiversFileFetcher,
-                          () -> {
-                              Set<URL> combined = new HashSet<>();
-                              combined.addAll(
-                                  jsonNetworkInformationFetcher.getLastFetchedNetworkInformation()
-                                                               .map(x -> x.getDataUrls(AppConstants.UPSTREAM_DATA_FILE_FORMAT))
-                                                               .orElse(new ArrayList<>())
-                              );
-                              combined.addAll(
-                                  legacyNetworkInformationFetcher.getLastFetchedNetworkInformation()
-                                                                 .map(x -> x.getDataUrls(AppConstants.UPSTREAM_DATA_FILE_FORMAT))
-                                                                 .orElse(new ArrayList<>())
-                              );
+            .register(
+                ServiceEndpoints.DATA_FILE_LEGACY,
+                new JsonToLegacyDataFileProxy(
+                    new DataFileParserFactory().createDataFileParser(AppConstants.UPSTREAM_DATA_FILE_FORMAT),
+                    onlineTransceiversFileFetcher,
+                    () -> {
+                        Set<URL> combined = new HashSet<>();
+                        combined.addAll(
+                            jsonNetworkInformationFetcher.getLastFetchedNetworkInformation()
+                                                         .map(x -> x.getDataUrls(AppConstants.UPSTREAM_DATA_FILE_FORMAT))
+                                                         .orElse(new ArrayList<>())
+                        );
+                        combined.addAll(
+                            legacyNetworkInformationFetcher.getLastFetchedNetworkInformation()
+                                                           .map(x -> x.getDataUrls(AppConstants.UPSTREAM_DATA_FILE_FORMAT))
+                                                           .orElse(new ArrayList<>())
+                        );
 
-                              if (combined.isEmpty()) {
-                                  return null;
-                              }
+                        if (combined.isEmpty()) {
+                            return null;
+                        }
 
-                              return pickRandomItem(combined).toString();
-                          },
-                          this::setAuthoritativeMinimumDataUpdateInterval
-                      )
+                        return pickRandomItem(combined).toString();
+                    },
+                    this::setAuthoritativeMinimumDataUpdateInterval
+                )
             )
-            .register(ServiceEndpoints.NETWORK_INFORMATION_JSON, new DirectProxy(
-                upstreamBaseUrl + ServiceEndpoints.NETWORK_INFORMATION_JSON,
-                StandardCharsets.UTF_8,
-                ContentType.APPLICATION_JSON
-            ))
+            .register(
+                ServiceEndpoints.NETWORK_INFORMATION_JSON,
+                new DirectProxy(
+                    upstreamBaseUrl + ServiceEndpoints.NETWORK_INFORMATION_JSON,
+                    StandardCharsets.UTF_8,
+                    ContentType.APPLICATION_JSON
+                )
+            )
             .register(ServiceEndpoints.NETWORK_INFORMATION_LEGACY, legacyNetworkInformationRequestHandler)
             .register("/", legacyNetworkInformationRequestHandler)
             .register("*", new SimpleErrorResponse(HttpStatus.SC_NOT_FOUND, "not found"))
