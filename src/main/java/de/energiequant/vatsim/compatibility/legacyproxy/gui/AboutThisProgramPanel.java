@@ -40,11 +40,12 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.energiequant.apputils.misc.attribution.CopyrightNotice;
+import de.energiequant.apputils.misc.attribution.CopyrightNoticeProvider;
 import de.energiequant.apputils.misc.attribution.License;
 import de.energiequant.apputils.misc.attribution.Project;
 import de.energiequant.vatsim.compatibility.legacyproxy.AppConstants;
 import de.energiequant.vatsim.compatibility.legacyproxy.Main;
+import de.energiequant.vatsim.compatibility.legacyproxy.attribution.CopyrightNotice;
 import de.energiequant.vatsim.compatibility.legacyproxy.attribution.VatSpyMetaData;
 
 public class AboutThisProgramPanel extends JPanel {
@@ -62,6 +63,7 @@ public class AboutThisProgramPanel extends JPanel {
     public AboutThisProgramPanel(Collection<Project> dependencies, Consumer<License> licenseClickedCallback) {
         super();
 
+        this.copyrightNoticeProvider = new CopyrightNotice();
         this.licenseClickedCallback = licenseClickedCallback;
 
         String applicationUrl = Main.getApplicationUrl();
@@ -206,7 +208,7 @@ public class AboutThisProgramPanel extends JPanel {
         }
 
         private String getHtmlCopyrightNotice(Project project) {
-            return StringEscapeUtils.escapeHtml4(CopyrightNotice.getNotice(project))
+            return StringEscapeUtils.escapeHtml4(copyrightNoticeProvider.getNotice(project))
                                     .replaceAll("\n", "<br/>");
         }
     }

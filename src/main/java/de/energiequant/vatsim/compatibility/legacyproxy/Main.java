@@ -33,9 +33,10 @@ import org.slf4j.LoggerFactory;
 
 import de.energiequant.apputils.misc.ResourceUtils;
 import de.energiequant.apputils.misc.attribution.AttributionParser;
-import de.energiequant.apputils.misc.attribution.CopyrightNotice;
+import de.energiequant.apputils.misc.attribution.CopyrightNoticeProvider;
 import de.energiequant.apputils.misc.attribution.License;
 import de.energiequant.apputils.misc.attribution.Project;
+import de.energiequant.vatsim.compatibility.legacyproxy.attribution.CopyrightNotice;
 import de.energiequant.vatsim.compatibility.legacyproxy.attribution.VatSpyMetaData;
 import de.energiequant.vatsim.compatibility.legacyproxy.gui.MainWindow;
 import de.energiequant.vatsim.compatibility.legacyproxy.logging.BufferAppender;
@@ -45,6 +46,8 @@ import de.energiequant.vatsim.compatibility.legacyproxy.server.Server.State;
 public class Main {
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
     private static final Collection<Project> DEPENDENCIES = AttributionParser.getProjects(Main.class);
+
+    private static final CopyrightNoticeProvider COPYRIGHT_NOTICE_PROVIDER = new CopyrightNotice();
 
     private static final String DISCLAIMER = ResourceUtils
         .getRelativeResourceContentAsString(Main.class, "disclaimer.txt", StandardCharsets.UTF_8)
@@ -223,7 +226,7 @@ public class Main {
         System.out.println(sb.toString());
 
         System.out.println();
-        System.out.println(indent("    ", CopyrightNotice.getNotice(project)));
+        System.out.println(indent("    ", COPYRIGHT_NOTICE_PROVIDER.getNotice(project)));
         System.out.println();
     }
 
