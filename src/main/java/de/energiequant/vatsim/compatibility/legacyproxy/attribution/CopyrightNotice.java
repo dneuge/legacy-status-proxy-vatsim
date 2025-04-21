@@ -133,6 +133,9 @@ public class CopyrightNotice implements CopyrightNoticeProvider {
         add("org.vatplanner.commons", "vatplanner-commons-base", "1.0",
             "Copyright (c) 2021-2025 Daniel Neugebauer"
         );
+        add("de.energiequant.common", "app-utils-misc", "0.1-SNAPSHOT",
+            "Copyright (c) 2021-2025 Daniel Neugebauer"
+        );
         add("de.energiequant.common", "webdataretrieval", "0.2.6",
             "Copyright (c) 2016-2021 Daniel Neugebauer"
         );
