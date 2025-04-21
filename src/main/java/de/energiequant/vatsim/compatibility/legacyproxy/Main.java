@@ -30,12 +30,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.energiequant.apputils.misc.ApplicationInfo;
+import de.energiequant.apputils.misc.DisclaimerState;
 import de.energiequant.apputils.misc.ResourceUtils;
 import de.energiequant.apputils.misc.attribution.AttributionParser;
 import de.energiequant.apputils.misc.attribution.CopyrightNoticeProvider;
 import de.energiequant.apputils.misc.attribution.License;
 import de.energiequant.apputils.misc.attribution.Project;
-import de.energiequant.vatsim.compatibility.legacyproxy.attribution.CommandLineAbout;
+import de.energiequant.apputils.misc.cli.CommandLineAbout;
 import de.energiequant.vatsim.compatibility.legacyproxy.attribution.CopyrightNotice;
 import de.energiequant.vatsim.compatibility.legacyproxy.attribution.VatSpyMetaData;
 import de.energiequant.vatsim.compatibility.legacyproxy.gui.MainWindow;

@@ -23,6 +23,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.energiequant.apputils.misc.DisclaimerState;
 import de.energiequant.vatsim.compatibility.legacyproxy.server.IPFilter;
 import de.energiequant.vatsim.compatibility.legacyproxy.server.stationlocator.StationLocator.Strategy;
 
