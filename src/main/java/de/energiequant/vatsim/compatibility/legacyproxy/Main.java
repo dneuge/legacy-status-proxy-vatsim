@@ -14,12 +14,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -29,7 +26,6 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,6 +35,7 @@ import de.energiequant.apputils.misc.attribution.AttributionParser;
 import de.energiequant.apputils.misc.attribution.CopyrightNoticeProvider;
 import de.energiequant.apputils.misc.attribution.License;
 import de.energiequant.apputils.misc.attribution.Project;
+import de.energiequant.vatsim.compatibility.legacyproxy.attribution.CommandLineAbout;
 import de.energiequant.vatsim.compatibility.legacyproxy.attribution.CopyrightNotice;
 import de.energiequant.vatsim.compatibility.legacyproxy.attribution.VatSpyMetaData;
 import de.energiequant.vatsim.compatibility.legacyproxy.gui.MainWindow;
@@ -155,29 +152,15 @@ public class Main {
             System.exit(0);
         }
 
+        CommandLineAbout about = new CommandLineAbout(System.out, APP_INFO, "--" + OPTION_NAME_SHOW_LICENSE);
         if (parameters.hasOption(OPTION_NAME_VERSION)) {
-            printVersion();
+            about.printVersion();
             System.exit(0);
         }
 
         if (parameters.hasOption(OPTION_NAME_SHOW_LICENSE)) {
             String licenseName = parameters.getOptionValue(OPTION_NAME_SHOW_LICENSE);
-            License license = null;
-            try {
-                license = License.valueOf(licenseName);
-            } catch (Exception ex) {
-                // ignore
-            }
-
-            if (license == null) {
-                System.err.println("License " + licenseName + " not found");
-                System.err.println();
-                System.err.println("Available: " + sortedLicenseKeys().collect(Collectors.joining(", ")));
-                System.exit(1);
-            }
-
-            printLicense(license);
-            System.exit(0);
+            about.printLicenseAndQuit(licenseName);
         }
 
         boolean shouldRunHeadless = GraphicsEnvironment.isHeadless() || parameters.hasOption(OPTION_NAME_NO_GUI);
@@ -191,7 +174,7 @@ public class Main {
 
         if (parameters.hasOption(OPTION_NAME_SHOW_DISCLAIMER)
             || (!disclaimerState.isAccepted() && shouldRunHeadless)) {
-            printDisclaimer();
+            about.printDisclaimer();
             System.exit(1);
         }
 
@@ -229,79 +212,6 @@ public class Main {
                 System.exit(0);
             });
         }
-    }
-
-    private static void printLicense(License license) {
-        String html = license.getText();
-
-        // TODO: deprecation warning is a false-positive in Eclipse?
-        @SuppressWarnings("deprecation")
-        String text = StringEscapeUtils.unescapeHtml4(html.replaceAll("<[^>]*?>", ""));
-
-        System.out.println(text);
-    }
-
-    private static void printVersion() {
-        System.out.println(APPLICATION_NAME);
-        System.out.println("version " + APPLICATION_VERSION);
-        System.out.println("includes VAT-Spy data from "
-                               + VatSpyMetaData.getIncludedDataTimestamp()
-                                               .map(UTC_HUMAN_READABLE_DATE_FORMATTER::format)
-                                               .orElse("unknown date")
-        );
-        System.out.println(APPLICATION_URL);
-        License license = APP_INFO.getEffectiveLicense();
-        System.out.println("released under " + license.getCanonicalName() + " [" + license.name() + "]");
-        System.out.println(APPLICATION_COPYRIGHT);
-        System.out.println();
-        System.out.println(AppConstants.DEPENDENCIES_CAPTION);
-        APP_INFO.getDependencies().stream().sorted(Comparator.comparing(Project::getName)).forEachOrdered(Main::printDependency);
-        System.out.println();
-        System.out.println("Generic copies of all involved software licenses are included with this program.");
-        System.out.println(
-            "To view a license run with --" + OPTION_NAME_SHOW_LICENSE + " <"
-                + sortedLicenseKeys().collect(Collectors.joining("|")) + ">");
-        System.out.println("The corresponding license IDs are shown in brackets [ ] above.");
-    }
-
-    private static void printDependency(Project project) {
-        System.out.println();
-        System.out.println(project.getName() + " (version " + project.getVersion() + ")");
-        project.getUrl().ifPresent(System.out::println);
-
-        StringBuilder sb = new StringBuilder();
-        sb.append(AppConstants.PROJECT_DEPENDENCY_LICENSE_INTRO);
-        List<License> licenses = project.getLicenses()
-                                        .stream()
-                                        .sorted(Comparator.comparing(License::getCanonicalName))
-                                        .collect(Collectors.toList());
-        boolean isFirst = true;
-        for (License license : licenses) {
-            if (!isFirst) {
-                sb.append(" & ");
-            } else {
-                isFirst = false;
-            }
-            sb.append(license.getCanonicalName());
-            sb.append(" [");
-            sb.append(license.name());
-            sb.append("]");
-        }
-        System.out.println(sb.toString());
-
-        System.out.println();
-        System.out.println(indent("    ", COPYRIGHT_NOTICE_PROVIDER.getNotice(project)));
-        System.out.println();
-    }
-
-    private static String indent(String prefix, String s) {
-        Pattern pattern = Pattern.compile("^", Pattern.MULTILINE);
-        Matcher matcher = pattern.matcher(s);
-        return matcher.replaceAll(prefix);
-    }
-
-    private static void printDisclaimer() {
-        System.out.println(DISCLAIMER);
     }
 
     private static Stream<String> sortedLicenseKeys() {
