@@ -4,41 +4,23 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.EnumMap;
 import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import javax.swing.JButton;
-import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JScrollPane;
 import javax.swing.JToggleButton;
 import javax.swing.WindowConstants;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Element;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.html.HTML;
-import javax.swing.text.html.HTMLDocument;
 
-import org.apache.commons.lang3.StringEscapeUtils;
-import org.apache.logging.log4j.Level;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.energiequant.apputils.misc.ResourceUtils;
 import de.energiequant.apputils.misc.gui.AboutWindow;
 import de.energiequant.apputils.misc.gui.SwingHelper;
-import de.energiequant.apputils.misc.logging.BufferAppender;
-import de.energiequant.apputils.misc.logging.BufferAppender.FormattedEvent;
 import de.energiequant.vatsim.compatibility.legacyproxy.Configuration;
 import de.energiequant.vatsim.compatibility.legacyproxy.Main;
 import de.energiequant.vatsim.compatibility.legacyproxy.server.Server;
@@ -47,8 +29,7 @@ import de.energiequant.vatsim.compatibility.legacyproxy.server.Server.State;
 public class MainWindow extends JFrame {
     private static final Logger LOGGER = LoggerFactory.getLogger(MainWindow.class);
 
-    private final JEditorPane logOutput;
-    private final JScrollPane logScrollPane;
+    private final ScrollableLogOutputPaneWrapper log;
     private final JToggleButton runStopButton;
     private final JLabel statusLabel = SwingHelper.stylePlain(new JLabel());
 
@@ -64,17 +45,7 @@ public class MainWindow extends JFrame {
     private final AboutWindow aboutWindow;
     private final ConfigurationWindow configurationWindow = new ConfigurationWindow();
 
-    private static final Map<Level, String> LOG_STYLES_BY_LEVEL = new HashMap<Level, String>();
-
-    // TODO: split to log component
-
     static {
-        LOG_STYLES_BY_LEVEL.put(Level.TRACE, styleForColor("#1E8449"));
-        LOG_STYLES_BY_LEVEL.put(Level.DEBUG, styleForColor("#D4AC0D"));
-        LOG_STYLES_BY_LEVEL.put(Level.WARN, styleForColor("#A93226"));
-        LOG_STYLES_BY_LEVEL.put(Level.ERROR, styleForColor("#B03A2E"));
-        LOG_STYLES_BY_LEVEL.put(Level.FATAL, styleForColor("#B03A2E"));
-
         MESSAGE_BY_SERVER_STATE.put(
             Server.State.INITIAL,
             "Server has not been started yet."
@@ -97,10 +68,6 @@ public class MainWindow extends JFrame {
         );
     }
 
-    private static String styleForColor(String color) {
-        return "style='color:" + color + "' ";
-    }
-
     public MainWindow(Runnable onCloseCallback) {
         super("Legacy Status Proxy for VATSIM");
 
@@ -121,20 +88,13 @@ public class MainWindow extends JFrame {
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
 
-        logOutput = new JEditorPane();
-        logOutput.setEditable(false);
-        logOutput.setContentType("text/html");
-        logOutput.setText(getDefaultHtml());
-
-        logScrollPane = new JScrollPane(logOutput);
-
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 4;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        add(logScrollPane, gbc);
+        log = new ScrollableLogOutputPaneWrapper(this::add, gbc);
 
         gbc.gridy++;
         gbc.weighty = 0.0;
@@ -166,26 +126,16 @@ public class MainWindow extends JFrame {
         quitButton.addActionListener(this::onQuitClicked);
         add(quitButton, gbc);
 
-        appendLogOutput();
+        log.appendLogOutput();
 
         setVisible(true);
 
-        Thread logUpdateThread = new Thread(() -> {
-            while (true) {
-                appendLogOutput();
-                try {
-                    Thread.sleep(200);
-                } catch (InterruptedException ex) {
-                    return;
-                }
-            }
-        });
-        logUpdateThread.start();
+        log.startAutoUpdate();
 
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                logUpdateThread.interrupt();
+                log.stopAutoUpdate();
                 onCloseCallback.run();
             }
         });
@@ -222,104 +172,6 @@ public class MainWindow extends JFrame {
         State serverState = Main.getServer().getState();
         runStopButton.setSelected(RUN_STOP_BUTTON_SELECTED_STATES.contains(serverState));
         runStopButton.setEnabled(RUN_STOP_BUTTON_ENABLED_STATES.contains(serverState));
-    }
-
-    private String getDefaultHtml() {
-        return ResourceUtils.getRelativeResourceContentAsString(getClass(), "LogOutput.html", StandardCharsets.UTF_8)
-                            .orElseThrow(() -> new RuntimeException("missing log output template"));
-    }
-
-    private void appendLogOutput() {
-        StringBuilder sb = new StringBuilder();
-
-        for (BufferAppender appender : BufferAppender.getInstances()) {
-            List<FormattedEvent> events = appender.getFormattedEventsAndClear();
-            for (FormattedEvent event : events) {
-                sb.append("<li ");
-                sb.append(LOG_STYLES_BY_LEVEL.getOrDefault(event.getLevel(), ""));
-                sb.append(">");
-                appendTextAsEditorHtml(sb, event.getMessage());
-                sb.append("</li>");
-            }
-        }
-
-        if (sb.length() == 0) {
-            return;
-        }
-
-        HTMLDocument document = (HTMLDocument) logOutput.getDocument();
-        Element listElement = document.getElement(document.getDefaultRootElement(), StyleConstants.NameAttribute,
-                                                  HTML.Tag.UL
-        );
-
-        try {
-            document.insertBeforeEnd(listElement, sb.toString());
-        } catch (BadLocationException | IOException ex) {
-            ex.printStackTrace();
-        }
-
-        logOutput.invalidate();
-        logScrollPane.invalidate();
-        EventQueue.invokeLater(this::scrollToEndOfLog);
-    }
-
-    /**
-     * Sanitizes and transforms the specified string so that it can be properly used on a {@link JEditorPane}.
-     * The output is directly appended to the given {@link StringBuilder}.
-     * <p>
-     * The following shortcomings of {@link JEditorPane} are being worked around by this method:
-     * </p>
-     * <ul>
-     * <li>tabs ({@code \t}) at the beginning of a line are expanded to 4 non-breaking spaces ({@code &nbsp;});
-     * otherwise they would just be rendered as a single white-space</li>
-     * <li>multi-line strings need to be wrapped as paragraphs ({@code <p>...</p>}); line-breaks ({@code <br/>}) only
-     * work for rendering but get lost when copying to clipboard, while paragraphs are only treated like line-breaks
-     * both during rendering and for the clipboard</li>
-     * </ul>
-     *
-     * @param sb where to append the transformed content to
-     * @param s  the input to be transformed
-     */
-    private void appendTextAsEditorHtml(StringBuilder sb, String s) {
-        s = sanitizeHtml(s);
-
-        if (s.isEmpty()) {
-            return;
-        }
-
-        String[] lines = s.split("\n");
-
-        boolean multipleLines = lines.length > 1;
-        for (int i = 0; i < lines.length; i++) {
-            if (multipleLines) {
-                if (i > 0) {
-                    sb.append("</p>");
-                }
-                sb.append("<p>");
-            }
-
-            if (lines[i].startsWith("\t")) {
-                sb.append("&nbsp;&nbsp;&nbsp;&nbsp;");
-                if (lines[i].length() > 1) {
-                    sb.append(lines[i], 1, lines[i].length() - 1);
-                }
-            } else {
-                sb.append(lines[i]);
-            }
-        }
-
-        if (multipleLines) {
-            sb.append("</p>");
-        }
-    }
-
-    private String sanitizeHtml(String message) {
-        // TODO: deprecation warning is a false-positive in Eclipse?
-        return StringEscapeUtils.escapeHtml4(message);
-    }
-
-    private void scrollToEndOfLog() {
-        logScrollPane.getViewport().scrollRectToVisible(new Rectangle(0, logOutput.getHeight() - 1, 1, 1));
     }
 
     private void onRunStopClicked(ActionEvent event) {
