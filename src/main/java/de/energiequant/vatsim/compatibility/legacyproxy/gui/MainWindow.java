@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.energiequant.apputils.misc.gui.AboutWindow;
+import de.energiequant.apputils.misc.gui.ScrollableLogOutputPaneWrapper;
 import de.energiequant.apputils.misc.gui.SwingHelper;
 import de.energiequant.vatsim.compatibility.legacyproxy.Configuration;
 import de.energiequant.vatsim.compatibility.legacyproxy.Main;
