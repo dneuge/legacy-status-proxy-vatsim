@@ -1,8 +1,8 @@
 package de.energiequant.vatsim.compatibility.legacyproxy.gui;
 
-import static de.energiequant.vatsim.compatibility.legacyproxy.gui.SwingHelper.styleBold;
-import static de.energiequant.vatsim.compatibility.legacyproxy.gui.SwingHelper.styleMonospaced;
-import static de.energiequant.vatsim.compatibility.legacyproxy.gui.SwingHelper.stylePlain;
+import static de.energiequant.apputils.misc.gui.SwingHelper.styleBold;
+import static de.energiequant.apputils.misc.gui.SwingHelper.styleMonospaced;
+import static de.energiequant.apputils.misc.gui.SwingHelper.stylePlain;
 
 import java.awt.Color;
 import java.awt.Cursor;
@@ -42,9 +42,9 @@ import org.slf4j.LoggerFactory;
 
 import de.energiequant.vatsim.compatibility.legacyproxy.AppConstants;
 import de.energiequant.vatsim.compatibility.legacyproxy.Main;
-import de.energiequant.vatsim.compatibility.legacyproxy.attribution.CopyrightNotice;
-import de.energiequant.vatsim.compatibility.legacyproxy.attribution.License;
-import de.energiequant.vatsim.compatibility.legacyproxy.attribution.Project;
+import de.energiequant.apputils.misc.attribution.CopyrightNotice;
+import de.energiequant.apputils.misc.attribution.License;
+import de.energiequant.apputils.misc.attribution.Project;
 import de.energiequant.vatsim.compatibility.legacyproxy.attribution.VatSpyMetaData;
 
 public class AboutThisProgramPanel extends JPanel {

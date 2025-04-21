@@ -1,7 +1,7 @@
 package de.energiequant.vatsim.compatibility.legacyproxy;
 
-import static de.energiequant.vatsim.compatibility.legacyproxy.utils.ArgumentChecks.requireAtLeast;
-import static de.energiequant.vatsim.compatibility.legacyproxy.utils.ArgumentChecks.requireData;
+import static de.energiequant.apputils.misc.ArgumentChecks.requireAtLeast;
+import static de.energiequant.apputils.misc.ArgumentChecks.requireData;
 
 import java.io.File;
 import java.io.FileInputStream;

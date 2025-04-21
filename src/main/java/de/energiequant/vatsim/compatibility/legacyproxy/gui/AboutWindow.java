@@ -9,8 +9,8 @@ import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
 
 import de.energiequant.vatsim.compatibility.legacyproxy.Main;
-import de.energiequant.vatsim.compatibility.legacyproxy.attribution.License;
-import de.energiequant.vatsim.compatibility.legacyproxy.attribution.Project;
+import de.energiequant.apputils.misc.attribution.License;
+import de.energiequant.apputils.misc.attribution.Project;
 
 public class AboutWindow extends JFrame {
     private final JTabbedPane tabbedPane;

@@ -20,6 +20,7 @@
         <finalName>legacy-status-proxy-vatsim</finalName>
 
         <!-- runtime dependencies -->
+        <appUtilsMisc.version>0.1-SNAPSHOT</appUtilsMisc.version>
         <vatplanner.commons.version>1.0</vatplanner.commons.version>
         <vatplanner.dataformatsVatsimPublic.version>0.1</vatplanner.dataformatsVatsimPublic.version>
         <webDataRetrieval.version>0.2.6</webDataRetrieval.version>
@@ -70,6 +71,12 @@
             <groupId>org.vatplanner.commons</groupId>
             <artifactId>vatplanner-commons-base</artifactId>
             <version>${vatplanner.commons.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>de.energiequant.common</groupId>
+            <artifactId>app-utils-misc</artifactId>
+            <version>${appUtilsMisc.version}</version>
         </dependency>
 
         <dependency>

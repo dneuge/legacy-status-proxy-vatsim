@@ -5,6 +5,7 @@ This is the development-related documentation. For other information please refe
 The following projects do not have Maven artifacts nor an official POM file, so they need to be fetched, repackaged and installed locally as well:
 
 - [VAT-Spy Client Data](https://github.com/vatsimnetwork/vatspy-data-project) at revision `a88517cece1e81cd1d18552e7c630e47ddd7739e`
+- [Miscellaneous Application Utilities for Java](https://github.com/dneuge/app-utils-misc-java)
 
 Automated checkout, build and installation can be performed on Linux systems by running [install-unpublished-dependencies.sh](../install-unpublished-dependencies.sh).
 

@@ -1,6 +1,6 @@
 package de.energiequant.vatsim.compatibility.legacyproxy.gui;
 
-import static de.energiequant.vatsim.compatibility.legacyproxy.gui.SwingHelper.onChange;
+import static de.energiequant.apputils.misc.gui.SwingHelper.onChange;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;

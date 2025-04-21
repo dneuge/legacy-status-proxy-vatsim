@@ -34,12 +34,13 @@ import org.apache.logging.log4j.Level;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.energiequant.apputils.misc.ResourceUtils;
+import de.energiequant.apputils.misc.gui.SwingHelper;
 import de.energiequant.vatsim.compatibility.legacyproxy.Main;
 import de.energiequant.vatsim.compatibility.legacyproxy.logging.BufferAppender;
 import de.energiequant.vatsim.compatibility.legacyproxy.logging.BufferAppender.FormattedEvent;
 import de.energiequant.vatsim.compatibility.legacyproxy.server.Server;
 import de.energiequant.vatsim.compatibility.legacyproxy.server.Server.State;
-import de.energiequant.vatsim.compatibility.legacyproxy.utils.ResourceUtils;
 
 public class MainWindow extends JFrame {
     private static final Logger LOGGER = LoggerFactory.getLogger(MainWindow.class);

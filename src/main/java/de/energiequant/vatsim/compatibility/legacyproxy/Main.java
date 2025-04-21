@@ -31,16 +31,16 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.energiequant.vatsim.compatibility.legacyproxy.attribution.AttributionParser;
-import de.energiequant.vatsim.compatibility.legacyproxy.attribution.CopyrightNotice;
-import de.energiequant.vatsim.compatibility.legacyproxy.attribution.License;
-import de.energiequant.vatsim.compatibility.legacyproxy.attribution.Project;
+import de.energiequant.apputils.misc.ResourceUtils;
+import de.energiequant.apputils.misc.attribution.AttributionParser;
+import de.energiequant.apputils.misc.attribution.CopyrightNotice;
+import de.energiequant.apputils.misc.attribution.License;
+import de.energiequant.apputils.misc.attribution.Project;
 import de.energiequant.vatsim.compatibility.legacyproxy.attribution.VatSpyMetaData;
 import de.energiequant.vatsim.compatibility.legacyproxy.gui.MainWindow;
 import de.energiequant.vatsim.compatibility.legacyproxy.logging.BufferAppender;
 import de.energiequant.vatsim.compatibility.legacyproxy.server.Server;
 import de.energiequant.vatsim.compatibility.legacyproxy.server.Server.State;
-import de.energiequant.vatsim.compatibility.legacyproxy.utils.ResourceUtils;
 
 public class Main {
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);

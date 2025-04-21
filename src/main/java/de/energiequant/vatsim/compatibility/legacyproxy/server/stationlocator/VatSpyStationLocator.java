@@ -31,12 +31,12 @@ import org.vatplanner.dataformats.vatsimpublic.parser.vatspy.UpperInformationReg
 import org.vatplanner.dataformats.vatsimpublic.parser.vatspy.VatSpyFile;
 import org.vatplanner.dataformats.vatsimpublic.parser.vatspy.VatSpyFileParser;
 
+import de.energiequant.apputils.misc.ResourceUtils;
 import de.energiequant.vatsim.compatibility.legacyproxy.AppConstants;
 import de.energiequant.vatsim.compatibility.legacyproxy.Configuration;
 import de.energiequant.vatsim.compatibility.legacyproxy.Main;
 import de.energiequant.vatsim.compatibility.legacyproxy.attribution.VatSpyMetaData;
 import de.energiequant.vatsim.compatibility.legacyproxy.utils.CallsignHelper;
-import de.energiequant.vatsim.compatibility.legacyproxy.utils.ResourceUtils;
 
 public class VatSpyStationLocator {
     private static final Logger LOGGER = LoggerFactory.getLogger(VatSpyStationLocator.class);

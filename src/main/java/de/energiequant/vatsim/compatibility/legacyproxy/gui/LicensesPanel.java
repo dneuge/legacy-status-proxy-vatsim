@@ -17,7 +17,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import de.energiequant.vatsim.compatibility.legacyproxy.Main;
-import de.energiequant.vatsim.compatibility.legacyproxy.attribution.License;
+import de.energiequant.apputils.misc.attribution.License;
 
 public class LicensesPanel extends JPanel {
     // TODO: insets

@@ -4,10 +4,10 @@ set -e
 
 vatspy_commit_hash='a88517cece1e81cd1d18552e7c630e47ddd7739e'
 
-repos=""
+repos="https://github.com/dneuge/app-utils-misc-java.git@master"
 # https://github.com/vatplanner/dataformats-vatsim-public.git@v0.1-pre210402
 # https://github.com/dneuge/web-data-retrieval.git@v0.2
-    
+
 basedir=$(realpath `dirname "$0"`)
 
 for repo in ${repos}; do

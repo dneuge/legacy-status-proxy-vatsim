@@ -1,9 +1,9 @@
 package de.energiequant.vatsim.compatibility.legacyproxy.gui;
 
-import static de.energiequant.vatsim.compatibility.legacyproxy.gui.SwingHelper.onChange;
-import static de.energiequant.vatsim.compatibility.legacyproxy.gui.SwingHelper.onSelect;
-import static de.energiequant.vatsim.compatibility.legacyproxy.gui.SwingHelper.stylePlain;
-import static de.energiequant.vatsim.compatibility.legacyproxy.gui.SwingHelper.sumInsets;
+import static de.energiequant.apputils.misc.gui.SwingHelper.onChange;
+import static de.energiequant.apputils.misc.gui.SwingHelper.onSelect;
+import static de.energiequant.apputils.misc.gui.SwingHelper.stylePlain;
+import static de.energiequant.apputils.misc.gui.SwingHelper.sumInsets;
 
 import java.awt.Component;
 import java.awt.GridBagConstraints;

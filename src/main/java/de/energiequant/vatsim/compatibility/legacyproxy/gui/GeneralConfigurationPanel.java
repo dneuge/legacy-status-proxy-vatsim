@@ -1,8 +1,8 @@
 package de.energiequant.vatsim.compatibility.legacyproxy.gui;
 
-import static de.energiequant.vatsim.compatibility.legacyproxy.gui.SwingHelper.onChange;
-import static de.energiequant.vatsim.compatibility.legacyproxy.gui.SwingHelper.stylePlain;
-import static de.energiequant.vatsim.compatibility.legacyproxy.gui.SwingHelper.unformattedNumericSpinner;
+import static de.energiequant.apputils.misc.gui.SwingHelper.onChange;
+import static de.energiequant.apputils.misc.gui.SwingHelper.stylePlain;
+import static de.energiequant.apputils.misc.gui.SwingHelper.unformattedNumericSpinner;
 
 import java.awt.Font;
 import java.awt.GridBagConstraints;
