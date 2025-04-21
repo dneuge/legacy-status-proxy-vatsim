@@ -44,7 +44,7 @@ import de.energiequant.vatsim.compatibility.legacyproxy.server.Server.State;
 
 public class Main {
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
-    private static final Collection<Project> DEPENDENCIES = AttributionParser.getProjects();
+    private static final Collection<Project> DEPENDENCIES = AttributionParser.getProjects(Main.class);
 
     private static final String DISCLAIMER = ResourceUtils
         .getRelativeResourceContentAsString(Main.class, "disclaimer.txt", StandardCharsets.UTF_8)

@@ -190,7 +190,7 @@
                 </executions>
                 <configuration>
                     <outputFile>
-                        ${project.basedir}/${directory.generated.resources}/de/energiequant/vatsim/compatibility/legacyproxy/attribution/attribution.xml
+                        ${project.basedir}/${directory.generated.resources}/de/energiequant/vatsim/compatibility/legacyproxy/attribution.xml
                     </outputFile>
                     <forceRegeneration>true</forceRegeneration>
                 </configuration>
