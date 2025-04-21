@@ -19,12 +19,9 @@ import java.awt.font.TextAttribute;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -44,7 +41,6 @@ import de.energiequant.apputils.misc.attribution.CopyrightNoticeProvider;
 import de.energiequant.apputils.misc.attribution.License;
 import de.energiequant.apputils.misc.attribution.Project;
 import de.energiequant.vatsim.compatibility.legacyproxy.AppConstants;
-import de.energiequant.vatsim.compatibility.legacyproxy.attribution.VatSpyMetaData;
 
 public class AboutThisProgramPanel extends JPanel {
     private static final Logger LOGGER = LoggerFactory.getLogger(AboutThisProgramPanel.class);
@@ -54,10 +50,6 @@ public class AboutThisProgramPanel extends JPanel {
 
     private static final boolean CAN_BROWSE = Desktop.isDesktopSupported()
         && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE);
-
-    private static final DateTimeFormatter UTC_HUMAN_READABLE_DATE_FORMATTER = DateTimeFormatter
-        .ofPattern("d MMMM YYYY", Locale.US)
-        .withZone(ZoneId.of("UTC"));
 
     public AboutThisProgramPanel(ApplicationInfo appInfo, Consumer<License> licenseClickedCallback) {
         super();
@@ -91,16 +83,15 @@ public class AboutThisProgramPanel extends JPanel {
         gbc.gridy++;
         add(new JLabel("Version " + appInfo.getApplicationVersion()), gbc);
 
-        gbc.gridy++;
-        add(
-            new JLabel(
-                "Includes VAT-Spy data from "
-                    + VatSpyMetaData.getIncludedDataTimestamp()
-                                    .map(UTC_HUMAN_READABLE_DATE_FORMATTER::format)
-                                    .orElse("unknown date")
-            ),
-            gbc
-        );
+        for (String extraInfo : appInfo.getExtraInfo()) {
+            gbc.gridy++;
+            add(
+                new JLabel(
+                    extraInfo
+                ),
+                gbc
+            );
+        }
 
         gbc.gridy++;
         add(applicationUrlLabel, gbc);
