@@ -34,9 +34,9 @@ public class CopyrightNotice implements CopyrightNoticeProvider {
                 + "This product includes software developed at\n"
                 + "The Apache Software Foundation (https://www.apache.org/)."
         );
-        add("commons-codec", "commons-codec", "1.17.1",
+        add("commons-codec", "commons-codec", "1.18.0",
             "Apache Commons Codec\n"
-                + "Copyright 2002-2024 The Apache Software Foundation\n"
+                + "Copyright 2002-2025 The Apache Software Foundation\n"
                 + "\n"
                 + "This product includes software developed at\n"
                 + "The Apache Software Foundation (https://www.apache.org/)."
