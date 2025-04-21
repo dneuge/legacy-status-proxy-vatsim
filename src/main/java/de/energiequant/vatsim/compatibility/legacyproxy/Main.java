@@ -37,10 +37,10 @@ import de.energiequant.apputils.misc.attribution.CopyrightNoticeProvider;
 import de.energiequant.apputils.misc.attribution.License;
 import de.energiequant.apputils.misc.attribution.Project;
 import de.energiequant.apputils.misc.cli.CommandLineAbout;
+import de.energiequant.apputils.misc.logging.BufferAppender;
 import de.energiequant.vatsim.compatibility.legacyproxy.attribution.CopyrightNotice;
 import de.energiequant.vatsim.compatibility.legacyproxy.attribution.VatSpyMetaData;
 import de.energiequant.vatsim.compatibility.legacyproxy.gui.MainWindow;
-import de.energiequant.vatsim.compatibility.legacyproxy.logging.BufferAppender;
 import de.energiequant.vatsim.compatibility.legacyproxy.server.Server;
 import de.energiequant.vatsim.compatibility.legacyproxy.server.Server.State;
 

@@ -37,10 +37,10 @@ import org.slf4j.LoggerFactory;
 import de.energiequant.apputils.misc.ResourceUtils;
 import de.energiequant.apputils.misc.gui.AboutWindow;
 import de.energiequant.apputils.misc.gui.SwingHelper;
+import de.energiequant.apputils.misc.logging.BufferAppender;
+import de.energiequant.apputils.misc.logging.BufferAppender.FormattedEvent;
 import de.energiequant.vatsim.compatibility.legacyproxy.Configuration;
 import de.energiequant.vatsim.compatibility.legacyproxy.Main;
-import de.energiequant.vatsim.compatibility.legacyproxy.logging.BufferAppender;
-import de.energiequant.vatsim.compatibility.legacyproxy.logging.BufferAppender.FormattedEvent;
 import de.energiequant.vatsim.compatibility.legacyproxy.server.Server;
 import de.energiequant.vatsim.compatibility.legacyproxy.server.Server.State;
 
