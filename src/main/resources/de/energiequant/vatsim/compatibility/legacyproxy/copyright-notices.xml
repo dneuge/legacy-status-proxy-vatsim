@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<copyrightNotices>
+    <notice groupId="_inofficial.com.github.vatsimnetwork" artifactId="vatspy-data-project" version="a88517cece1e81cd1d18552e7c630e47ddd7739e">
+        <!-- based on README file
+             also needs to be incorporated to AppConstants.SERVER_VAT_SPY_INTERNAL_HEADER -->
+
+        Copyright (c) 2019-2024 Niels Voogd, Adrian Bjerke and contributors
+        VAT-Spy is being developed by Ross Carlson
+        Previous data project lead: Néstor Pérez
+
+        Please visit the linked website to view the full list of contributors.
+    </notice>
+    <notice groupId="com.github.cliftonlabs" artifactId="json-simple" version="4.0.1">
+        <!-- This is based on the Apache License file, release date and the homepage of
+             json-simple as there is no NOTICE file or similar. -->
+
+        Copyright 2016-2022 Clifton Labs
+
+        Davin Loegering designed and developed the 2.*, 3.*, 4.* versions.
+        Fang Yidong architected and developed the 1.* versions.
+        Chris Nokleberg contributed to the 1.* versions.
+        Dave Hughes contributed to the 1.* versions.
+        Chris (cbojar on github) provided fixes released in the 3.0.2 version.
+        Barry Lagerweij for the convenience put methods introduced in the 3.1.1 version.
+    </notice>
+    <notice groupId="commons-cli" artifactId="commons-cli" version="1.5.0">
+        Apache Commons CLI
+        Copyright 2002-2021 The Apache Software Foundation
+
+        This product includes software developed at
+        The Apache Software Foundation (https://www.apache.org/).
+    </notice>
+    <notice groupId="commons-codec" artifactId="commons-codec" version="1.18.0">
+        Apache Commons Codec
+        Copyright 2002-2025 The Apache Software Foundation
+
+        This product includes software developed at
+        The Apache Software Foundation (https://www.apache.org/).
+    </notice>
+    <notice groupId="commons-io" artifactId="commons-io" version="2.19.0">
+        Apache Commons IO
+        Copyright 2002-2025 The Apache Software Foundation
+
+        This product includes software developed at
+        The Apache Software Foundation (https://www.apache.org/).
+    </notice>
+    <notice groupId="de.energiequant.common" artifactId="app-utils-misc" version="0.1-SNAPSHOT">
+        Copyright (c) 2021-2025 Daniel Neugebauer
+    </notice>
+    <notice groupId="de.energiequant.common" artifactId="webdataretrieval" version="0.2.6">
+        Copyright (c) 2016-2021 Daniel Neugebauer
+    </notice>
+    <notice groupId="org.apache.commons" artifactId="commons-compress" version="1.27.1">
+        Apache Commons Compress
+        Copyright 2002-2024 The Apache Software Foundation
+
+        This product includes software developed at
+        The Apache Software Foundation (https://www.apache.org/).
+    </notice>
+    <notice groupId="org.apache.commons" artifactId="commons-lang3" version="3.12.0">
+        Apache Commons Lang
+        Copyright 2001-2021 The Apache Software Foundation
+
+        This product includes software developed at
+        The Apache Software Foundation (https://www.apache.org/).
+    </notice>
+    <notice groupId="org.apache.httpcomponents.client5" artifactId="httpclient5" version="5.4.3">
+        Apache HttpClient
+        Copyright 1999-2021 The Apache Software Foundation
+
+        This product includes software developed at
+        The Apache Software Foundation (http://www.apache.org/).
+    </notice>
+    <notice groupId="org.apache.httpcomponents.core5" artifactId="httpcore5-h2" version="5.3.4">
+        Apache HttpComponents Core HTTP/2
+        Copyright 2005-2021 The Apache Software Foundation
+
+        This product includes software developed at
+        The Apache Software Foundation (http://www.apache.org/).
+    </notice>
+    <notice groupId="org.apache.httpcomponents.core5" artifactId="httpcore5" version="5.3.4">
+        Apache HttpComponents Core HTTP/1.1
+        Copyright 2005-2021 The Apache Software Foundation
+
+        This product includes software developed at
+        The Apache Software Foundation (http://www.apache.org/).
+    </notice>
+    <notice groupId="org.apache.logging.log4j" artifactId="log4j-api" version="2.20.0">
+        Apache Log4j API
+        Copyright 1999-2023 The Apache Software Foundation
+
+        This product includes software developed at
+        The Apache Software Foundation (http://www.apache.org/).
+    </notice>
+    <notice groupId="org.apache.logging.log4j" artifactId="log4j-core" version="2.20.0">
+        Apache Log4j Core
+        Copyright 1999-2012 Apache Software Foundation
+
+        This product includes software developed at
+        The Apache Software Foundation (http://www.apache.org/).
+
+        ResolverUtil.java
+        Copyright 2005-2006 Tim Fennell
+    </notice>
+    <notice groupId="org.apache.logging.log4j" artifactId="log4j-slf4j-impl" version="2.20.0">
+        Apache Log4j SLF4J Binding
+        Copyright 1999-2023 The Apache Software Foundation
+
+        This product includes software developed at
+        The Apache Software Foundation (http://www.apache.org/).
+    </notice>
+    <notice groupId="org.slf4j" artifactId="slf4j-api" version="1.7.36">
+        <!-- grabbed from MIT license file (note there are two, on root folder and in slf4j-api -->
+        Copyright (c) 2004-2022 QOS.ch Sarl (Switzerland)
+        All rights reserved.
+    </notice>
+    <notice groupId="org.vatplanner.commons" artifactId="vatplanner-commons-base" version="1.0">
+        Copyright (c) 2021-2025 Daniel Neugebauer
+    </notice>
+    <notice groupId="org.vatplanner" artifactId="dataformats-vatsim-public" version="0.1">
+        Copyright (c) 2016-2023 Daniel Neugebauer
+    </notice>
+</copyrightNotices>
