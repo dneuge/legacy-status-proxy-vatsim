@@ -30,25 +30,25 @@ Run `mvn clean install` to compile, locally install the status proxy and generat
 # Updating dependencies
 
 [Attribution Maven Plugin](https://github.com/jinnovations/attribution-maven-plugin) is used on every build to ensure all artifacts are listed in
-`src-gen/main/resources/de/energiequant/vatsim/compatibility/legacyproxy/attribution/attribution.xml`. At application startup that file is used to check that
+`src-gen/main/resources/de/energiequant/vatsim/compatibility/legacyproxy/attribution.xml`. At application startup that file is used to check that
 all required licenses have been included and copyright notices have been recorded for every dependency.
 
 This requires additional changes to be made after adding a new dependency or changing versions in the POM file:
 
 - All copyright notices must be recorded
-  in [CopyrightNotice](../src/main/java/de/energiequant/vatsim/compatibility/legacyproxy/attribution/CopyrightNotice.java) class, otherwise an exception will be
+  in [copyright-notices.xml](../src/main/resources/de/energiequant/vatsim/compatibility/legacyproxy/copyright-notices.xml), otherwise an exception will be
   thrown when starting the proxy.
     - Use the official copyright notice if available, preferably from files included within the used JAR artifacts.
     - Some licenses or projects may require specific file contents to be included, for example some "notice" file for Apache 2.0 licensed projects.
     - Copyright, license or additional notices may change between version updates. Check that the copyright information is up-to-date. Fully replace the
       information if in doubt.
-- If known licenses are referred by unknown aliases,
-  adapt [License.java](../src/main/java/de/energiequant/vatsim/compatibility/legacyproxy/attribution/License.java) enum.
+- If known licenses are referred by unknown aliases, adapt the `License` enum
+  in [Miscellaneous Application Utilities for Java](https://github.com/dneuge/app-utils-misc-java).
 - If new licenses are introduced:
     - check license compatibility and implications on effective license for binary distribution
     - add a copy of the official license text
-      to [src/main/resources/de/energiequant/vatsim/compatibility/legacyproxy/attribution/](../src/main/resources/de/energiequant/vatsim/compatibility/legacyproxy/attribution/)
-    - adapt [License.java](../src/main/java/de/energiequant/vatsim/compatibility/legacyproxy/attribution/License.java) enum
+      to [Miscellaneous Application Utilities for Java](https://github.com/dneuge/app-utils-misc-java) if it does not exist there already
+    - adapt `License` enum in [Miscellaneous Application Utilities for Java](https://github.com/dneuge/app-utils-misc-java)
     - if distribution license is affected:
         - confirm with project lead that the new license will not lead to any complications for development or future use and are really okay to be introduced
           to the project
