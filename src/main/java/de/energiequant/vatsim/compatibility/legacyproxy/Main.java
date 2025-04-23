@@ -33,8 +33,8 @@ import de.energiequant.apputils.misc.ApplicationInfo;
 import de.energiequant.apputils.misc.DisclaimerState;
 import de.energiequant.apputils.misc.ResourceUtils;
 import de.energiequant.apputils.misc.attribution.AttributionParser;
-import de.energiequant.apputils.misc.attribution.CopyrightNotice;
 import de.energiequant.apputils.misc.attribution.CopyrightNoticeProvider;
+import de.energiequant.apputils.misc.attribution.CopyrightNotices;
 import de.energiequant.apputils.misc.attribution.License;
 import de.energiequant.apputils.misc.attribution.Project;
 import de.energiequant.apputils.misc.cli.CommandLineAbout;
@@ -48,7 +48,7 @@ public class Main {
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
     private static final Collection<Project> DEPENDENCIES = AttributionParser.getProjects(Main.class);
 
-    private static final CopyrightNoticeProvider COPYRIGHT_NOTICE_PROVIDER = CopyrightNotice.loadXML(Main.class);
+    private static final CopyrightNoticeProvider COPYRIGHT_NOTICE_PROVIDER = CopyrightNotices.loadXML(Main.class);
 
     private static final String DISCLAIMER = ResourceUtils
         .getRelativeResourceContentAsString(Main.class, "disclaimer.txt", StandardCharsets.UTF_8)
